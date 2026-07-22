@@ -1,0 +1,265 @@
+/* Importación de tipografía alternativa bold display si no está local */
+@import url('https://fonts.googleapis.com/css2?family=League+Spartan:wght@800;900&display=swap');
+
+:root {
+    /* Paleta de Colores Oficial del Diseño */
+    --color-dark-navy: #001C3D;
+    --color-medium-blue: #00569E;
+    --color-light-blue: #7EC2F4;
+    --color-black-accent: #0A0A0A;
+    --color-bg-gray: #D9D9D9;
+    --color-table-bg: #2B2B2B;
+    --color-white: #FFFFFF;
+
+    /* Tipografía */
+    --font-primary: 'Boldonse', 'League Spartan', Arial Black, sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-primary);
+}
+
+body {
+   background-color: var(--color-bg-gray); /* Fondo general claro */
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+}
+
+/* LAYOUT PRINCIPAL */
+.app-container {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+    background-color: var(--color-bg-gray);
+    border-radius: 0; /* Quitamos bordes redondeados externos para que sea app full screen */
+    overflow: hidden;
+    box-shadow: none;
+}
+
+/* BARRA LATERAL */
+.sidebar {
+    width: 90px;
+    background-color: var(--color-dark-navy);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 0;
+    gap: 25px;
+}
+
+.user-avatar-placeholder {
+    width: 55px;
+    height: 55px;
+    background-color: #A3B8CC;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-dark-navy);
+    font-size: 24px;
+}
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+    align-items: center;
+}
+
+.nav-btn {
+    width: 50px;
+    height: 48px;
+    background-color: var(--color-black-accent);
+    border: none;
+    border-radius: 6px;
+    color: var(--color-white);
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.nav-btn:hover {
+    background-color: var(--color-medium-blue);
+    transform: translateY(-2px);
+}
+
+.nav-btn.active {
+    background-color: var(--color-bg-gray);
+    color: var(--color-black-accent);
+}
+
+/* ÁREA DE CONTENIDO */
+.main-content {
+    flex: 1;
+    padding: 20px 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* HEADER */
+.main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.brand-title {
+    font-size: 32px;
+    color: var(--color-black-accent);
+    font-weight: 900;
+    letter-spacing: -0.5px;
+}
+
+.date-badge {
+    background-color: var(--color-medium-blue);
+    color: var(--color-white);
+    padding: 8px 18px;
+    border-radius: 12px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* BARRA DE ACCIONES Y MÉTRICAS */
+.actions-bar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 25px;
+    margin-top: 5px;
+}
+
+.btn-action {
+    background-color: var(--color-dark-navy);
+    color: var(--color-white);
+    border: none;
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-action:hover {
+    background-color: var(--color-medium-blue);
+}
+
+.metric-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.metric-label {
+    font-size: 20px;
+    font-weight: 900;
+    color: var(--color-black-accent);
+    margin-bottom: 2px;
+}
+
+.metric-value {
+    background-color: var(--color-medium-blue);
+    color: var(--color-white);
+    font-size: 26px;
+    font-weight: 900;
+    padding: 6px 20px;
+    border-radius: 8px;
+    border: 3px solid var(--color-light-blue);
+}
+
+/* GRID DE DASHBOARD INFERIOR */
+.dashboard-grid {
+    display: flex;
+    gap: 20px;
+    flex: 1;
+    margin-top: 10px;
+}
+
+/* TABLA DE VENTAS / HISTORIAL DE VENTAS*/
+.table-card {
+    flex: 1.3;
+    background-color: var(--color-table-bg);
+    border-radius: 16px;
+    padding: 15px;
+    border: 3px solid var(--color-dark-navy);
+    overflow-y: auto;
+}
+
+.sales-table {
+    width: 100%;
+    border-collapse: collapse;
+    color: var(--color-white);
+    text-align: center;
+}
+
+.sales-table th {
+    /*Información de la tabla */
+    font-size: 22px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--color-white);
+    border-right: 2px solid var(--color-white);
+}
+
+.sales-table th:last-child {
+    border-right: none;
+}
+
+.sales-table td {
+    font-size: 20px;
+    padding: 12px 5px;
+    border-right: 2px solid var(--color-white);
+}
+
+.sales-table td:last-child {
+    border-right: none;
+}
+
+/* CARD DE LO MÁS VENDIDO */
+.top-products-card {
+    flex: 1;
+    background-color: var(--color-dark-navy);
+    border-radius: 16px;
+    padding: 20px;
+    color: var(--color-white);
+    display: flex;
+    flex-direction: column;
+}
+
+.card-title {
+    text-align: center;
+    font-size: 20px;
+    margin-bottom: 15px;
+    color: var(--color-white);
+}
+
+.top-products-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.top-products-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.top-products-list li {
+    display: flex;
+    justify-content: space-between;
+    font-size: 17px;
+    font-weight: bold;
+}

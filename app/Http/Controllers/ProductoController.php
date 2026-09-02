@@ -45,7 +45,7 @@ class ProductoController extends Controller
         Producto::create([
             'nombre'          => $request->nombre,
             'precio'          => $request->precio,
-            'fk_id_categoria' => $request->fk_id_categoria, // ✅ Corregido el typo 'categoira'
+            'fk_id_categoria' => $request->fk_id_categoria,
             'imagen'          => $imagen,
         ]);
 

@@ -4,9 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Categoria extends Model
+class Seccion extends Model
 {
     protected $table = "seccion";
-        protected $fillable = ["seccion"];
+
+    protected $fillable = ["id_seccion"];
+
     public $timestamps = false;
 }

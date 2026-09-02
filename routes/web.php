@@ -3,11 +3,11 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\CategoriaController;
+use App\Http\Controllers\AdminPedidoController;
+use App\Http\Controllers\SeccionController;
 // Login
 
 use App\Http\Controllers\LoginController;
-
-use App\Http\Controllers\AdminPedidoController;
 
 // Mostrar formulario
 Route::get('/', [LoginController::class, 'mostrarLogin'])->name('login');
@@ -48,4 +48,4 @@ Route::post('/Categoria/guardar', [ProductoController::class, 'registroCategoria
 
 
 // Ruta pedidos para llevar
-Route::get('/admin/pedidos', [AdminPedidoController::class, 'pedido'])->name('muestra_pedido');
+Route::get('/Admin/Pedidos', [SeccionController::class, 'obtenerSeecion'])->name('muestra_pedido');

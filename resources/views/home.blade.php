@@ -15,7 +15,7 @@
     <!-- BARRA LATERAL (MENU) -->
     <aside class="barra-lateral">
       <div class="logo-sistema">
-        <h3>Sanwichería Gabriel</h3>
+        <h3>Sandwichería Gabriel</h3>
       </div>
 
       <!-- Opciones del menú -->
@@ -31,7 +31,21 @@
     <!-- CONTENIDO PRINCIPAL: Todo lo que cambia según la pantalla -->
     <main class="contenido-principal">
       <header class="barra-superior">
-        <h2>Historial de Caja</h2>
+        <div class="header-info">
+          <h2>Historial de Caja</h2>
+
+          <!-- BOTONERA HORIZONTAL Y SUMADOR -->
+          <div class="panel-caja-acciones">
+            <button id="btn-abrir-caja" class="btn-accion btn-abrir">Abrir Caja</button>
+
+            <div class="sumador-container">
+              Total Pagos: $<span id="total-pagos">0.00</span>
+            </div>
+
+            <button id="btn-cerrar-caja" class="btn-accion btn-cerrar" disabled>Cerrar Caja</button>
+          </div>
+        </div>
+
         <div id="estado-api" class="mensaje-estado">Cargando datos de la API...</div>
       </header>
 
@@ -43,6 +57,7 @@
               <th>Fecha</th>
               <th>Hora de Cierre</th>
               <th>Monto Total</th>
+              <th>Cerrado Por</th> <!-- NUEVA COLUMNA -->
             </tr>
           </thead>
           <tbody>

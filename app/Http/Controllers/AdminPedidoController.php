@@ -12,6 +12,8 @@ class MesasController extends Controller
     public function muestraPedido()
     {
         // 'with' hace la consulta optimizada (Eager Loading)
+
+
         $pedidos = Pedido::with(['detalles.producto', 'detalles.combo', 'mesa'])
                     ->orderBy('created_at', 'desc')
                     ->get();

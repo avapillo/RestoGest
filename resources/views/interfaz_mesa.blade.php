@@ -17,16 +17,15 @@
       </div>
       <nav class="menu-navegacion">
         <a href="{{ route('home') }}" class="opcion-menu">Principal</a>
-        <a href="{{ route('intefaz_mesa') }}" class="opcion-menu">Mesas</a>
+        <a href="{{ route('intefaz_mesa') }}" class="opcion-menu activa">Mesas</a>
         <a href="{{ route('producto.index') }}" class="opcion-menu">Producto</a>
         <a href="{{ route('interfaz_paraLlevar') }}" class="opcion-menu">Para Llevar</a>
-        <a href="#" class="opcion-menu activa">Ventas / Pedidos</a>
+        <a href="#" class="opcion-menu">Ventas / Pedidos</a>
       </nav>
     </aside>
 
 
 
-  </div>
 
 </body>
 </html>

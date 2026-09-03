@@ -5,8 +5,6 @@ use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\MesasController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\LoginController;
-use App\Http\Controllers\AdminPedidoController;
-
 // Mostrar formulario
 Route::get('/', [LoginController::class, 'mostrarLogin'])->name('login');
 
@@ -39,13 +37,7 @@ Route::delete('/Producto/{id}/eliminar', [ProductoController::class, 'eliminarPr
 Route::post('/Categoria/guardar', [ProductoController::class, 'registroCategoria'])->name('categoria.store');
 
 
-// Ruta pedidos para llevar
-// Route::get('/admin/pedidos', [AdminPedidoController::class, 'pedido'])->name('muestra_pedido');
-
-
 // Rutas de mesas
-Route::get('/Mesas', [MesasController::class, 'mostrarMesas'])->name('mesas.index');
+Route::get('/Mesas', [MesasController::class, 'mostrarMesas'])->name('intefaz_mesa');
 
-// Rutas de Pedido
-// Route::get('/admin/pedidos', [AdminPedidoController::class, 'pedido'])->name('muestra_pedido');
-// Route::post('/admin/pedidos/pagar', [AdminPedidoController::class, 'procesarPago'])->name('pedidos.pagar');
+Route::post('/Mesas/pagar', [MesasController::class, 'procesarPago'])->name('pedidos.pagar');

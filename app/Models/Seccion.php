@@ -7,8 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 class Seccion extends Model
 {
     protected $table = "seccion";
-
-    protected $fillable = ["id_seccion"];
-
+    protected $primaryKey = "id_seccion";
     public $timestamps = false;
+    protected $fillable = ['seccion'];
+
+
+    public function mesas()
+    {
+        return $this->hasMany(Mesas::class, 'fk_id_seccion', 'id_seccion');
+    }
+
 }

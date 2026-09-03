@@ -1,17 +1,13 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // ----------------------------------------------------
-  // 1. FILTRADO POR SECCIONES
-  // ----------------------------------------------------
+  // Filtrado de secciones vía parámetros GET
   document.querySelectorAll('.btn-filtro').forEach(boton => {
     boton.addEventListener('click', () => {
       const seccionId = boton.getAttribute('data-id');
-      window.location.href = `/admin/pedidos?fk_id_seccion=${seccionId}`;
+      window.location.href = `/Mesas?fk_id_seccion=${seccionId}`;
     });
   });
 
-  // ----------------------------------------------------
-  // 2. MODAL REALIZAR PAGO
-  // ----------------------------------------------------
+  // Modal para realizar el pago
   const modalPago = document.getElementById('modalPago');
   const btnCerrarModalPago = document.getElementById('btnCerrarModalPago');
   const lblNumeroMesa = document.getElementById('lblNumeroMesa');

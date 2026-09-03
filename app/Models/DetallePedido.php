@@ -11,28 +11,15 @@ class DetallePedido extends Model
 
     protected $table = 'detalle_pedido';
     protected $primaryKey = 'id_detalle';
+    public $timestamps = false;
 
-    protected $fillable = [
-        'fk_id_pedido',
-        'fk_id_producto',
-        'fk_id_combo',
-        'cantidad',
-        'precio_unitario' // Asegúrate de incluirlo si guardas el precio al momento de la venta
-    ];
+    protected $fillable = ['fk_id_pedido', 'fk_id_producto', 'fk_id_combo', 'cantidad'];
 
-    // Relación: El detalle pertenece a un Pedido
-    public function pedido()
-    {
-        return $this->belongsTo(Pedido::class, 'fk_id_pedido', 'id_pedido');
-    }
-
-    // Relación: El detalle pertenece a un Producto
     public function producto()
     {
-        return $this->belongsTo(Producto::class, 'fk_id_producto', 'id');
+        return $this->belongsTo(Producto::class, 'fk_id_producto');
     }
 
-    // Relación: El detalle pertenece a un Combo
     public function combo()
     {
         return $this->belongsTo(Combo::class, 'fk_id_combo', 'id');

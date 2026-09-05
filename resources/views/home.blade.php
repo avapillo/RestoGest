@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Panel de Control - Cevichería Gabriel</title>
+  <title>Panel de Control - Sanwichería Gabriel</title>
   <!-- Enlace al archivo de estilos CSS en la carpeta public/css -->
   <link rel="stylesheet" href="{{ asset('css/style.css') }}">
 </head>
@@ -15,7 +15,7 @@
     <!-- BARRA LATERAL (MENU) -->
     <aside class="barra-lateral">
       <div class="logo-sistema">
-        <h3>Sandwichería Gabriel</h3>
+        <h3>Sanwichería Gabriel</h3>
       </div>
 
       <!-- Opciones del menú -->
@@ -31,21 +31,7 @@
     <!-- CONTENIDO PRINCIPAL: Todo lo que cambia según la pantalla -->
     <main class="contenido-principal">
       <header class="barra-superior">
-        <div class="header-info">
-          <h2>Historial de Caja</h2>
-
-          <!-- BOTONERA HORIZONTAL Y SUMADOR -->
-          <div class="panel-caja-acciones">
-            <button id="btn-abrir-caja" class="btn-accion btn-abrir">Abrir Caja</button>
-
-            <div class="sumador-container">
-              Total Pagos: $<span id="total-pagos">0.00</span>
-            </div>
-
-            <button id="btn-cerrar-caja" class="btn-accion btn-cerrar" disabled>Cerrar Caja</button>
-          </div>
-        </div>
-
+        <h2>Historial de Caja</h2>
         <div id="estado-api" class="mensaje-estado">Cargando datos de la API...</div>
       </header>
 
@@ -57,7 +43,6 @@
               <th>Fecha</th>
               <th>Hora de Cierre</th>
               <th>Monto Total</th>
-              <th>Cerrado Por</th> <!-- NUEVA COLUMNA -->
             </tr>
           </thead>
           <tbody>

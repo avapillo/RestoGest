@@ -35,22 +35,22 @@
       </header>
 
       <!-- BOTONES DE FILTRADO DE SECCIONES -->
-      <div class="contenedor-filtros">
-        <button class="btn-filtro {{ ($seccionSeleccionada ?? 'todas') == 'todas' ? 'activo' : '' }}" data-id="todas">
-          Todas
-        </button>
+<div class="contenedor-filtros">
+  <button class="btn-filtro {{ ($seccionSeleccionada ?? 'todas') == 'todas' ? 'activo' : '' }}" data-id="">
+    Todas
+  </button>
 
-        @foreach ($todasSecciones as $sec)
-          <button class="btn-filtro {{ ($seccionSeleccionada ?? '') == $sec->id_seccion ? 'activo' : '' }}" data-id="{{ $sec->id_seccion }}">
-            {{ $sec->seccion }}
-          </button>
-        @endforeach
-      </div>
+  @foreach ($todasSecciones as $sec)
+    <button class="btn-filtro {{ ($seccionSeleccionada ?? '') == $sec->id_seccion ? 'activo' : '' }}" data-id="{{ $sec->id_seccion }}">
+      {{ $sec->seccion }}
+    </button>
+  @endforeach
+</div>
 
-      <!-- VISTA POR SECCIONES Y TARJETAS DE MESA -->
+      <!-- GRILLA DE TARJETAS DE MESA (SIN IMÁGENES) -->
       @forelse ($secciones as $seccion)
         <div class="bloque-seccion" style="margin-bottom: 30px;">
-          <h3 style="border-bottom: 2px solid #ddd; padding-bottom: 5px; margin-bottom: 15px;">
+          <h3 style="border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; margin-bottom: 15px; color: #0f172a;">
             📍 {{ $seccion->seccion }}
           </h3>
 
@@ -58,16 +58,14 @@
             @forelse ($seccion->mesas as $mesa)
               @php $pedido = $mesa->pedidoActivo; @endphp
 
-              <div class="tarjeta-producto" id="mesa-{{ $mesa->id_mesa }}">
-                <div class="foto-producto">🪑</div>
-
+              <div class="tarjeta-mesa" id="mesa-{{ $mesa->id_mesa }}">
                 <div class="info-producto">
                   <h4>Mesa N° {{ $mesa->numero_mesa }}</h4>
 
                   @if($pedido)
-                    <div style="text-align: left; margin: 8px 0;">
-                      <strong style="font-size: 0.85rem;">Consumo:</strong>
-                      <ul style="padding-left: 15px; font-size: 0.8rem; margin-top: 3px;">
+                    <div class="contenedor-consumo">
+                      <strong>Consumo:</strong>
+                      <ul class="lista-consumo">
                         @foreach ($pedido->detalles as $detalle)
                           <li>
                             {{ $detalle->cantidad }}x
@@ -81,24 +79,28 @@
                       <strong>Total: ${{ number_format($pedido->monto_total, 2) }}</strong>
                     </p>
                   @else
-                    <p class="categoria-etiqueta">Estado: <strong style="color: green;">Disponible</strong></p>
+                    <p class="categoria-etiqueta" style="color: #16a34a; font-weight: bold; margin: 15px 0;">Disponible</p>
                     <p class="precio-producto"><strong>$0.00</strong></p>
                   @endif
                 </div>
 
                 <div class="acciones-tarjeta">
                   @if($pedido)
-                    <button class="btn-accion btn-modificar">✏️ Modificar</button>
-
-                    <button class="btn-accion btnAbrirModalPago"
+                    <button class="btn-accion btn-modificar btnAbrirModalEditar"
                             data-id_pedido="{{ $pedido->id_pedido }}"
                             data-numero_mesa="{{ $mesa->numero_mesa }}"
-                            data-monto="{{ $pedido->monto_total }}"
-                            style="background-color: #28a745; color: white;">
+                            data-detalles="{{ json_encode($pedido->detalles) }}">
+                      ✏️ Modificar
+                    </button>
+
+                    <button class="btn-accion btn-pagar btnAbrirModalPago"
+                            data-id_pedido="{{ $pedido->id_pedido }}"
+                            data-numero_mesa="{{ $mesa->numero_mesa }}"
+                            data-monto="{{ $pedido->monto_total }}">
                       💳 Pagar
                     </button>
                   @else
-                    <button class="btn-accion" disabled style="opacity: 0.5;">Sin Pedido</button>
+                    <button class="btn-accion btn-disabled" disabled>Sin Pedido</button>
                   @endif
                 </div>
               </div>
@@ -114,7 +116,38 @@
     </main>
   </div>
 
-  <!-- MODAL: PROCESAR PAGO -->
+  <!-- MODAL 1: MODIFICAR PEDIDO (GRILLA DE EDICIÓN DE ÍTEMS) -->
+  <div id="modalEditarPedido" class="modal-overlay hidden">
+    <div class="modal-content modal-ancho-grilla">
+      <h3>Modificar Pedido - Mesa N° <span id="lblMesaEditar"></span></h3>
+
+      <form action="{{ route('pedidos.actualizar') }}" method="POST">
+        @csrf
+        @method('PUT')
+        <input type="hidden" id="edit_id_pedido" name="id_pedido">
+
+        <table class="tabla-grilla-pedidos">
+          <thead>
+            <tr>
+              <th>Producto / Combo</th>
+              <th style="width: 100px;">Cantidad</th>
+              <th style="width: 80px; text-align: center;">Acción</th>
+            </tr>
+          </thead>
+          <tbody id="contenedorDetallesEditar">
+            <!-- Filas dinámicas generadas mediante JavaScript -->
+          </tbody>
+        </table>
+
+        <div class="modal-botones">
+          <button type="button" id="btnCerrarModalEditar" class="btn-cancelar">Cancelar</button>
+          <button type="submit" class="btn-guardar">Guardar Cambios</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 2: PROCESAR PAGO -->
   <div id="modalPago" class="modal-overlay hidden">
     <div class="modal-content">
       <h3>Pagar Pedido - Mesa N° <span id="lblNumeroMesa"></span></h3>
@@ -140,7 +173,7 @@
 
         <div class="modal-botones">
           <button type="button" id="btnCerrarModalPago" class="btn-cancelar">Cancelar</button>
-          <button type="submit" class="btn-guardar" style="background-color: #28a745;">Confirmar Pago</button>
+          <button type="submit" class="btn-guardar" style="background-color: #16a34a;">Confirmar Pago</button>
         </div>
       </form>
     </div>

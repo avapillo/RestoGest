@@ -5,6 +5,8 @@ use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\MesasController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\UsuariosController;
+
 // Mostrar formulario
 Route::get('/', [LoginController::class, 'mostrarLogin'])->name('login');
 
@@ -29,15 +31,20 @@ Route::get('/ProductoLlevar', function (){
 Route::get('/Producto', [ProductoController::class, 'mostrarProducto'])->name('producto.index');
 // Llama al metodo de registro producto en ProductoController.php
 Route::post('/Producto/guardar', [ProductoController::class, 'registroProducto'])->name('producto.store');
-
 Route::post('/Producto/modificar', [ProductoController::class, 'modificarProducto'])->name('producto.update');
-
 Route::delete('/Producto/{id}/eliminar', [ProductoController::class, 'eliminarProducto'])->name('producto.destroy');
-
 Route::post('/Categoria/guardar', [ProductoController::class, 'registroCategoria'])->name('categoria.store');
 
 
 // Rutas de mesas
 Route::get('/Mesas', [MesasController::class, 'mostrarMesas'])->name('intefaz_mesa');
-
 Route::post('/Mesas/pagar', [MesasController::class, 'procesarPago'])->name('pedidos.pagar');
+Route::put('/Mesas/actualizar', [MesasController::class, 'actualizarPedido'])->name('pedidos.actualizar');
+
+
+// Registro de nuevo usuario
+Route::get('/Usuario', [UsuariosController::class, 'mostrarUsuarios'])->name('usuario.index');
+Route::post('/Usuario/guardar', [UsuariosController::class, 'nuevoUsuario'])->name('usuario.store');
+Route::post('/Usuario/modificar', [UsuariosController::class, 'modificarUsuario'])->name('usuario.update');
+Route::delete('/Usuario/{id}/eliminar', [UsuariosController::class, 'eliminarUsuario'])->name('usuario.destroy');
+

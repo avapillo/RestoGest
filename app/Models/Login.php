@@ -10,4 +10,5 @@ class Login extends Model{
     protected $fillable = ["nombre", "contrasenia"];
 
     public $timestamps = false;
+
 }

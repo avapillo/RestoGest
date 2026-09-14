@@ -1,0 +1,343 @@
+/* ==========================================
+   ESTILOS GENERALES Y RESETEO
+   ========================================== */
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f1f5f9; /* Fondo gris claro para la aplicación */
+  color: #334155;
+}
+
+/* Contenedor que usa Flexbox para poner el menú a la izquierda y el contenido a la derecha */
+.contenedor-sitio {
+  display: flex;
+  min-height: 100vh; /* Ocupa el 100% de la altura de la pantalla */
+}
+
+/* ==========================================
+   ESTILOS DE LA BARRA LATERAL (MENU)
+   ========================================== */
+.barra-lateral {
+  width: 260px; /* Ancho fijo del menú lateral */
+  background-color: #0f172a; /* Azul muy oscuro/negro */
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.logo-sistema {
+  padding: 20px;
+  text-align: center;
+  border-bottom: 3px solid #1e293b; /* Línea divisoria sutil */
+}
+
+.logo-sistema h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #38bdf8; /* Azul celeste llamativo */
+}
+
+.menu-navegacion {
+  display: flex;
+  flex-direction: column;
+  padding: 15px 0;
+}
+
+/* Estilo para cada botón/enlace del menú */
+.opcion-menu {
+  color: #93a9c8; /* Gris claro para texto no seleccionado */
+  padding: 12px 20px;
+  text-decoration: none; /* Quita el subrayado */
+  display: block;
+  transition: all 0.3s ease; /* Suaviza el cambio de color */
+}
+
+/* Cuando pasas el mouse por encima o la opción está activa */
+.opcion-menu:hover, .opcion-menu.activa {
+  background-color: #1e293b; /* Fondo un poco más claro */
+  color: #ffffff;            /* Texto blanco */
+  border-left: 4px solid #38bdf8; /* Barra celeste decorativa a la izquierda */
+}
+
+/* ==========================================
+   CONTENIDO PRINCIPAL Y PANELES
+   ========================================== */
+
+/* Layout para el contenido al costado del menú */
+.contenido-principal {
+  flex: 1;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.encabezado-seccion {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #e2e8f0;
+  padding-bottom: 15px;
+}
+
+.encabezado-seccion h2 {
+  margin: 0;
+  font-size: 1.8rem;
+  color: #0f172a;
+}
+
+/* Botón Nuevo Producto */
+.btn-agregar {
+  background-color: #38bdf8;
+  color: #0f172a;
+  border: none;
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn-agregar:hover {
+  background-color: #0ea5e9;
+  color: #ffffff;
+  margin-left: 2px;
+}
+
+/* ==========================================
+   GRILLA Y TARJETAS DE PRODUCTO
+   ========================================== */
+
+/* Grilla responsive para las Tarjetas */
+.grilla-usuario {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 25px;
+}
+
+/* Estilos de las Tarjetas de Producto */
+.tarjeta-usuario {
+  background-color: #0f172a;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.foto-usuario {
+  width: 100%;
+  height: 180px;
+  background-color: #0f172a;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #6a85ab;
+  font-size: 3rem;
+  overflow: hidden;
+}
+
+.info-usuario {
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+/*Nombre de usuario*/
+.info-usuario h4 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #677487;
+}
+
+.info-usuario .rol-usuario {
+  font-size: 1.30rem;
+  color: #677487;
+  margin: 2px 0;
+}
+
+.info-usuario p.precio-usuario,
+.info-usuario p strong {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #0ea5e9;
+  font-weight: bold;
+}
+
+/* Botones Modificar y Eliminar en la tarjeta */
+.acciones-tarjeta {
+  display: flex;
+  border-top: 1px solid #e2e8f0;
+  margin-top: auto;
+}
+
+.btn-accion {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.2s;
+}
+
+.btn-modificar {
+  color: #0ea5e9;
+}
+
+.btn-modificar:hover {
+  background-color: #f0f9ff;
+}
+
+.btn-eliminar {
+  color: #ef4444;
+  border-left: 1px solid #e2e8f0;
+}
+
+.btn-eliminar:hover {
+  background-color: #fef2f2;
+}
+
+/* ==========================================
+   ESTILOS DEL SUBPANEL MODAL (FORMULARIO)
+   ========================================== */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(15, 23, 42, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.modal-content {
+  background-color: #ffffff;
+  padding: 30px;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 450px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.modal-content h3 {
+  margin-top: 0;
+  color: #0f172a;
+  margin-bottom: 20px;
+}
+
+.grupo-campo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 15px;
+}
+
+.grupo-campo label {
+  font-weight: 600;
+  color: #475569;
+}
+
+.grupo-campo input,
+.select-categoria {
+  padding: 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 1rem;
+  background-color: #ffffff;
+  color: #334155;
+  outline: none;
+}
+
+.grupo-campo input:focus,
+.select-categoria:focus {
+  border-color: #38bdf8;
+  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
+}
+
+.modal-botones {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.btn-cancelar {
+  background-color: #e2e8f0;
+  color: #475569;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.2s;
+}
+
+.btn-cancelar:hover {
+  background-color: #cbd5e1;
+}
+
+.btn-guardar {
+  background-color: #0f172a;
+  color: #ffffff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.2s;
+}
+
+.btn-guardar:hover {
+  background-color: #1e293b;
+}
+
+/* ==========================================
+   MENSAJES DE ESTADO Y VALIDACIONES
+   ========================================== */
+.mensaje-exito {
+  background-color: #d1fae5;
+  color: #065f46;
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid #a7f3d0;
+  font-size: 0.95rem;
+}
+
+.error-texto {
+  color: #ef4444;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.sin-productos {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: #64748b;
+  padding: 40px;
+  font-size: 1rem;
+}
+
+/* Clase de utilidad para ocultar/mostrar elementos */
+.hidden {
+  display: none !important;
+}
+
+/* ==========================================
+   BOTONES DE FILTRADO POR CATEGORÍA
+   ========================================== */
+
+/* Botón Activo: idéntico al botón "+ Nuevo Producto" */
+.btn-filtro.activo {
+  background-color: #38bdf8;
+  color: #0f172a;
+  border: 1px solid #38bdf8;
+  box-shadow: 0 4px 6px -1px rgba(56, 189, 248, 0.3);
+}

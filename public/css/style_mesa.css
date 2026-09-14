@@ -1,62 +1,85 @@
 /* ==========================================
-   ESTILOS GENERALES Y RESETEO
+   ESTILOS ESPECÍFICOS PARA TARJETAS DE MESAS
    ========================================== */
-body {
-  font-family: 'Segoe UI', Arial, sans-serif;
-  margin: 0;
-  padding: 0;
-  background-color: #f1f5f9; /* Fondo gris claro para la aplicación */
-  color: #000000; /* Color del texto de las tabla */
+.tarjeta-mesa {
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border: 1px solid #e2e8f0;
 }
 
-/* Contenedor que usa Flexbox para poner el menú a la izquierda y el contenido a la derecha */
-.contenedor-sitio {
-  display: flex;
-  min-height: 100vh; /* Ocupa el 100% de la altura de la pantalla */
+.contenedor-consumo {
+  text-align: left;
+  margin: 10px 0;
+}
+
+.contenedor-consumo strong {
+  font-size: 0.85rem;
+  color: #475569;
+}
+
+.lista-consumo {
+  padding-left: 18px;
+  margin: 5px 0 0 0;
+  font-size: 0.85rem;
+  color: #334155;
+}
+
+.btn-pagar {
+  color: #16a34a !important;
+  border-left: 1px solid #e2e8f0;
+}
+
+.btn-pagar:hover {
+  background-color: #f0fdf4 !important;
+}
+
+.btn-disabled {
+  color: #94a3b8 !important;
+  cursor: not-allowed !important;
+  width: 100%;
 }
 
 /* ==========================================
-   ESTILOS DE LA BARRA LATERAL (MENU)
+   GRILLA DE EDICIÓN EN MODAL
    ========================================== */
-.barra-lateral {
-  width: 260px; /* Ancho fijo del menú lateral */
-  background-color: #0f172a; /* Azul muy oscuro/negro */
-  color: #ffffff;
-  display: flex;
-  flex-direction: column;
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+.modal-ancho-grilla {
+  max-width: 550px !important;
 }
 
-.logo-sistema {
-  padding: 20px;
-  text-align: center;
-  border-bottom: 3px solid #1e293b; /* Línea divisoria sutil */
+.tabla-grilla-pedidos {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
 }
 
-.logo-sistema h3 {
-  margin: 0;
-  font-size: 1.2rem;
-  color: #38bdf8; /* Azul celeste llamativo */
+.tabla-grilla-pedidos th,
+.tabla-grilla-pedidos td {
+  border: 1px solid #cbd5e1;
+  padding: 10px;
+  text-align: left;
+  font-size: 0.9rem;
 }
 
-.menu-navegacion {
-  display: flex;
-  flex-direction: column;
-  padding: 15px 0;
+.tabla-grilla-pedidos th {
+  background-color: #f8fafc;
+  color: #0f172a;
 }
 
-/* Estilo para cada botón/enlace del menú */
-.opcion-menu {
-  color: #94a3b8; /* Gris claro para texto no seleccionado */
-  padding: 12px 20px;
-  text-decoration: none; /* Quita el subrayado */
-  display: block;
-  transition: all 0.3s ease; /* Suaviza el cambio de color */
+.input-cantidad-grilla {
+  width: 100%;
+  padding: 6px;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  box-sizing: border-box;
 }
 
-/* Cuando pasas el mouse por encima o la opción está activa */
-.opcion-menu:hover, .opcion-menu.activa {
-  background-color: #1e293b; /* Fondo un poco más claro */
-  color: #ffffff;            /* Texto blanco */
-  border-left: 4px solid #38bdf8; /* Barra celeste decorativa a la izquierda */
+.btn-eliminar-item {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.1rem;
 }

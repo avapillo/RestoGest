@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\CategoriaController;
+use App\Http\Controllers\AdminPedidoController;
+use App\Http\Controllers\SeccionController;
 // Login
 
 use App\Http\Controllers\LoginController;
@@ -43,3 +45,7 @@ Route::post('/Producto/modificar', [ProductoController::class, 'modificarProduct
 Route::delete('/Producto/{id}/eliminar', [ProductoController::class, 'eliminarProducto'])->name('producto.destroy');
 
 Route::post('/Categoria/guardar', [ProductoController::class, 'registroCategoria'])->name('categoria.store');
+
+
+// Ruta pedidos para llevar
+Route::get('/Admin/Pedidos', [SeccionController::class, 'obtenerSeecion'])->name('muestra_pedido');

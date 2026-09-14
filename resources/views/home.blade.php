@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Panel de Control - Cevichería Gabriel</title>
+  <title>Panel de Control - Sanwichería Gabriel</title>
   <!-- Enlace al archivo de estilos CSS en la carpeta public/css -->
   <link rel="stylesheet" href="{{ asset('css/style.css') }}">
 </head>

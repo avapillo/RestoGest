@@ -10,8 +10,6 @@ use App\Http\Controllers\AdminPedidoController;
 use App\Http\Controllers\SeccionController;
 // Login
 
-use App\Http\Controllers\LoginController;
-
 // Mostrar formulario
 Route::get('/', [LoginController::class, 'mostrarLogin'])->name('login');
 

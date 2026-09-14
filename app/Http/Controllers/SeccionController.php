@@ -3,12 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-<<<<<<< HEAD
 
 class SeccionController extends Controller
 {
     //
-=======
 use App\Models\Seccion;
 use App\Models\Producto;
 use App\Models\Mesa; // Asegúrate de importar el modelo Mesa si usas $mesas
@@ -38,5 +36,4 @@ class SeccionController extends Controller
         // 4. Pasar las variables exactas a la vista 'interfaz_mesa'
         return view('interfaz_mesa', compact('mesas', 'secciones', 'seccionSeleccionada', 'productos'));
     }
->>>>>>> 5a28dd570ec2d80539b168a3ca99c3ba7643ef0f
 }

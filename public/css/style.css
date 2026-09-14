@@ -6,7 +6,7 @@ body {
   margin: 0;
   padding: 0;
   background-color: #f1f5f9; /* Fondo gris claro para la aplicación */
-  color: #000000; /* Color del texto de las tabla */
+  color: #000000; /* Color del texto de la tabla */
 }
 
 /* Contenedor que usa Flexbox para poner el menú a la izquierda y el contenido a la derecha */
@@ -65,21 +65,92 @@ body {
    ESTILOS DEL CONTENIDO PRINCIPAL
    ========================================== */
 .contenido-principal {
-  flex-top: 1; /* Ocupa todo el espacio restante de la pantalla */
+  flex: 1; /* Ocupa todo el espacio restante de la pantalla */
   width: 100%;
-  padding: 10px;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
 .barra-superior {
   display: flex;
   justify-content: space-between; /* Alinea el título a la izquierda y el estado a la derecha */
-  align-items: center;
+  align-items: flex-start;
   margin-bottom: 20px;
+  gap: 15px;
+}
+
+.header-info h2 {
+  margin: 0 0 15px 0;
+  color: #0f172a;
 }
 
 .mensaje-estado {
   font-weight: bold;
   color: #2563eb; /* Azul por defecto */
+}
+
+/* ==========================================
+   NUEVA BOTONERA Y SUMADOR DE CAJA
+   ========================================== */
+.panel-caja-acciones {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background-color: #ffffff;
+  padding: 10px 16px;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e2e8f0;
+}
+
+.btn-accion {
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease, opacity 0.2s ease;
+}
+
+/* Botón Abrir Caja */
+.btn-abrir {
+  background-color: #16a34a;
+  color: #ffffff;
+}
+
+.btn-abrir:hover:not(:disabled) {
+  background-color: #15803d;
+}
+
+/* Botón Cerrar Caja */
+.btn-cerrar {
+  background-color: #dc2626;
+  color: #ffffff;
+}
+
+.btn-cerrar:hover:not(:disabled) {
+  background-color: #b91c1c;
+}
+
+/* Estado deshabilitado para los botones */
+.btn-accion:disabled {
+  background-color: #cbd5e1;
+  color: #64748b;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Visor del Sumador */
+.sumador-container {
+  font-size: 0.95rem;
+  font-weight: bold;
+  color: #0f172a;
+  background-color: #f8fafc;
+  padding: 6px 14px;
+  border-radius: 4px;
+  border: 1px solid #cbd5e1;
+  white-space: nowrap;
 }
 
 /* ==========================================
@@ -90,7 +161,7 @@ body {
   border-radius: 4px;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   overflow: hidden; /* Mantiene las esquinas redondeadas */
-  border-color: #0f172a;
+  border: 1px solid #e2e8f0;
 }
 
 table {
@@ -117,5 +188,5 @@ tr:nth-child(even) {
 
 /* Efecto hover al pasar el ratón sobre una fila */
 tr:hover {
-  background-color: #577796;
+  background-color: #e2e8f0;
 }

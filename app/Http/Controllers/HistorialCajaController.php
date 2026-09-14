@@ -3,20 +3,36 @@
 namespace App\Http\Controllers;
 
 use App\Models\HistorialCaja;
-use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
-// Se encarga de manejar todos los datos de esta parte en este caso solo de historial de caja.
 class HistorialCajaController extends Controller
 {
-    /**
-     * Devuelve todos los registros del historial de caja.
-     */
-    public function index(): JsonResponse
+    // Carga los registros junto con el nombre del usuario
+    public function index()
     {
-        // Trae todos los registros de la tabla historial_caja
-        $historial = HistorialCaja::all();
+        $historial = HistorialCaja::with('usuario:id,nombre')
+            ->orderBy('momento_cierre', 'desc')
+            ->get();
 
-        // Responde al frontend con los datos en formato JSON
-        return response()->json($historial, 200);
+        return response()->json($historial);
+    }
+
+    // Guarda un nuevo cierre de caja usando el usuario en sesión
+    public function store(Request $request)
+    {
+        $request->validate([
+            'monto_total' => 'required|numeric'
+        ]);
+
+        $cierre = HistorialCaja::create([
+            'monto_total'    => $request->monto_total,
+            'momento_cierre' => now(),
+            'id_usuario'     => session('usuario_id') // Toma el id guardado en LoginController
+        ]);
+
+        return response()->json([
+            'mensaje' => 'Caja cerrada exitosamente',
+            'data'    => $cierre
+        ], 201);
     }
 }

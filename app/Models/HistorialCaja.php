@@ -4,16 +4,21 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-// Se crea el modelo para poder hacer la consulta a la base de datos y traer los datos del historial de caja o otro archivo.
-
 class HistorialCaja extends Model
 {
-    // CORRECCIÓN: Debe ser $table (en inglés)
     protected $table = 'historial_caja';
-
-    // AGREGAR: Indica cuál es tu llave primaria real
     protected $primaryKey = 'id_historial';
+    public $timestamps = false;
 
-    // OPCIONAL: Si tu tabla no tiene las columnas 'created_at' y 'updated_at', desactívalas así:
-    // public $timestamps = false;
+    protected $fillable = [
+        'monto_total',
+        'momento_cierre',
+        'id_usuario'
+    ];
+
+    // Relación para traer la información del usuario
+    public function usuario()
+    {
+        return $this->belongsTo(Login::class, 'id_usuario', 'id');
+    }
 }

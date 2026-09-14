@@ -4,8 +4,16 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\MesasController;
 use App\Http\Controllers\CategoriaController;
+<<<<<<< HEAD
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\UsuariosController;
+=======
+use App\Http\Controllers\AdminPedidoController;
+use App\Http\Controllers\SeccionController;
+// Login
+
+use App\Http\Controllers\LoginController;
+>>>>>>> 5a28dd570ec2d80539b168a3ca99c3ba7643ef0f
 
 // Mostrar formulario
 Route::get('/', [LoginController::class, 'mostrarLogin'])->name('login');
@@ -36,6 +44,7 @@ Route::delete('/Producto/{id}/eliminar', [ProductoController::class, 'eliminarPr
 Route::post('/Categoria/guardar', [ProductoController::class, 'registroCategoria'])->name('categoria.store');
 
 
+<<<<<<< HEAD
 // Rutas de mesas
 Route::get('/Mesas', [MesasController::class, 'mostrarMesas'])->name('intefaz_mesa');
 Route::post('/Mesas/pagar', [MesasController::class, 'procesarPago'])->name('pedidos.pagar');
@@ -48,3 +57,7 @@ Route::post('/Usuario/guardar', [UsuariosController::class, 'nuevoUsuario'])->na
 Route::post('/Usuario/modificar', [UsuariosController::class, 'modificarUsuario'])->name('usuario.update');
 Route::delete('/Usuario/{id}/eliminar', [UsuariosController::class, 'eliminarUsuario'])->name('usuario.destroy');
 
+=======
+// Ruta pedidos para llevar
+Route::get('/Admin/Pedidos', [SeccionController::class, 'obtenerSeecion'])->name('muestra_pedido');
+>>>>>>> 5a28dd570ec2d80539b168a3ca99c3ba7643ef0f

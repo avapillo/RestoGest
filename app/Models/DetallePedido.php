@@ -17,7 +17,7 @@ class DetallePedido extends Model
 
     public function producto()
     {
-        return $this->belongsTo(Producto::class, 'fk_id_producto');
+        return $this->belongsTo(Producto::class, 'fk_id_producto', 'id');
     }
 
     public function combo()

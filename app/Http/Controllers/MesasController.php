@@ -3,32 +3,33 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Pedio;
 use App\Models\Seccion;
 use App\Models\Mesas;
 use App\Models\Combo;
 
 class MesasController extends Controller
 {
-   public function mostrarMesas(Request $request)
-    {
-        $seccionSeleccionada = $request->get('fk_id_seccion', 'todas');
 
-        // Eager Loading para evitar problema N+1 al cargar las 4 tablas
-        $querySecciones = Seccion::with([
-            'mesas.pedidoActivo.detalles.producto',
-            'mesas.pedidoActivo.detalles.combo'
-        ]);
+public function mostrarMesas(Request $request)
+{
+    // Asegúrate de que el nombre del parámetro coincida con el que envía tu JS/Blade ('seccion' o 'fk_id_seccion')
+    $seccionSeleccionada = $request->query('fk_id_seccion', 'todas');
 
-        if ($seccionSeleccionada !== 'todas') {
-            $querySecciones->where('id_seccion', $seccionSeleccionada);
-        }
+    // 1. Cargar las secciones para la barra/botones de filtros
+    $secciones = Seccion::all();
 
-        $secciones = $querySecciones->get();
-        $todasSecciones = Seccion::all();
-        $metodosPago = Combo::all(); // Utiliza la tabla combos para los métodos de pago
-
-        return view('interfaz_mesa', compact('secciones', 'todasSecciones', 'seccionSeleccionada', 'metodosPago'));
+    // 2. Aplicar exactamente la misma estructura de Producto
+    if ($seccionSeleccionada === 'todas') {
+        $mesas = Mesas::with('seccion')->get();
+    } else {
+        $mesas = Mesas::with('seccion')
+            ->where('fk_id_seccion', $seccionSeleccionada)
+            ->get();
     }
+
+    return view('interfaz_mesa', compact('mesas', 'secciones', 'seccionSeleccionada'));
+}
 
     public function procesarPago(Request $request)
     {

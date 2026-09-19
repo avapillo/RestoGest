@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductoController;
+use App\Http\Controllers\PedidoController;
 use App\Http\Controllers\MesasController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\LoginController;
@@ -38,6 +39,8 @@ Route::post('/Categoria/guardar', [ProductoController::class, 'registroCategoria
 
 
 // Rutas de mesas
-Route::get('/Mesas', [MesasController::class, 'mostrarMesas'])->name('intefaz_mesa');
+Route::get('/Mesas', [MesasController::class, 'mostrarMesas'])->name('mesas.index');
 
 Route::post('/Mesas/pagar', [MesasController::class, 'procesarPago'])->name('pedidos.pagar');
+
+Route::get('/pedidos/crear/{mesa}', [PedidoController::class, 'create'])->name('pedidos.create');

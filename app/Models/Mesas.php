@@ -16,11 +16,9 @@ class Mesas extends Model
         return $this->belongsTo(Seccion::class, 'fk_id_seccion', 'id_seccion');
     }
 
-    public function pedidoActivo()
+    public function pedidos()
     {
-        return $this->hasOne(Pedido::class, 'fk_id_mesa', 'id_mesa')
-                    ->whereNull('fk_id_tipo_pago')
-                    ->latest('fecha_pedido');
+        return $this->hasMany(Pedido::class, 'fk_id_mesa', 'id_mesa');
     }
 
 }

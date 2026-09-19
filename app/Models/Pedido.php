@@ -13,21 +13,14 @@ class Pedido extends Model
     protected $primaryKey = 'id_pedido';
     public $timestamps = false;
 
-    protected $fillable = [
-        'monto_total',
-        'fecha_pedido',
-        'fk_id_mesa',
-        'fk_id_tipo_pago',
-        'es_para_llevar',
-    ];
+    public function mesa()
+    {
+        return $this->belongsTo(Mesa::class, 'fk_id_mesa', 'id_mesa');
+    }
 
-    public function detalles()
+      public function detalles()
     {
         return $this->hasMany(DetallePedido::class, 'fk_id_pedido', 'id_pedido');
     }
 
-    public function mesa()
-    {
-        return $this->belongsTo(Mesas::class, 'fk_id_mesa', 'id_mesa');
-    }
 }

@@ -17,7 +17,7 @@
       </div>
       <nav class="menu-navegacion">
         <a href="{{ route('home') }}" class="opcion-menu">Principal</a>
-        <a href="{{ route('intefaz_mesa') }}" class="opcion-menu">Mesas</a>
+        <a href="{{ route('mesas.index') }}" class="opcion-menu">Mesas</a>
         <a href="{{ route('producto.index') }}" class="opcion-menu activa">Producto</a>
         <a href="#" class="opcion-menu">Ventas</a>
         <a href="{{ route('interfaz_paraLlevar') }}" class="opcion-menu">Para Llevar</a>
@@ -67,13 +67,6 @@
 
         @forelse ($productos as $producto)
           <div class="tarjeta-producto" id="producto-{{ $producto->id }}">
-            <div class="foto-producto">
-              @if($producto->imagen)
-                <img src="{{ asset('storage/' . $producto->imagen) }}" alt="{{ $producto->nombre }}">
-              @else
-                🖼️
-              @endif
-            </div>
 
             <div class="info-producto">
               <h4>{{ $producto->nombre }}</h4>

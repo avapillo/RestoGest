@@ -31,6 +31,31 @@ public function mostrarMesas(Request $request)
     return view('interfaz_mesa', compact('mesas', 'secciones', 'seccionSeleccionada'));
 }
 
+public function mostrarOrdenesPedidos(Request $request){
+    $seccionSeleccionada = $request->query('fk_id_seccion', 'todas');
+    $secciones = Seccion::all();
+
+    // 1. Iniciar consulta trayendo ÚNICAMENTE mesas que TENGAN pedidos
+    $query = Mesas::with('pedidos')->with([
+        'seccion',
+        // Opcional: si manejas estado del pedido (ej. 'pendiente'), puedes filtrarlo aquí:
+        'pedidos' => function ($q) {
+            // $q->where('estado', 'pendiente');
+        },
+        'pedidos.detalles.producto',
+        'pedidos.detalles.combo',
+    ]);
+
+    // 2. Filtrar por sección si el usuario eligió una
+    if ($seccionSeleccionada !== 'todas' && !empty($seccionSeleccionada)) {
+        $query->where('fk_id_seccion', $seccionSeleccionada);
+    }
+
+    $mesasConOrdenes = $query->get();
+
+    return view('interfaz_mesa', compact('mesasConOrdenes', 'secciones', 'seccionSeleccionada'));
+}
+
     public function procesarPago(Request $request)
     {
         $request->validate([

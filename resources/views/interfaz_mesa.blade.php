@@ -35,12 +35,13 @@
         @endif
 
         <div class="contenedor-botones-header">
-          <button id="btnAbrirModalProducto" class="btn-agregar">➕ Nueva Mesa</button>
+        <button id="btnAbrirModalProducto" class="btn-agregar">➕ Tomar Pedido</button>
           <!-- <button id="btnAbrirModalCategoria" class="btn-agregar">➕ Nueva Categoría</button> -->
         </div>
 
+
         <div class="contenedor-botones-header">
-          <button id="btnAbrirModalProducto" class="btn-agregar">➕ Tomar Pedido</button>
+          <button id="btnAbrirModalProducto" class="btn-agregar">➕ Nueva Mesa</button>
           <!-- <button id="btnAbrirModalCategoria" class="btn-agregar">➕ Nueva Categoría</button> -->
         </div>
 
@@ -75,18 +76,16 @@
       </div>
 
       <!-- 🛠️ ACCIONES DE LA MESA -->
-      <div class="acciones-tarjeta" style="margin-top: 15px;">
-        <a href="{{ route('pedidos.create', ['mesa' => $mesa->id_mesa]) }}" class="btn-accion btn-modificar">
-          ➕ Tomar Pedido
-        </a>
-      </div>
-
+       <button class="btn-accion btn-modificar">Modificar</button>
+        <button class="btn-accion btn-modificar">Pagar</button>
     </div>
   @empty
     <p class="sin-productos">No hay mesas registradas en esta sección.</p>
   @endforelse
 
 </section>
+
+
 
     </main>
   </div>

@@ -43,6 +43,7 @@
               <th>Fecha</th>
               <th>Hora de Cierre</th>
               <th>Monto Total</th>
+              <th>Cerro Caja</th>
             </tr>
           </thead>
           <tbody>

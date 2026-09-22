@@ -86,7 +86,7 @@
         @csrf
 
         <div class="grupo-campo">
-          <label for="nombre">Nombre:</label>
+          <label for="nombre">Telefono:</label>
           <input type="text" id="nombre" name="nombre" required placeholder="Ej: Juan" value="{{ old('nombre') }}">
           @error('nombre') <span class="error-texto">{{ $message }}</span> @enderror
         </div>
@@ -110,6 +110,10 @@
           @error('id_rol_usuario') <span class="error-texto">{{ $message }}</span> @enderror
         </div>
 
+         <div class="contenedor-botones-header">
+          <button id="btnAbrirNuevoUsuario" class="btn-agregar">➕ Nuevo Rol </button>
+        </div>
+
         <div class="modal-botones">
           <button type="button" id="btnCerrarModal" class="btn-cancelar">Cancelar</button>
           <button type="submit" class="btn-guardar">Registrar Usuario</button>
@@ -128,7 +132,7 @@
         <input type="hidden" id="edit_id" name="id">
 
         <div class="grupo-campo">
-          <label for="edit_nombre">Nombre:</label>
+          <label for="edit_nombre">Telefono:</label>
           <input type="text" id="edit_nombre" name="nombre" required>
         </div>
 

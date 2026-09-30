@@ -3,10 +3,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnCerrarModalUsuario = document.getElementById('btnCerrarModal');
     const modalUsuario = document.getElementById('modalUsuario');
     const formUsuario = document.getElementById('formUsuario');
+    const btnComboBox = document.getElementById('btnNuevoRol');
+    const modalComboBox = document.getElementById('modalComboBox');
 
      if (btnAbrirModalUsuario && modalUsuario) {
     btnAbrirModalUsuario.addEventListener('click', () => {
       modalUsuario.classList.remove('hidden');
+    });
+  }
+
+  if (btnComboBox && modalComboBox){
+    btnComboBox.addEventListener('click', () => {
+      modalComboBox.classList.remove('hidden');
     });
   }
 

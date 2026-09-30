@@ -74,6 +74,23 @@
           <p class="sin-usuario">No hay usuarios registrados.</p>
         @endforelse
 
+
+  <!-- ================== Nuevo Rol de Usuario =================== -->
+  <div id="modalComboBox" class="modal-overlay hidden">
+    <div class="grupo-campo">
+          <label for="id_rol_usuario">Rol Usuario:</label>
+          <select id="id_rol_usuario" name="id_rol_usuario" required class="select-categoria">
+            <option value="">-- Seleccionar Rol --</option>
+            @foreach ($roles as $rol)
+              <option value="{{ $rol->id_rol }}" {{ old('id_rol_usuario') == $rol->id_rol ? 'selected' : '' }}>
+                {{ $rol->rol_nombre }}
+              </option>
+            @endforeach
+          </select>
+          @error('id_rol_usuario') <span class="error-texto">{{ $message }}</span> @enderror
+        </div>
+  </div>
+
       </section>
     </main>
 
@@ -110,6 +127,8 @@
           @error('id_rol_usuario') <span class="error-texto">{{ $message }}</span> @enderror
         </div>
 
+
+
          <div class="contenedor-botones-header">
           <button id="btnAbrirNuevoUsuario" class="btn-agregar">➕ Nuevo Rol </button>
         </div>
@@ -120,6 +139,23 @@
         </div>
       </form>
      </div>
+  </div>
+
+
+  <!-- ================== Nuevo Rol de Usuario =================== -->
+  <div id="modalComboBox" class="modal-overlay hidden">
+    <div class="grupo-campo">
+          <label for="id_rol_usuario">Rol Usuario:</label>
+          <select id="id_rol_usuario" name="id_rol_usuario" required class="select-categoria">
+            <option value="">-- Seleccionar Rol --</option>
+            @foreach ($roles as $rol)
+              <option value="{{ $rol->id_rol }}" {{ old('id_rol_usuario') == $rol->id_rol ? 'selected' : '' }}>
+                {{ $rol->rol_nombre }}
+              </option>
+            @endforeach
+          </select>
+          @error('id_rol_usuario') <span class="error-texto">{{ $message }}</span> @enderror
+        </div>
   </div>
 
   <!-- ================== Modal de Modificar usuarios =================== -->

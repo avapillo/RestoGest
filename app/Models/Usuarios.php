@@ -9,14 +9,14 @@ class Usuarios extends Model
 {
     protected $table = 'usuarios';
 
-    protected $fillable = ["nombre", "contrasenia", "id_rol_usuario"];
+    protected $fillable = ["nombre", "contrasenia"];
 
     public $timestamps = false;
 
     public function roles()
     {
         // Relación: id_rol_usuario de la tabla usuarios apunta a 'id' de la tabla rol
-        return $this->belongsTo(RolUsuario::class, 'id_rol_usuario', 'id_rol');
+        return $this->belongsToMany(RolUsuario::class, 'usuario_roles', 'fk_id_usuario', 'fk_id_rol');
 
     }
 }

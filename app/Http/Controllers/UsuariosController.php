@@ -13,45 +13,58 @@ class UsuariosController extends Controller
       public function mostrarUsuarios(Request $request){
          $usuarios = usuarios::with('roles')->get();
 
-         // Consulta la tabla 'rol_usuario' directamente SIN usar su modelo
-         $roles = DB::table('rol_usuario')->get();
-        // $roles = RolUsuario::all();
+    // Consulta la tabla 'rol_usuario' directamente SIN usar su modelo
+       // $roles = DB::table('rol_usuario')->get();
+
+       $roles = RolUsuario::all();
 
         return view('interfaz_nuevo_usuario', compact('usuarios',"roles"));
     }
 
-    public function nuevoUsuario(Request $request){
-        $request->validate([
-           'nombre'         => 'required|string|max:255',
-           'contrasenia'    => 'required|string|max:255',
-            'id_rol_usuario' => 'required|exists:rol_usuario,id_rol',
-        ]);
+   public function nuevoUsuario(Request $request)
+{
+    $request->validate([
+        'nombre'      => 'required|string|max:255',
+        'contrasenia' => 'required|string|max:255',
+        'roles'       => 'nullable|array', // Recibe uno o varios IDs de roles [1, 2, ...]
+        'roles.*'     => 'exists:rol_usuario,id_rol',
+    ]);
 
-        Usuarios::create([
-            'nombre'         => $request->nombre,
-            'contrasenia'    => $request->contrasenia,
-            'id_rol_usuario' => $request->id_rol_usuario,
-        ]);
+    // 1. Crear el registro en la tabla 'usuarios'
+    $usuario = Usuarios::create([
+        'nombre'      => $request->nombre,
+        'contrasenia' => $request->contrasenia,
+    ]);
 
-        return redirect()->route('usuario.index')->with('status', '¡Usuario registrado con éxito!');
+    // 2. Insertar los roles en la tabla pivote 'usuario_roles'
+    if ($request->has('roles')) {
+        $usuario->roles()->attach($request->roles);
     }
 
-    public function modificarUsuario(Request $request){
-        $request->validate([
-            'id'             => 'required|exists:usuarios,id',
-            'nombre'         => 'required|string|max:255',
-            'contrasenia'    => 'required|string|max:255',
-            'id_rol_usuario' => 'required|exists:rol_usuario,id_rol',
-        ]);
+    return redirect()->route('usuario.index')->with('status', '¡Usuario registrado con éxito!');
+}
 
-        $usuario = Usuarios::findOrFail($request->id);
-        $usuario->nombre = $request->nombre;
-        $usuario->contrasenia = $request->contrasenia;
-        $usuario->id_rol_usuario = $request->id_rol_usuario;
-        $usuario->save();
+    public function modificarUsuario(Request $request)
+{
+    $request->validate([
+        'id'          => 'required|exists:usuarios,id',
+        'nombre'      => 'required|string|max:255',
+        'contrasenia' => 'required|string|max:255',
+        'roles'       => 'nullable|array', // Recibe los nuevos roles seleccionados
+        'roles.*'     => 'exists:rol_usuario,id_rol',
+    ]);
 
-        return redirect()->route('usuario.index')->with('status', '¡Usuario modificado con éxito!');
-    }
+    // 1. Actualizar datos del usuario
+    $usuario = Usuarios::findOrFail($request->id);
+    $usuario->nombre = $request->nombre;
+    $usuario->contrasenia = $request->contrasenia;
+    $usuario->save();
+
+    // 2. Sincronizar roles en la tabla pivote 'usuario_roles'
+    $usuario->roles()->sync($request->input('roles', []));
+
+    return redirect()->route('usuario.index')->with('status', '¡Usuario modificado con éxito!');
+}
 
     public function eliminarUsuario($id){
 

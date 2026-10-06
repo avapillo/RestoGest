@@ -75,9 +75,6 @@
         </p>
       </div>
 
-      <!-- 🛠️ ACCIONES DE LA MESA -->
-       <button class="btn-accion btn-modificar">Modificar</button>
-        <button class="btn-accion btn-modificar">Pagar</button>
     </div>
   @empty
     <p class="sin-productos">No hay mesas registradas en esta sección.</p>

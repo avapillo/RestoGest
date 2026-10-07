@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
   <title>Panel de Control - Sanwichería Gabriel</title>
   <!-- Enlace al archivo de estilos CSS en la carpeta public/css -->
   <link rel="stylesheet" href="{{ asset('css/style.css') }}">
@@ -30,10 +31,65 @@
 
     <!-- CONTENIDO PRINCIPAL: Todo lo que cambia según la pantalla -->
     <main class="contenido-principal">
-      <header class="barra-superior">
-        <h2>Historial de Caja</h2>
-        <div id="estado-api" class="mensaje-estado">Cargando datos de la API...</div>
-      </header>
+     <header class="barra-superior">
+
+  <!-- COLUMNA IZQUIERDA -->
+  <div class="columna-izquierda-caja">
+
+    <!-- TÍTULO -->
+    <div class="titulo-caja">
+      <h2>Historial de Caja</h2>
+    </div>
+
+    <!-- BOTONES DE CAJA -->
+    <div class="controles-caja">
+
+      <button
+        id="btn-abrir-caja"
+        class="btn-abrir-caja"
+      >
+        🟢 Abrir Caja
+      </button>
+
+      <button
+        id="btn-cerrar-caja"
+        class="btn-cerrar-caja"
+        style="display: none;"
+      >
+        🔴 Cerrar Caja
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <!-- COLUMNA DERECHA -->
+  <div class="panel-caja">
+
+    <!-- TOTAL RECAUDADO -->
+    <div class="total-caja">
+
+      <span>Total del día</span>
+
+      <strong>
+        $ <span id="total-pagos">0,00</span>
+      </strong>
+
+    </div>
+
+
+    <!-- MENSAJE DE SINCRONIZACIÓN -->
+    <div
+      id="estado-api"
+      class="mensaje-estado"
+    >
+      Cargando datos de la API...
+    </div>
+
+  </div>
+
+</header>
 
       <!-- SECCIÓN DE LA TABLA -->
       <section class="seccion-tabla">

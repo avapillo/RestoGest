@@ -10,6 +10,13 @@ use App\Http\Controllers\ApiProductoController;
 
 // Ruta que ya tenías
 Route::get('/historial-caja', [HistorialCajaController::class, 'index']);
+Route::get('/caja/estado', [HistorialCajaController::class, 'estado']);
+
+Route::post('/caja/abrir', [HistorialCajaController::class, 'abrir']);
+
+Route::post('/caja/pago', [HistorialCajaController::class, 'registrarPago']);
+
+Route::post('/caja/cerrar', [HistorialCajaController::class, 'store']);
 /*
 Route::get('/historial-caja', function () {
     // Retornamos un arreglo ficticio para probar que el HTML y JS dibujen la tabla

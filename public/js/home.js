@@ -1,134 +1,535 @@
-// 1. Configuración de API y variables de estado global
+// ============================================================
+// CONFIGURACIÓN
+// ============================================================
+
 const DIRECCION_API = '/api/historial-caja';
+const API_ESTADO = '/api/caja/estado';
+const API_ABRIR = '/api/caja/abrir';
+const API_PAGO = '/api/caja/pago';
+const API_CERRAR = '/api/caja/cerrar';
+
 let cajaAbierta = false;
 let acumuladoPagos = 0;
 
-// 2. Inicialización cuando el DOM esté listo
+
+// ============================================================
+// INICIALIZACIÓN
+// ============================================================
+
 document.addEventListener('DOMContentLoaded', () => {
-  solicitarDatosServidor();
-  inicializarControlesCaja();
+
+    cargarEstadoCaja();
+
+    solicitarDatosServidor();
+
+    inicializarControlesCaja();
+
 });
 
-// 3. Función para asociar los eventos a los botones de la caja
-function inicializarControlesCaja() {
-  const btnAbrir = document.getElementById('btn-abrir-caja');
-  const btnCerrar = document.getElementById('btn-cerrar-caja');
-  const visorTotal = document.getElementById('total-pagos');
 
-  if (!btnAbrir || !btnCerrar) {
-    console.error('No se encontraron los botones de caja en el DOM.');
-    return;
-  }
+// ============================================================
+// ELEMENTOS
+// ============================================================
 
-  // Evento al presionar "Abrir Caja"
-  btnAbrir.addEventListener('click', () => {
-    cajaAbierta = true;
-    acumuladoPagos = 0;
+function obtenerElementosCaja() {
 
-    if (visorTotal) {
-      visorTotal.textContent = '0.00';
-    }
+    return {
+        btnAbrir: document.getElementById('btn-abrir-caja'),
+        btnCerrar: document.getElementById('btn-cerrar-caja'),
+        visorTotal: document.getElementById('total-pagos')
+    };
 
-    // Cambiar estados de los botones
-    btnAbrir.disabled = true;
-    btnCerrar.disabled = false;
-
-    console.log('Caja abierta correctamente.');
-  });
-
-  // Evento al presionar "Cerrar Caja"
-  btnCerrar.addEventListener('click', () => {
-    if (!cajaAbierta) return;
-
-    if (confirm(`¿Desea cerrar la caja con un total de $${acumuladoPagos.toFixed(2)}?`)) {
-      cajaAbierta = false;
-
-      // Habilitar / Deshabilitar botones
-      btnAbrir.disabled = false;
-      btnCerrar.disabled = true;
-
-      // Opcional: Aquí llamas a tu API para guardar el cierre en la BD
-      // enviarCierreServidor(acumuladoPagos);
-    }
-  });
 }
 
-// 4. Función para sumar pagos desde otras interfaces (Mesas / Para Llevar)
-window.registrarNuevoPago = function(monto) {
-  if (!cajaAbierta) {
-    alert('Debe abrir la caja primero para poder registrar un pago.');
-    return;
-  }
 
-  acumuladoPagos += parseFloat(monto);
-  const visorTotal = document.getElementById('total-pagos');
+// ============================================================
+// CARGAR ESTADO REAL DE LA CAJA
+// ============================================================
 
-  if (visorTotal) {
-    visorTotal.textContent = acumuladoPagos.toLocaleString('es-CL', {
-      minimumFractionDigits: 2
+function cargarEstadoCaja() {
+
+    fetch(API_ESTADO)
+
+        .then(respuesta => {
+
+            if (!respuesta.ok) {
+                throw new Error('No se pudo obtener el estado de la caja');
+            }
+
+            return respuesta.json();
+
+        })
+
+        .then(datos => {
+
+            cajaAbierta = datos.abierta;
+            acumuladoPagos = parseFloat(datos.monto_actual || 0);
+
+            actualizarInterfazCaja();
+
+        })
+
+        .catch(error => {
+
+            console.error('Error al obtener estado de caja:', error);
+
+        });
+
+}
+
+
+// ============================================================
+// BOTONES
+// ============================================================
+
+function inicializarControlesCaja() {
+
+    const { btnAbrir, btnCerrar } = obtenerElementosCaja();
+
+    if (!btnAbrir || !btnCerrar) {
+
+        console.error('No se encontraron los controles de caja.');
+
+        return;
+
+    }
+
+
+    // ABRIR CAJA
+    btnAbrir.addEventListener('click', abrirCaja);
+
+
+    // CERRAR CAJA
+    btnCerrar.addEventListener('click', cerrarCaja);
+
+}
+
+
+// ============================================================
+// ABRIR CAJA
+// ============================================================
+
+function abrirCaja() {
+
+    if (cajaAbierta) {
+        return;
+    }
+
+    fetch(API_ABRIR, {
+
+        method: 'POST',
+
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': obtenerTokenCSRF()
+        }
+
+    })
+
+    .then(respuesta => {
+
+        if (!respuesta.ok) {
+            throw new Error('No se pudo abrir la caja');
+        }
+
+        return respuesta.json();
+
+    })
+
+    .then(datos => {
+
+        cajaAbierta = datos.abierta;
+        acumuladoPagos = parseFloat(datos.monto_actual || 0);
+
+        actualizarInterfazCaja();
+
+        alert('Caja abierta correctamente.');
+
+    })
+
+    .catch(error => {
+
+        console.error(error);
+
+        alert('No se pudo abrir la caja.');
+
     });
-  }
+
+}
+
+
+// ============================================================
+// CERRAR CAJA
+// ============================================================
+
+function cerrarCaja() {
+
+    if (!cajaAbierta) {
+        return;
+    }
+
+
+    const monto = acumuladoPagos.toFixed(2);
+
+
+    const confirmar = confirm(
+        `¿Desea cerrar la caja con un total de $${formatearMonto(monto)}?`
+    );
+
+
+    if (!confirmar) {
+        return;
+    }
+
+
+    fetch(API_CERRAR, {
+
+        method: 'POST',
+
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': obtenerTokenCSRF()
+        }
+
+    })
+
+    .then(respuesta => {
+
+        if (!respuesta.ok) {
+            throw new Error('No se pudo cerrar la caja');
+        }
+
+        return respuesta.json();
+
+    })
+
+    .then(datos => {
+
+        cajaAbierta = false;
+        acumuladoPagos = 0;
+
+        actualizarInterfazCaja();
+
+        solicitarDatosServidor();
+
+        alert('Caja cerrada correctamente.');
+
+    })
+
+    .catch(error => {
+
+        console.error(error);
+
+        alert('No se pudo cerrar la caja.');
+
+    });
+
+}
+
+
+// ============================================================
+// REGISTRAR PAGO
+// ============================================================
+
+window.registrarNuevoPago = function(monto) {
+
+    if (!cajaAbierta) {
+
+        alert('Debe abrir la caja primero para poder registrar un pago.');
+
+        return;
+
+    }
+
+
+    const montoNumerico = parseFloat(monto);
+
+
+    if (isNaN(montoNumerico) || montoNumerico <= 0) {
+
+        console.error('Monto inválido:', monto);
+
+        return;
+
+    }
+
+
+    fetch(API_PAGO, {
+
+        method: 'POST',
+
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': obtenerTokenCSRF()
+        },
+
+        body: JSON.stringify({
+            monto: montoNumerico
+        })
+
+    })
+
+    .then(respuesta => {
+
+        if (!respuesta.ok) {
+            throw new Error('No se pudo registrar el pago');
+        }
+
+        return respuesta.json();
+
+    })
+
+    .then(datos => {
+
+        acumuladoPagos = parseFloat(datos.monto_actual || 0);
+
+        actualizarInterfazCaja();
+
+    })
+
+    .catch(error => {
+
+        console.error('Error al registrar pago:', error);
+
+    });
+
 };
 
-// 5. Carga de datos de la tabla desde la API
-function solicitarDatosServidor() {
-  const etiquetaEstado = document.getElementById('estado-api');
 
-  fetch(DIRECCION_API)
-    .then(respuestaBruta => {
-      if (!respuestaBruta.ok) {
-        throw new Error(`Error en el servidor. Código: ${respuestaBruta.status}`);
-      }
-      return respuestaBruta.json();
-    })
-    .then(listaDeRegistros => {
-      construirFilasTabla(listaDeRegistros);
-      if (etiquetaEstado) {
-        etiquetaEstado.textContent = '✅ Datos sincronizados con éxito';
-        etiquetaEstado.style.color = '#16a34a';
-      }
-    })
-    .catch(error => {
-      console.error('Detalles del error:', error);
-      if (etiquetaEstado) {
-        etiquetaEstado.textContent = '❌ Error al conectar con el servidor';
-        etiquetaEstado.style.color = '#dc2626';
-      }
-    });
+// ============================================================
+// ACTUALIZAR INTERFAZ
+// ============================================================
+
+function actualizarInterfazCaja() {
+
+    const {
+        btnAbrir,
+        btnCerrar,
+        visorTotal
+    } = obtenerElementosCaja();
+
+
+    if (visorTotal) {
+
+        visorTotal.textContent = formatearMonto(acumuladoPagos);
+
+    }
+
+
+    if (cajaAbierta) {
+
+        // Caja abierta
+        if (btnAbrir) {
+            btnAbrir.style.display = 'none';
+        }
+
+        if (btnCerrar) {
+            btnCerrar.style.display = 'inline-block';
+        }
+
+    } else {
+
+        // Caja cerrada
+        if (btnAbrir) {
+            btnAbrir.style.display = 'inline-block';
+        }
+
+        if (btnCerrar) {
+            btnCerrar.style.display = 'none';
+        }
+
+    }
+
 }
 
-// 6. Inyección de datos en la tabla HTML
+
+// ============================================================
+// FORMATO DEL MONTO
+// ============================================================
+
+function formatearMonto(monto) {
+
+    return parseFloat(monto || 0).toLocaleString('es-AR', {
+
+        minimumFractionDigits: 2,
+
+        maximumFractionDigits: 2
+
+    });
+
+}
+
+
+// ============================================================
+// TOKEN CSRF
+// ============================================================
+
+function obtenerTokenCSRF() {
+
+    const meta = document.querySelector('meta[name="csrf-token"]');
+
+    return meta ? meta.getAttribute('content') : '';
+
+}
+
+
+// ============================================================
+// CARGAR HISTORIAL
+// ============================================================
+
+function solicitarDatosServidor() {
+
+    const etiquetaEstado =
+        document.getElementById('estado-api');
+
+
+    fetch(DIRECCION_API)
+
+        .then(respuesta => {
+
+            if (!respuesta.ok) {
+
+                throw new Error(
+                    `Error en el servidor. Código: ${respuesta.status}`
+                );
+
+            }
+
+            return respuesta.json();
+
+        })
+
+        .then(listaDeRegistros => {
+
+            construirFilasTabla(listaDeRegistros);
+
+
+            if (etiquetaEstado) {
+
+                etiquetaEstado.textContent =
+                    '✅ Datos sincronizados con éxito';
+
+                etiquetaEstado.style.color = '#16a34a';
+
+            }
+
+        })
+
+        .catch(error => {
+
+            console.error('Detalles del error:', error);
+
+
+            if (etiquetaEstado) {
+
+                etiquetaEstado.textContent =
+                    '❌ Error al conectar con el servidor';
+
+                etiquetaEstado.style.color = '#dc2626';
+
+            }
+
+        });
+
+}
+
+
+// ============================================================
+// CONSTRUIR TABLA
+// ============================================================
+
 function construirFilasTabla(registrosCaja) {
-  const cuerpoTabla = document.querySelector('#tabla-datos tbody');
-  if (!cuerpoTabla) return;
 
-  cuerpoTabla.innerHTML = '';
+    const cuerpoTabla =
+        document.querySelector('#tabla-datos tbody');
 
-  registrosCaja.forEach(registro => {
-    const nuevaFila = document.createElement('tr');
-    const fechaObjeto = registro.momento_cierre ? new Date(registro.momento_cierre) : new Date();
 
-    const fechaFormateada = fechaObjeto.toLocaleDateString('es-AR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric'
+    if (!cuerpoTabla) {
+        return;
+    }
+
+
+    cuerpoTabla.innerHTML = '';
+
+
+    registrosCaja.forEach(registro => {
+
+        const nuevaFila =
+            document.createElement('tr');
+
+
+        const fechaObjeto =
+            registro.momento_cierre
+                ? new Date(registro.momento_cierre)
+                : new Date();
+
+
+        const fechaFormateada =
+            fechaObjeto.toLocaleDateString('es-AR', {
+
+                day: '2-digit',
+
+                month: '2-digit',
+
+                year: 'numeric'
+
+            });
+
+
+        const horaFormateada =
+            fechaObjeto.toLocaleTimeString('es-AR', {
+
+                hour: '2-digit',
+
+                minute: '2-digit'
+
+            });
+
+
+        const montoFormateado =
+            parseFloat(
+                registro.monto_total || 0
+            ).toLocaleString('es-AR', {
+
+                minimumFractionDigits: 2,
+
+                maximumFractionDigits: 2
+
+            });
+
+
+        const nombreUsuario =
+            registro.usuario_nombre ||
+            registro.usuario?.nombre ||
+            'Sin usuario';
+
+
+        nuevaFila.innerHTML = `
+
+            <td>
+                <strong>${fechaFormateada}</strong>
+            </td>
+
+            <td>
+                ${horaFormateada}
+            </td>
+
+            <td>
+                <strong>$${montoFormateado}</strong>
+            </td>
+
+            <td>
+                ${nombreUsuario}
+            </td>
+
+        `;
+
+
+        cuerpoTabla.appendChild(nuevaFila);
+
     });
 
-    const horaFormateada = fechaObjeto.toLocaleTimeString('es-AR', {
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-
-    const montoFormateado = parseFloat(registro.monto_total || 0).toLocaleString('es-CL');
-    const nombreUsuario = registro.usuario_nombre || registro.usuario?.nombre || 'Sin usuario';
-
-    nuevaFila.innerHTML = `
-      <td><strong>${fechaFormateada}</strong></td>
-      <td>${horaFormateada}</td>
-      <td><strong>$${montoFormateado}</strong></td>
-      <td>${nombreUsuario}</td>
-    `;
-
-    cuerpoTabla.appendChild(nuevaFila);
-  });
 }

@@ -63,16 +63,55 @@
         @endforeach
       </div>
 
-      <section id="grillaProductos" class="grilla-productos">
+      <!-- GRILLA DE MESAS -->
+<section id="grillaProductos" class="grilla-productos">
 
   @forelse ($mesas ?? [] as $mesa)
+    @php
+      // Tomamos el último pedido activo registrado en la mesa
+      $ultimoPedido = $mesa->pedidos->last();
+    @endphp
+
     <div class="tarjeta-producto" id="mesa-{{ $mesa->id_mesa }}">
 
       <div class="info-producto">
-        <h4>Mesa N° {{ $mesa->numero_mesa }}</h4>
+        <!-- Título de la Mesa con la Hora al lado -->
+        <h4>
+          Mesa N° {{ $mesa->numero_mesa }}
+          @if($ultimoPedido)
+            <span style="font-size: 0.85rem; font-weight: normal; color: #555; margin-left: 6px;">
+              ({{ $ultimoPedido->hora_pedido }})
+            </span>
+          @endif
+        </h4>
+
         <p class="categoria-etiqueta">
           Sección: <strong>{{ $mesa->seccion->seccion ?? 'Sin Sección' }}</strong>
         </p>
+
+        <!-- Bloque con el detalle de Productos/Combos -->
+        @if ($ultimoPedido && $ultimoPedido->detalles->isNotEmpty())
+          <div class="detalle-pedido" style="margin-top: 10px; border-top: 1px dashed #ccc; padding-top: 8px;">
+            <ul style="list-style: none; padding-left: 0; margin: 0 0 8px 0; font-size: 0.88rem;">
+              @foreach ($ultimoPedido->detalles as $detalle)
+                @php
+                  // Determina si el detalle pertenece a un Producto o a un Combo
+                  $nombreItem = $detalle->producto->nombre ?? $detalle->combo->nombre ?? 'Ítem';
+                @endphp
+                <li style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                  <span><strong>{{ $detalle->cantidad }}x</strong> {{ $nombreItem }}</span>
+                  <span>${{ number_format($detalle->subtotal, 2) }}</span>
+                </li>
+              @endforeach
+            </ul>
+
+            <!-- Mantiene el Monto Total registrado en el pedido -->
+            <div style="text-align: right; font-weight: bold; font-size: 0.95rem; border-top: 1px solid #eee; padding-top: 4px;">
+              Total: ${{ number_format($ultimoPedido->monto_total, 2) }}
+            </div>
+          </div>
+        @endif
+
       </div>
 
     </div>
@@ -81,7 +120,6 @@
   @endforelse
 
 </section>
-
 
 
     </main>

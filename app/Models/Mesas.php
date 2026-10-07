@@ -18,7 +18,7 @@ class Mesas extends Model
 
     public function pedidos()
     {
-        return $this->hasMany(Pedido::class, 'fk_id_mesa', 'id_mesa');
+        return $this->hasMany(Pedido::class, 'fk_id_mesa', 'id_mesa')
+            ->orderBy('id_pedido');
     }
-
 }

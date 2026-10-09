@@ -41,6 +41,8 @@ Route::post('/Categoria/guardar', [ProductoController::class, 'registroCategoria
 // Rutas de mesas
 Route::get('/Mesas', [MesasController::class, 'mostrarMesas'])->name('mesas.index');
 
-Route::post('/Mesas/pagar', [MesasController::class, 'procesarPago'])->name('pedidos.pagar');
+Route::post('/Mesas/pagar', [MesasController::class, 'procesarPago'])->name('pedido.pagar');
+
+Route::post('/Mesas/Pedido', [MesasController::class, 'realizarPedido'])->name('cargar.store');
 
 Route::get('/pedidos/crear/{mesa}', [PedidoController::class, 'create'])->name('pedidos.create');

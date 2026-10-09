@@ -92,22 +92,30 @@
         <!-- Bloque con el detalle de Productos/Combos -->
         @if ($ultimoPedido && $ultimoPedido->detalles->isNotEmpty())
           <div class="detalle-pedido" style="margin-top: 10px; border-top: 1px dashed #ccc; padding-top: 8px;">
+            @php $totalPedidoCalculado = 0; @endphp
             <ul style="list-style: none; padding-left: 0; margin: 0 0 8px 0; font-size: 0.88rem;">
               @foreach ($ultimoPedido->detalles as $detalle)
                 @php
                   // Determina si el detalle pertenece a un Producto o a un Combo
                   $nombreItem = $detalle->producto->nombre ?? $detalle->combo->nombre ?? 'Ítem';
+                  $precioUnitario = $detalle->producto->precio ?? 0;
+                  $subtotalItem = $detalle->producto
+                    ? $precioUnitario * $detalle->cantidad
+                    : $detalle->subtotal;
+                  $totalPedidoCalculado += $subtotalItem;
                 @endphp
                 <li style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-                  <span><strong>{{ $detalle->cantidad }}x</strong> {{ $nombreItem }}</span>
-                  <span>${{ number_format($detalle->subtotal, 2) }}</span>
+                  <span>
+                    <strong>{{ $detalle->cantidad }}x</strong> {{ $nombreItem }}
+                  </span>
+                  <span>${{ number_format($subtotalItem, 2) }}</span>
                 </li>
               @endforeach
             </ul>
 
-            <!-- Mantiene el Monto Total registrado en el pedido -->
+            <!-- Total calculado a partir de los importes de cada línea -->
             <div style="text-align: right; font-weight: bold; font-size: 0.95rem; border-top: 1px solid #eee; padding-top: 4px;">
-              Total: ${{ number_format($ultimoPedido->monto_total, 2) }}
+              Total: ${{ number_format($totalPedidoCalculado, 2) }}
             </div>
           </div>
         @endif
@@ -125,8 +133,55 @@
     </main>
   </div>
 
-  <!-- MODAL: PROCESAR PAGO -->
+  <!-- ========================================== -->
+  <!-- MODAL 1: REGISTRAR PEDIDOS                 -->
+  <!-- ========================================== -->
+  <div id="modalProducto" class="modal-overlay hidden">
+    <div class="modal-content">
+      <h3>Agregar Pedido</h3>
 
+      <form id="formProducto" action="{{ route('cargar.store') }}" method="POST" enctype="multipart/form-data">
+        @csrf
+
+        <div class="grupo-campo">
+          <label for="fk_id_seccion">Seleccionar Area:</label>
+          <select id="fk_id_seccion" name="fk_id_seccion" required class="select-categoria">
+            <option value=""> Seleccionar seccion </option>
+            @foreach ($secciones as $sec)
+              <option value="{{ $sec->id_seccion }}" {{ old('fk_id_seccion', $seccionSeleccionada ?? '') == $sec->id_seccion ? 'selected' : '' }}>
+                {{ $sec->seccion }}
+              </option>
+            @endforeach
+          </select>
+          @error('fk_id_seccion') <span class="error-texto">{{ $message }}</span> @enderror
+        </div>
+
+        <div class="grupo-campo">
+          <label for="fk_id_mesa">Seleccionar Mesa:</label>
+          <select id="fk_id_mesa" name="fk_id_mesa" required class="select-categoria" {{ empty($seccionSeleccionada) ? 'disabled' : '' }}>
+            <option value=""> Seleccionar Mesa </option>
+            @foreach ($mesas as $mesa)
+              <option value="{{ $mesa->id_mesa }}" {{ old('fk_id_mesa') == $mesa->id_mesa ? 'selected' : '' }}>
+                Mesa N° {{ $mesa->numero_mesa }}
+              </option>
+            @endforeach
+          </select>
+          @error('fk_id_mesa') <span class="error-texto">{{ $message }}</span> @enderror
+        </div>
+
+        <div class="grupo-campo">
+          <label for="precio">Precio ($):</label>
+          <input type="number" id="precio" name="precio" required placeholder="Ej: 3500" value="{{ old('precio') }}">
+          @error('precio') <span class="error-texto">{{ $message }}</span> @enderror
+        </div>
+
+        <div class="modal-botones">
+          <button type="button" id="btnCerrarModal" class="btn-cancelar">Cancelar</button>
+          <button type="submit" class="btn-guardar">Registrar Pedido</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
   <script src="{{ asset('js/pedidos.js') }}"></script>
 </body>

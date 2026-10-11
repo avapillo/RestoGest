@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnCerrarEditar = document.getElementById('btnCerrarModalEditar');
   const inputEditId = document.getElementById('edit_id');
   const inputEditNombre = document.getElementById('edit_nombre');
-  const inputEditContraseña = document.getElementById('edit_contraseña');
+  const inputEditGmail = document.getElementById('edit_gmail');
   const contenedorEditar = document.getElementById('contenedorCombosEditar');
   const btnAgregarRolEditar = document.getElementById('btnAgregarComboEditar');
 
@@ -101,7 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
     boton.addEventListener('click', () => {
       const id = boton.getAttribute('data-id');
       const nombre = boton.getAttribute('data-nombre');
-      const contraseña = boton.getAttribute('data-contrasenia');
+      const gmail = boton.getAttribute('data-gmail');
 
       // Leemos el array de IDs de roles desde el atributo data-roles='@json(...)'
       const rolesData = boton.getAttribute('data-roles');
@@ -116,7 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // Asignación de datos básicos
       if (inputEditId) inputEditId.value = id;
       if (inputEditNombre) inputEditNombre.value = nombre;
-      if (inputEditContraseña) inputEditContraseña.value = contraseña;
+      if (inputEditGmail) inputEditGmail.value = gmail;
 
       // Cargar comboboxes por cada rol en el modal de edición
       if (contenedorEditar) {

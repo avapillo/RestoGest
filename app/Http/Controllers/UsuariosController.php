@@ -13,9 +13,6 @@ class UsuariosController extends Controller
       public function mostrarUsuarios(Request $request){
          $usuarios = usuarios::with('roles')->get();
 
-    // Consulta la tabla 'rol_usuario' directamente SIN usar su modelo
-       // $roles = DB::table('rol_usuario')->get();
-
        $roles = RolUsuario::all();
 
         return view('interfaz_nuevo_usuario', compact('usuarios',"roles"));
@@ -24,16 +21,20 @@ class UsuariosController extends Controller
    public function nuevoUsuario(Request $request)
 {
     $request->validate([
-        'nombre'      => 'required|string|max:255',
-        'contrasenia' => 'required|string|max:255',
-        'roles'       => 'nullable|array', // Recibe uno o varios IDs de roles [1, 2, ...]
+        'nombre'      => 'required|string|max:50',
+        'gmail'       => 'required|email|max:255|unique:usuarios,gmail',
+        'roles'       => 'required|array|min:1',
         'roles.*'     => 'exists:rol_usuario,id_rol',
+    ], [
+        'gmail.unique'  => 'No se pueden repetir los Gmail.',
+        'roles.required' => 'Debes seleccionar un rol para el nuevo usuario.',
+        'roles.min'      => 'Debes seleccionar un rol para el nuevo usuario.',
     ]);
 
     // 1. Crear el registro en la tabla 'usuarios'
     $usuario = Usuarios::create([
-        'nombre'      => $request->nombre,
-        'contrasenia' => $request->contrasenia,
+        'nombre' => $request->nombre,
+        'gmail'  => $request->gmail,
     ]);
 
     // 2. Insertar los roles en la tabla pivote 'usuario_roles'
@@ -48,8 +49,8 @@ class UsuariosController extends Controller
 {
     $request->validate([
         'id'          => 'required|exists:usuarios,id',
-        'nombre'      => 'required|string|max:255',
-        'contrasenia' => 'required|string|max:255',
+        'nombre'      => 'required|string|max:50',
+        'gmail'       => 'required|email|max:255|unique:usuarios,gmail,' . $request->id,
         'roles'       => 'nullable|array', // Recibe los nuevos roles seleccionados
         'roles.*'     => 'exists:rol_usuario,id_rol',
     ]);
@@ -57,7 +58,7 @@ class UsuariosController extends Controller
     // 1. Actualizar datos del usuario
     $usuario = Usuarios::findOrFail($request->id);
     $usuario->nombre = $request->nombre;
-    $usuario->contrasenia = $request->contrasenia;
+    $usuario->gmail = $request->gmail;
     $usuario->save();
 
     // 2. Sincronizar roles en la tabla pivote 'usuario_roles'

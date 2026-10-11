@@ -51,7 +51,7 @@
           {{-- Muestra todos los roles concatenados con comas --}}
           Rol: <strong>{{ $usuario->roles->pluck('rol_nombre')->implode(', ') ?: 'Sin Rol' }}</strong>
         </p>
-        <p class="precio-usuario"><strong>Contraseña: ********</strong></p>
+        <p class="precio-usuario"><strong>Gmail: {{ $usuario->gmail }}</strong></p>
       </div>
 
       <div class="acciones-tarjeta">
@@ -59,7 +59,7 @@
         <button class="btn-accion btn-modificar"
                 data-id="{{ $usuario->id }}"
                 data-nombre="{{ $usuario->nombre }}"
-                data-contrasenia="{{ $usuario->contrasenia }}"
+                data-gmail="{{ $usuario->gmail }}"
                 data-roles='@json($usuario->roles->pluck("id_rol"))'>✏️ Modificar</button>
 
         <form action="{{ route('usuario.destroy', $usuario->id) }}" method="POST" onsubmit="return confirm('¿Seguro que deseas eliminar este usuario?')" style="display:inline;">
@@ -78,28 +78,33 @@
 </main>
 
 <!-- ================== Modal de Nuevos usuarios =================== -->
-<div id="modalUsuario" class="modal-overlay hidden">
+<div id="modalUsuario" class="modal-overlay {{ $errors->any() ? '' : 'hidden' }}">
   <div class="modal-content">
     <h3>Nuevo Usuario</h3>
 
     <form id="formUsuario" action="{{ route('usuario.store') }}" method="POST">
       @csrf
 
+      @if ($errors->any())
+        <div class="error-texto">{{ $errors->first() }}</div>
+      @endif
+
       <div class="grupo-campo">
-        <label for="nombre">Teléfono / Nombre:</label>
-        <input type="text" id="nombre" name="nombre" required placeholder="Ej: Juan" value="{{ old('nombre') }}">
+        <label for="nombre">Nombre del usuario:</label>
+        <input type="text" id="nombre" name="nombre" maxlength="50" required placeholder="Ej: Juan" value="{{ old('nombre') }}">
         @error('nombre') <span class="error-texto">{{ $message }}</span> @enderror
       </div>
 
       <div class="grupo-campo">
-        <label for="contrasenia">Contraseña:</label>
-        <input type="text" id="contrasenia" name="contrasenia" required placeholder="Ej: 2580" value="{{ old('contrasenia') }}">
-        @error('contrasenia') <span class="error-texto">{{ $message }}</span> @enderror
+        <label for="gmail">Gmail:</label>
+        <input type="email" id="gmail" name="gmail" required placeholder="Ej: juan@gmail.com" value="{{ old('gmail') }}">
+        @error('gmail') <span class="error-texto">{{ $message }}</span> @enderror
       </div>
 
       <!-- Contenedor dinámico de Comboboxes de Roles -->
       <div class="grupo-campo">
         <label>Rol Usuario:</label>
+        @error('roles') <span class="error-texto">{{ $message }}</span> @enderror
         <div id="contenedorCombosNuevo">
           <div class="combo-rol-item" style="display: flex; gap: 8px; margin-bottom: 8px;">
             <select name="roles[]" required class="select-categoria">
@@ -132,13 +137,13 @@
       <input type="hidden" id="edit_id" name="id">
 
       <div class="grupo-campo">
-        <label for="edit_nombre">Teléfono / Nombre:</label>
+        <label for="edit_nombre">Nombre del usuario:</label>
         <input type="text" id="edit_nombre" name="nombre" required>
       </div>
 
       <div class="grupo-campo">
-        <label for="edit_contraseña">Contraseña:</label>
-        <input type="text" id="edit_contraseña" name="contrasenia" required>
+        <label for="edit_gmail">Gmail:</label>
+        <input type="email" id="edit_gmail" name="gmail" required>
       </div>
 
       <!-- Contenedor dinámico de Comboboxes en la Edición -->

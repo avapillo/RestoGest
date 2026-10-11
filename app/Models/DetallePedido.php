@@ -15,6 +15,8 @@ class DetallePedido extends Model
         'fk_id_combo',
         'cantidad',
         'subtotal',
+        'precio_unitario',
+        'descripcion',
     ];
 
     public function pedido()

@@ -104,11 +104,16 @@
                     : $detalle->subtotal;
                   $totalPedidoCalculado += $subtotalItem;
                 @endphp
-                <li style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                <li style="display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 12px; row-gap: 2px; margin-bottom: 6px;">
                   <span>
                     <strong>{{ $detalle->cantidad }}x</strong> {{ $nombreItem }}
                   </span>
                   <span>${{ number_format($subtotalItem, 2) }}</span>
+                  @if ($detalle->descripcion)
+                    <small style="grid-column: 1; color: #64748b; font-size: 0.8rem;">
+                      {{ $detalle->descripcion }}
+                    </small>
+                  @endif
                 </li>
               @endforeach
             </ul>
@@ -143,36 +148,83 @@
       <form id="formProducto" action="{{ route('cargar.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
 
-        <div class="grupo-campo">
-          <label for="fk_id_seccion">Seleccionar Area:</label>
-          <select id="fk_id_seccion" name="fk_id_seccion" required class="select-categoria">
-            <option value=""> Seleccionar seccion </option>
-            @foreach ($secciones as $sec)
-              <option value="{{ $sec->id_seccion }}" {{ old('fk_id_seccion', $seccionSeleccionada ?? '') == $sec->id_seccion ? 'selected' : '' }}>
-                {{ $sec->seccion }}
-              </option>
-            @endforeach
-          </select>
-          @error('fk_id_seccion') <span class="error-texto">{{ $message }}</span> @enderror
+        <div class="fila-horizontal contenedor-mesas-area">
+          <div class="grupo-campo">
+            <label for="fk_id_seccion">Sección:</label>
+            <select id="fk_id_seccion" name="fk_id_seccion" required class="select-categoria">
+              <option value="">Seleccionar sección</option>
+              @foreach ($secciones as $sec)
+                <option value="{{ $sec->id_seccion }}" {{ old('fk_id_seccion', $seccionSeleccionada ?? '') == $sec->id_seccion ? 'selected' : '' }}>
+                  {{ $sec->seccion }}
+                </option>
+              @endforeach
+            </select>
+            @error('fk_id_seccion') <span class="error-texto">{{ $message }}</span> @enderror
+          </div>
+
+          <div class="grupo-campo">
+            <label for="fk_id_mesa">Mesa:</label>
+            <select id="fk_id_mesa" name="fk_id_mesa" required class="select-categoria" {{ empty($seccionSeleccionada) ? 'disabled' : '' }}>
+              <option value="">Seleccionar mesa</option>
+              @foreach ($mesas as $mesa)
+                <option value="{{ $mesa->id_mesa }}" {{ old('fk_id_mesa') == $mesa->id_mesa ? 'selected' : '' }}>
+                  Mesa N° {{ $mesa->numero_mesa }}
+                </option>
+              @endforeach
+            </select>
+            @error('fk_id_mesa') <span class="error-texto">{{ $message }}</span> @enderror
+          </div>
+
+          <div class="grupo-campo">
+            <label for="es_para_llevar">Tipo de consumo:</label>
+            <select id="es_para_llevar" name="es_para_llevar" required class="select-categoria">
+              <option value="0" {{ old('es_para_llevar', '0') == '0' ? 'selected' : '' }}>Consumo en local</option>
+              <option value="1" {{ old('es_para_llevar') == '1' ? 'selected' : '' }}>Para llevar</option>
+            </select>
+          </div>
         </div>
 
-        <div class="grupo-campo">
-          <label for="fk_id_mesa">Seleccionar Mesa:</label>
-          <select id="fk_id_mesa" name="fk_id_mesa" required class="select-categoria" {{ empty($seccionSeleccionada) ? 'disabled' : '' }}>
-            <option value=""> Seleccionar Mesa </option>
-            @foreach ($mesas as $mesa)
-              <option value="{{ $mesa->id_mesa }}" {{ old('fk_id_mesa') == $mesa->id_mesa ? 'selected' : '' }}>
-                Mesa N° {{ $mesa->numero_mesa }}
-              </option>
-            @endforeach
-          </select>
-          @error('fk_id_mesa') <span class="error-texto">{{ $message }}</span> @enderror
-        </div>
+        <div id="listaProductosPedido">
+          <div class="fila-item-producto">
+            <div class="campos-item-producto">
+              <div class="grupo-campo col-categoria">
+                <label for="categoria-item-0">Categoría:</label>
+                <select id="categoria-item-0" name="items[0][fk_id_categoria]" class="select-categoria selector-categoria" required>
+                  <option value="">Seleccionar categoría</option>
+                  @foreach ($categorias as $categoria)
+                    <option value="{{ $categoria->id }}">{{ $categoria->categoria }}</option>
+                  @endforeach
+                </select>
+              </div>
 
-        <div class="grupo-campo">
-          <label for="precio">Precio ($):</label>
-          <input type="number" id="precio" name="precio" required placeholder="Ej: 3500" value="{{ old('precio') }}">
-          @error('precio') <span class="error-texto">{{ $message }}</span> @enderror
+              <div class="grupo-campo col-producto">
+                <label for="producto-item-0">Producto:</label>
+                <select id="producto-item-0" name="items[0][fk_id_producto]" class="select-categoria selector-producto" required disabled>
+                  <option value="">Seleccionar producto</option>
+                  @foreach ($productos as $producto)
+                    <option value="{{ $producto->id }}" data-categoria="{{ $producto->fk_id_categoria }}">
+                      {{ $producto->nombre }}
+                    </option>
+                  @endforeach
+                </select>
+              </div>
+
+              <div class="grupo-campo col-cantidad">
+                <label for="cantidad-item-0">Cantidad:</label>
+                <input id="cantidad-item-0" type="number" name="items[0][cantidad]" min="1" value="1" required>
+              </div>
+
+              <div class="grupo-campo col-descripcion">
+                <label for="descripcion-item-0">Descripción:</label>
+                <input id="descripcion-item-0" type="text" name="items[0][descripcion]" maxlength="255" placeholder="Nota del producto">
+              </div>
+            </div>
+
+            <div class="acciones-item-producto" aria-label="Acciones del producto">
+              <button type="button" class="btn-agregar-item" data-accion="agregar" aria-label="Agregar otro producto" title="Agregar otro producto">+</button>
+              <button type="button" class="btn-quitar-item" data-accion="quitar" aria-label="Quitar este producto" title="Quitar este producto">x</button>
+            </div>
+          </div>
         </div>
 
         <div class="modal-botones">

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use App\Models\Categoria;
 use App\Models\Combo;
@@ -88,21 +89,58 @@ public function mostrarOrdenesPedidos(Request $request){
             return response()->json($mesas);
         }
 
-        $categorias = Categoria::all();
-        $secciones = Seccion::all();
-        $query = Mesas::with([
-            'seccion',
-            'pedidos.detalles.producto',
-            'pedidos.detalles.combo',
+        $datos = $request->validate([
+            'fk_id_seccion' => ['required', 'exists:seccion,id_seccion'],
+            'fk_id_mesa' => [
+                'required',
+                Rule::exists('mesas', 'id_mesa')->where('fk_id_seccion', $seccionSeleccionada),
+            ],
+            'es_para_llevar' => ['required', 'boolean'],
+            'items' => ['required', 'array', 'min:1'],
+            'items.*.fk_id_categoria' => ['required', 'exists:categoria,id'],
+            'items.*.fk_id_producto' => ['required', 'exists:productos,id'],
+            'items.*.cantidad' => ['required', 'integer', 'min:1'],
+            'items.*.descripcion' => ['nullable', 'string', 'max:255'],
         ]);
 
-        if (!empty($seccionSeleccionada)) {
-            $query->where('fk_id_seccion', $seccionSeleccionada);
+        $productos = Producto::whereIn(
+            'id',
+            collect($datos['items'])->pluck('fk_id_producto')->unique()
+        )->get()->keyBy('id');
+
+        foreach ($datos['items'] as $indice => $item) {
+            $producto = $productos->get($item['fk_id_producto']);
+
+            if ((int) $producto->fk_id_categoria !== (int) $item['fk_id_categoria']) {
+                throw ValidationException::withMessages([
+                    "items.$indice.fk_id_producto" => 'El producto no pertenece a la categoría seleccionada.',
+                ]);
+            }
         }
 
-        $mesas = $query->get();
+        DB::transaction(function () use ($datos, $productos) {
+            $pedido = Pedido::create([
+                'fk_id_mesa' => $datos['fk_id_mesa'],
+                'es_para_llevar' => $datos['es_para_llevar'],
+            ]);
 
-        return view('interfaz_mesa', compact('secciones', 'categorias', 'mesas', 'seccionSeleccionada'));
+            foreach ($datos['items'] as $item) {
+                $producto = $productos->get($item['fk_id_producto']);
+                $precioUnitario = (int) $producto->precio;
+
+                $pedido->detalles()->create([
+                    'fk_id_producto' => $producto->id,
+                    'cantidad' => $item['cantidad'],
+                    'precio_unitario' => $precioUnitario,
+                    'subtotal' => $precioUnitario * $item['cantidad'],
+                    'descripcion' => $item['descripcion'] ?? null,
+                ]);
+            }
+        });
+
+        return redirect()
+            ->route('mesas.index', ['fk_id_seccion' => $seccionSeleccionada])
+            ->with('status', 'Pedido registrado correctamente.');
     }
 
 }

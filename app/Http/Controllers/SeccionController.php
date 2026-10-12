@@ -3,13 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
-class SeccionController extends Controller
-{
-    //
 use App\Models\Seccion;
 use App\Models\Producto;
-use App\Models\Mesa; // Asegúrate de importar el modelo Mesa si usas $mesas
+use App\Models\Mesa;
 
 class SeccionController extends Controller
 {

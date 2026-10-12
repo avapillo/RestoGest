@@ -20,17 +20,17 @@ class LoginController extends Controller
         // 1. Validaciones
         $request->validate([
             'nombre'      => 'required|string',
-            'contrasenia' => 'required|numeric',
+            'gmail'       => 'required|email',
         ], [
             'nombre.required'      => 'El usuario es obligatorio.',
-            'contrasenia.required' => 'La contraseña es obligatoria.',
-            'contrasenia.numeric'  => 'La contraseña debe ser numérica.'
+            'gmail.required'       => 'El correo electrónico es obligatorio.',
+            'gmail.email'          => 'Ingresa un correo electrónico válido.',
         ]);
 
         // 2. Consulta a la BD (tabla usuario)
         $usuario = DB::table('usuarios')
             ->where('nombre', $request->nombre)
-            ->where('contrasenia', $request->contrasenia)
+            ->where('gmail', $request->gmail)
             ->first();
 
         // 3. Si existe el usuario: Guardamos sesión y REDIRECCIONAMOS a la vista deseada
@@ -46,7 +46,7 @@ class LoginController extends Controller
 
         // 4. Si las credenciales fallan: Volvemos atrás con mensaje de error
         return back()
-            ->with('error', 'Usuario o contraseña incorrectos.')
+            ->with('error', 'Usuario o correo electrónico incorrectos.')
             ->withInput($request->only('nombre'));
     }
 

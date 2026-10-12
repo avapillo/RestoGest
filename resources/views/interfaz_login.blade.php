@@ -46,20 +46,20 @@
                 @enderror
             </div>
 
-            <!-- Campo Contraseña / PIN -->
+            <!-- Campo Gmail -->
             <div class="form-group">
-                <label for="contrasenia">PIN / Contraseña</label>
+                <label for="gmail">Gmail</label>
                 <div class="input-container">
-                    <i class="fa-solid fa-lock input-icon"></i>
+                    <i class="fa-solid fa-envelope input-icon"></i>
                     <input
-                        type="password"
-                        id="contrasenia"
-                        name="contrasenia"
-                        inputmode="numeric"
-                        placeholder="Ej: 1234"
+                        type="email"
+                        id="gmail"
+                        name="gmail"
+                        placeholder="Ej: nombre@gmail.com"
+                        value="{{ old('gmail') }}"
                         required>
                 </div>
-                @error('contrasenia')
+                @error('gmail')
                     <span class="error-texto">{{ $message }}</span>
                 @enderror
             </div>

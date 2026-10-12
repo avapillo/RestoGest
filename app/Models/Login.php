@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Login extends Model{
     protected $table = 'usuarios';
 
-    protected $fillable = ["nombre", "contrasenia"];
+    protected $fillable = ["nombre", "gmail"];
 
     public $timestamps = false;
 

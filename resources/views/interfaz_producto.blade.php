@@ -19,8 +19,7 @@
         <a href="{{ route('home') }}" class="opcion-menu">Principal</a>
         <a href="{{ route('mesas.index') }}" class="opcion-menu">Mesas</a>
         <a href="{{ route('producto.index') }}" class="opcion-menu activa">Producto</a>
-        <a href="#" class="opcion-menu">Ventas</a>
-        <a href="{{ route('interfaz_paraLlevar') }}" class="opcion-menu">Para Llevar</a>
+        <a href="{{ route('interfaz_ventas') }}" class="opcion-menu">Ventas</a>
       </nav>
     </aside>
 

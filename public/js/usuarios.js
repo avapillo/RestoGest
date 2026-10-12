@@ -13,12 +13,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  if (btnComboBox && modalComboBox){
-    btnComboBox.addEventListener('click', () => {
-      modalComboBox.classList.remove('hidden');
-    });
-  }
-
   if (btnCerrarModalUsuario && modalUsuario) {
     btnCerrarModalUsuario.addEventListener('click', () => {
       modalUsuario.classList.add('hidden');

@@ -1,5 +1,5 @@
 <?php
-
+use App\Http\Controllers\ApiCocinaController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -43,3 +43,6 @@ Route::get('/v1/productos', [ApiProductoController::class, 'obtenerTodoLosProduc
 
 // URL 2: Obtener productos filtrados por una categoría específica
 Route::get('/v1/productos/categoria/{id}', [ApiProductoController::class, 'obtenerProductoPorCategoria']);
+// Pedidos para la aplicación de cocina
+Route::get('/cocina/pedidos', [ApiCocinaController::class, 'pedidos']);
+Route::post('/cocina/pedidos', [ApiCocinaController::class, 'guardar']);

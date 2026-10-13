@@ -69,6 +69,16 @@
     @php
       // Tomamos el último pedido activo registrado en la mesa
       $ultimoPedido = $mesa->pedidos->last();
+      $itemsEditables = $ultimoPedido?->detalles
+        ->filter(fn ($detalle) => $detalle->fk_id_producto)
+        ->map(fn ($detalle) => [
+          'fk_id_categoria' => $detalle->producto->fk_id_categoria,
+          'fk_id_producto' => $detalle->fk_id_producto,
+          'cantidad' => $detalle->cantidad,
+          'descripcion' => $detalle->descripcion,
+        ])
+        ->values() ?? collect();
+      $pedidoTieneCombos = $ultimoPedido?->detalles->contains(fn ($detalle) => $detalle->fk_id_combo) ?? false;
     @endphp
 
     <div class="tarjeta-producto" id="mesa-{{ $mesa->id_mesa }}">
@@ -121,6 +131,27 @@
             <div style="text-align: right; font-weight: bold; font-size: 0.95rem; border-top: 1px solid #eee; padding-top: 4px;">
               Total: ${{ number_format($totalPedidoCalculado, 2) }}
             </div>
+            <div class="acciones-pedido">
+              <button
+                type="button"
+                class="btn-accion btn-modificar btn-pedido-modificar"
+                data-update-url="{{ route('pedido.update', $ultimoPedido->id_pedido) }}"
+                data-items="{{ $itemsEditables->toJson() }}"
+                data-seccion-id="{{ $mesa->fk_id_seccion }}"
+                data-mesa-id="{{ $mesa->id_mesa }}"
+                data-para-llevar="{{ (int) $ultimoPedido->es_para_llevar }}"
+                @disabled($pedidoTieneCombos)
+                title="{{ $pedidoTieneCombos ? 'No se pueden modificar pedidos que contienen combos desde este formulario.' : 'Modificar pedido' }}">
+                Modificar
+              </button>
+              <button
+                type="button"
+                class="btn-accion btn-pedido-cobrar"
+                data-order-id="{{ $ultimoPedido->id_pedido }}"
+                data-total="{{ $totalPedidoCalculado }}">
+                Cobrar
+              </button>
+            </div>
           </div>
         @endif
 
@@ -145,7 +176,7 @@
     <div class="modal-content">
       <h3>Agregar Pedido</h3>
 
-      <form id="formProducto" action="{{ route('cargar.store') }}" method="POST" enctype="multipart/form-data">
+      <form id="formProducto" action="{{ route('cargar.store') }}" data-create-url="{{ route('cargar.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
 
         <div class="fila-horizontal contenedor-mesas-area">
@@ -230,6 +261,30 @@
         <div class="modal-botones">
           <button type="button" id="btnCerrarModal" class="btn-cancelar">Cancelar</button>
           <button type="submit" class="btn-guardar">Registrar Pedido</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="modalCobrar" class="modal-overlay hidden">
+    <div class="modal-content modal-pago-content">
+      <h3>Cobrar pedido</h3>
+      <form id="formCobrar" action="{{ route('pedido.pagar') }}" method="POST">
+        @csrf
+        <input id="pagoIdPedido" type="hidden" name="id_pedido">
+        <p class="total-cobro">Total: <strong id="totalCobroPedido"></strong></p>
+        <div class="grupo-campo">
+          <label for="fk_tipo_pago">Medio de pago:</label>
+          <select id="fk_tipo_pago" name="fk_tipo_pago" class="select-categoria" required>
+            <option value="">Seleccionar medio de pago</option>
+            @foreach ($tiposPago as $tipoPago)
+              <option value="{{ $tipoPago->id }}">{{ $tipoPago->tipo_pago }}</option>
+            @endforeach
+          </select>
+        </div>
+        <div class="modal-botones">
+          <button type="button" id="btnCerrarModalCobro" class="btn-cancelar">Cancelar</button>
+          <button type="submit" class="btn-guardar" {{ $tiposPago->isEmpty() ? 'disabled' : '' }}>Confirmar cobro</button>
         </div>
       </form>
     </div>

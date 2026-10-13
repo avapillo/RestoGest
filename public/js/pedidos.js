@@ -3,12 +3,45 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnAbrirModalPedido = document.getElementById('btnAbrirModalProducto');
   const btnCerrarModalPedido = document.getElementById('btnCerrarModal');
   const modalProducto = document.getElementById('modalProducto');
+  const formPedido = document.getElementById('formProducto');
   const selectSeccion = document.getElementById('fk_id_seccion');
   const selectMesa = document.getElementById('fk_id_mesa');
   const listaProductosPedido = document.getElementById('listaProductosPedido');
+  let actualizarFilas = () => {};
+
+  const limpiarFilasPedido = () => {
+    if (!listaProductosPedido) return;
+
+    const filas = [...listaProductosPedido.querySelectorAll('.fila-item-producto')];
+    filas.slice(1).forEach(fila => fila.remove());
+    const fila = filas[0];
+    if (!fila) return;
+
+    fila.querySelector('.selector-categoria').value = '';
+    fila.querySelector('.selector-producto').value = '';
+    fila.querySelector('.selector-producto').disabled = true;
+    fila.querySelector('input[type="number"]').value = '1';
+    fila.querySelector('input[type="text"]').value = '';
+    [...fila.querySelector('.selector-producto').options].forEach(option => {
+      option.hidden = false;
+      option.disabled = false;
+    });
+    actualizarFilas();
+  };
+
+  const prepararNuevoPedido = () => {
+    if (!formPedido) return;
+
+    formPedido.reset();
+    limpiarFilasPedido();
+    formPedido.action = formPedido.dataset.createUrl;
+    modalProducto.querySelector('h3').textContent = 'Agregar Pedido';
+    formPedido.querySelector('button[type="submit"]').textContent = 'Registrar Pedido';
+  };
 
   if (btnAbrirModalPedido && modalProducto) {
     btnAbrirModalPedido.addEventListener('click', () => {
+      prepararNuevoPedido();
       modalProducto.classList.remove('hidden');
     });
   }
@@ -51,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   if (listaProductosPedido) {
-    const actualizarFilas = () => {
+    actualizarFilas = () => {
       const filas = [...listaProductosPedido.querySelectorAll('.fila-item-producto')];
 
       filas.forEach((fila, indice) => {
@@ -109,6 +142,54 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     actualizarFilas();
+  }
+
+  document.querySelectorAll('.btn-pedido-modificar:not(:disabled)').forEach(boton => {
+    boton.addEventListener('click', () => {
+      prepararNuevoPedido();
+      formPedido.action = boton.dataset.updateUrl;
+      selectSeccion.value = boton.dataset.seccionId;
+      selectMesa.value = boton.dataset.mesaId;
+      document.getElementById('es_para_llevar').value = boton.dataset.paraLlevar;
+
+      const items = JSON.parse(boton.dataset.items);
+      const filaBase = listaProductosPedido.querySelector('.fila-item-producto');
+
+      items.forEach((item, indice) => {
+        const fila = indice === 0 ? filaBase : filaBase.cloneNode(true);
+        if (indice > 0) listaProductosPedido.append(fila);
+
+        const categoria = fila.querySelector('.selector-categoria');
+        const producto = fila.querySelector('.selector-producto');
+        categoria.value = item.fk_id_categoria;
+        categoria.dispatchEvent(new Event('change', { bubbles: true }));
+        producto.value = item.fk_id_producto;
+        fila.querySelector('input[type="number"]').value = item.cantidad;
+        fila.querySelector('input[type="text"]').value = item.descripcion || '';
+      });
+
+      actualizarFilas();
+      modalProducto.querySelector('h3').textContent = 'Modificar Pedido';
+      formPedido.querySelector('button[type="submit"]').textContent = 'Guardar cambios';
+      modalProducto.classList.remove('hidden');
+    });
+  });
+
+  const modalCobrar = document.getElementById('modalCobrar');
+  const formCobrar = document.getElementById('formCobrar');
+  const cerrarModalCobro = document.getElementById('btnCerrarModalCobro');
+
+  document.querySelectorAll('.btn-pedido-cobrar').forEach(boton => {
+    boton.addEventListener('click', () => {
+      formCobrar.reset();
+      document.getElementById('pagoIdPedido').value = boton.dataset.orderId;
+      document.getElementById('totalCobroPedido').textContent = `$${Number(boton.dataset.total).toLocaleString('es-CL')}`;
+      modalCobrar.classList.remove('hidden');
+    });
+  });
+
+  if (cerrarModalCobro && modalCobrar) {
+    cerrarModalCobro.addEventListener('click', () => modalCobrar.classList.add('hidden'));
   }
 
   // Filtro por secciones

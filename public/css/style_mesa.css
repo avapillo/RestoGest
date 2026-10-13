@@ -214,6 +214,38 @@ body {
   margin-top: auto;
 }
 
+.acciones-pedido {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.acciones-pedido .btn-accion {
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  padding: 9px 12px;
+}
+
+.acciones-pedido .btn-accion:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.btn-pedido-cobrar {
+  flex: 1;
+  background-color: #15803d;
+  color: #ffffff;
+}
+
+.btn-pedido-cobrar:hover {
+  background-color: #166534;
+}
+
+.total-cobro {
+  margin: 0 0 18px;
+  font-size: 1.1rem;
+}
+
 .btn-accion {
   flex: 1;
   padding: 12px;

@@ -24,9 +24,12 @@ public function mostrarMesas(Request $request)
     $categorias = Categoria::all();
     $productos = Producto::orderBy('nombre')->get();
     $combos = Combo::orderBy('combo')->get();
+    $tiposPago = DB::table('tipo_pago')->orderBy('tipo_pago')->get();
+    $pedidosPendientes = static fn ($query) => $query->sinCobrar();
 
     $query = Mesas::with([
         'seccion',
+        'pedidos' => $pedidosPendientes,
         'pedidos.detalles.producto',
         'pedidos.detalles.combo'
     ]);
@@ -37,15 +40,17 @@ public function mostrarMesas(Request $request)
 
     $mesas = $query->get();
 
-    return view('interfaz_mesa', compact('mesas', 'secciones', 'seccionSeleccionada', 'categorias', 'productos', 'combos'));
+    return view('interfaz_mesa', compact('mesas', 'secciones', 'seccionSeleccionada', 'categorias', 'productos', 'combos', 'tiposPago'));
 }
 
 public function mostrarOrdenesPedidos(Request $request){
     $seccionSeleccionada = $request->query('fk_id_seccion', 'todas');
     $secciones = Seccion::all();
+    $pedidosPendientes = static fn ($query) => $query->sinCobrar();
 
-    $query = Mesas::whereHas('pedidos')->with([
+    $query = Mesas::whereHas('pedidos', $pedidosPendientes)->with([
         'seccion',
+        'pedidos' => $pedidosPendientes,
         'pedidos.detalles.producto',
         'pedidos.detalles.combo',
     ]);
@@ -61,14 +66,37 @@ public function mostrarOrdenesPedidos(Request $request){
 
     public function procesarPago(Request $request)
     {
-        $request->validate([
+        $datos = $request->validate([
             'id_pedido' => 'required|exists:pedidos,id_pedido',
-            'fk_id_tipo_pago' => 'required|exists:combos,id',
+            'fk_tipo_pago' => 'required|exists:tipo_pago,id',
         ]);
 
-        $pedido = Pedido::findOrFail($request->id_pedido);
-        $pedido->fk_id_tipo_pago = $request->fk_id_tipo_pago;
-        $pedido->save();
+        $pedido = Pedido::with('detalles')->findOrFail($datos['id_pedido']);
+        $monto = $pedido->detalles->sum('subtotal');
+
+        if ($monto <= 0) {
+            throw ValidationException::withMessages([
+                'id_pedido' => 'No se puede cobrar un pedido sin productos.',
+            ]);
+        }
+
+        DB::transaction(function () use ($datos, $monto) {
+            $pedido = Pedido::where('id_pedido', $datos['id_pedido'])
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            if (DB::table('registro_pago')->where('fk_id_pedido', $pedido->id_pedido)->exists()) {
+                throw ValidationException::withMessages([
+                    'id_pedido' => 'Este pedido ya fue cobrado.',
+                ]);
+            }
+
+            DB::table('registro_pago')->insert([
+                'monto' => $monto,
+                'fk_tipo_pago' => $datos['fk_tipo_pago'],
+                'fk_id_pedido' => $pedido->id_pedido,
+            ]);
+        });
 
         return redirect()->back()->with('status', 'Pago procesado exitosamente.');
     }
@@ -171,6 +199,16 @@ public function mostrarOrdenesPedidos(Request $request){
         }
 
         DB::transaction(function () use ($pedido, $datos, $productos) {
+            $pedido = Pedido::where('id_pedido', $pedido->id_pedido)
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            if (DB::table('registro_pago')->where('fk_id_pedido', $pedido->id_pedido)->exists()) {
+                throw ValidationException::withMessages([
+                    'id_pedido' => 'No se puede modificar un pedido que ya fue cobrado.',
+                ]);
+            }
+
             // Eliminar los detalles existentes
             $pedido->detalles()->delete();
 

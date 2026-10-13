@@ -45,6 +45,8 @@ Route::post('/Mesas/pagar', [MesasController::class, 'procesarPago'])->name('ped
 
 Route::post('/Mesas/Pedido', [MesasController::class, 'realizarPedido'])->name('cargar.store');
 
+Route::post('/Mesas/Pedido/{id_pedido}/modificar', [MesasController::class, 'modificarPedido'])->name('pedido.update');
+
 Route::get('/pedidos/crear/{mesa}', [PedidoController::class, 'create'])->name('pedidos.create');
 
 

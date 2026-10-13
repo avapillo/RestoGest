@@ -143,4 +143,55 @@ public function mostrarOrdenesPedidos(Request $request){
             ->with('status', 'Pedido registrado correctamente.');
     }
 
+    public function modificarPedido(Request $request, $id_pedido)
+    {
+        $pedido = Pedido::with('detalles')->findOrFail($id_pedido);
+
+        $datos = $request->validate([
+            'items' => ['required', 'array', 'min:1'],
+            'items.*.fk_id_categoria' => ['required', 'exists:categoria,id'],
+            'items.*.fk_id_producto' => ['required', 'exists:productos,id'],
+            'items.*.cantidad' => ['required', 'integer', 'min:1'],
+            'items.*.descripcion' => ['nullable', 'string', 'max:255'],
+        ]);
+
+        $productos = Producto::whereIn(
+            'id',
+            collect($datos['items'])->pluck('fk_id_producto')->unique()
+        )->get()->keyBy('id');
+
+        foreach ($datos['items'] as $indice => $item) {
+            $producto = $productos->get($item['fk_id_producto']);
+
+            if ((int) $producto->fk_id_categoria !== (int) $item['fk_id_categoria']) {
+                throw ValidationException::withMessages([
+                    "items.$indice.fk_id_producto" => 'El producto no pertenece a la categoría seleccionada.',
+                ]);
+            }
+        }
+
+        DB::transaction(function () use ($pedido, $datos, $productos) {
+            // Eliminar los detalles existentes
+            $pedido->detalles()->delete();
+
+            // Crear nuevos detalles
+            foreach ($datos['items'] as $item) {
+                $producto = $productos->get($item['fk_id_producto']);
+                $precioUnitario = (int) $producto->precio;
+
+                $pedido->detalles()->create([
+                    'fk_id_producto' => $producto->id,
+                    'cantidad' => $item['cantidad'],
+                    'precio_unitario' => $precioUnitario,
+                    'subtotal' => $precioUnitario * $item['cantidad'],
+                    'descripcion' => $item['descripcion'] ?? null,
+                ]);
+            }
+        });
+
+        return redirect()
+            ->route('mesas.index', ['fk_id_seccion' => $pedido->mesa->fk_id_seccion])
+            ->with('status', 'Pedido modificado correctamente.');
+    }
+
 }

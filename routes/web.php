@@ -46,3 +46,6 @@ Route::post('/Mesas/pagar', [MesasController::class, 'procesarPago'])->name('ped
 Route::post('/Mesas/Pedido', [MesasController::class, 'realizarPedido'])->name('cargar.store');
 
 Route::get('/pedidos/crear/{mesa}', [PedidoController::class, 'create'])->name('pedidos.create');
+
+
+// Ruta de ventas

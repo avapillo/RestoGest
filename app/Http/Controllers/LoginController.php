@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use App\Models\Login;
 
 class LoginController extends Controller
@@ -20,21 +21,29 @@ class LoginController extends Controller
         // 1. Validaciones
         $request->validate([
             'nombre'      => 'required|string',
-            'contrasenia' => 'required|numeric',
+            'gmail'       => 'nullable|required_without:contrasenia|email',
+            'contrasenia' => 'nullable|required_without:gmail',
         ], [
             'nombre.required'      => 'El usuario es obligatorio.',
-            'contrasenia.required' => 'La contraseña es obligatoria.',
-            'contrasenia.numeric'  => 'La contraseña debe ser numérica.'
+            'gmail.required_without' => 'Ingresa el correo electrónico o la contraseña.',
+            'gmail.email'          => 'Ingresa un correo electrónico válido.',
         ]);
 
-        // 2. Consulta a la BD (tabla usuario)
+        // 2. Consulta al usuario y valida el dato disponible en el esquema.
         $usuario = DB::table('usuarios')
             ->where('nombre', $request->nombre)
-            ->where('contrasenia', $request->contrasenia)
             ->first();
 
+        $credencialesValidas = false;
+
+        if ($usuario && $request->filled('gmail') && Schema::hasColumn('usuarios', 'gmail')) {
+            $credencialesValidas = hash_equals((string) $usuario->gmail, (string) $request->gmail);
+        } elseif ($usuario && $request->filled('contrasenia') && Schema::hasColumn('usuarios', 'contrasenia')) {
+            $credencialesValidas = hash_equals((string) $usuario->contrasenia, (string) $request->contrasenia);
+        }
+
         // 3. Si existe el usuario: Guardamos sesión y REDIRECCIONAMOS a la vista deseada
-        if ($usuario) {
+        if ($credencialesValidas) {
             session([
                 'usuario_id'  => $usuario->id,
                 'usuario_nom' => $usuario->nombre

@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductoController;
+use App\Http\Controllers\PedidoController;
 use App\Http\Controllers\MesasController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\LoginController;
@@ -40,16 +41,15 @@ Route::post('/Categoria/guardar', [ProductoController::class, 'registroCategoria
 
 
 // Rutas de mesas
-Route::get('/Mesas', [MesasController::class, 'mostrarMesas'])->name('intefaz_mesa');
-Route::post('/Mesas/pagar', [MesasController::class, 'procesarPago'])->name('pedidos.pagar');
-Route::put('/Mesas/actualizar', [MesasController::class, 'actualizarPedido'])->name('pedidos.actualizar');
+Route::get('/Mesas', [MesasController::class, 'mostrarMesas'])->name('mesas.index');
+
+Route::post('/Mesas/pagar', [MesasController::class, 'procesarPago'])->name('pedido.pagar');
+
+Route::post('/Mesas/Pedido', [MesasController::class, 'realizarPedido'])->name('cargar.store');
+
+Route::post('/Mesas/Pedido/{id_pedido}/modificar', [MesasController::class, 'modificarPedido'])->name('pedido.update');
+
+Route::get('/pedidos/crear/{mesa}', [PedidoController::class, 'create'])->name('pedidos.create');
 
 
-// Registro de nuevo usuario
-Route::get('/Usuario', [UsuariosController::class, 'mostrarUsuarios'])->name('usuario.index');
-Route::post('/Usuario/guardar', [UsuariosController::class, 'nuevoUsuario'])->name('usuario.store');
-Route::post('/Usuario/modificar', [UsuariosController::class, 'modificarUsuario'])->name('usuario.update');
-Route::delete('/Usuario/{id}/eliminar', [UsuariosController::class, 'eliminarUsuario'])->name('usuario.destroy');
-
-// Ruta pedidos para llevar
-Route::get('/Admin/Pedidos', [SeccionController::class, 'obtenerSeecion'])->name('muestra_pedido');
+// Ruta de ventas

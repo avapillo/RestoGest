@@ -23,8 +23,8 @@
         <a href="{{ route('home') }}" class="opcion-menu">Principal</a>
         <a href="{{ route('intefaz_mesa') }}" class="opcion-menu">Mesas</a>
         <a href="{{ route('producto.index') }}" class="opcion-menu">Producto</a>
-        <a href="{{ route('usuario.index') }}" class="opcion-menu">Control de Usuario</a>
-        <a href="{{ route('interfaz_paraLlevar') }}" class="opcion-menu activa">Para Llevar</a>
+        <a href="interfaz_ventas" class="opcion-menu activa">Ventas</a>
+
       </nav>
     </aside>
 

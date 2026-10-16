@@ -4,32 +4,25 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Seccion;
-use App\Models\Producto;
-use App\Models\Mesa;
 
 class SeccionController extends Controller
 {
-    public function mostrar(Request $request)
+    public function secciones(Request $request)
     {
-        // 1. Obtener el parámetro de la URL (si no viene nada, asigna 'todas')
-        $seccionSeleccionada = $request->query('id_seccion', 'todas');
 
-        // 2. Traer todas las secciones para renderizar los botones del filtro
+    $seccionSeleccionada = $request->query('seccion', 'todas');
+
         $secciones = Seccion::all();
 
-        // 3. Traer las mesas o productos filtrados según la sección
         if ($seccionSeleccionada === 'todas') {
-            $productos = Producto::with('seccion')->get();
+            $mesas = Mesas::with('seccion')->get();
         } else {
-            $productos = Producto::with('seccion')
+            $mesas = Mesas::with('seccion')
                 ->where('fk_id_seccion', $seccionSeleccionada)
                 ->get();
+
         }
 
-        // Obtener la lista de mesas para la pantalla
-        $mesas = Mesa::all();
-
-        // 4. Pasar las variables exactas a la vista 'interfaz_mesa'
-        return view('interfaz_mesa', compact('mesas', 'secciones', 'seccionSeleccionada', 'productos'));
+        return view('interfaz_mesa', compact('mesas', 'secciones', 'seccionSeleccionada'));
     }
 }

@@ -31,7 +31,7 @@ class ProductoController extends Controller
     public function registroProducto(Request $request)
     {
         $request->validate([
-            'nombre'          => 'required|string|max:255',
+            'nombre'          => 'required|string|max:60',
             'precio'          => 'required|integer|min:0',
             'fk_id_categoria' => 'required|exists:categoria,id',
             'imagen'          => 'nullable|image|max:20240',
@@ -56,7 +56,7 @@ class ProductoController extends Controller
     {
         $request->validate([
             'id'              => 'required|exists:productos,id',
-            'nombre'          => 'required|string|max:255',
+            'nombre'          => 'required|string|max:60',
             'precio'          => 'required|integer|min:0',
             'fk_id_categoria' => 'required|exists:categoria,id',
             'imagen'          => 'nullable|image|max:20240',

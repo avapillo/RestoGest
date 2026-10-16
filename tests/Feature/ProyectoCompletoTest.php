@@ -12,6 +12,7 @@ beforeEach(function () {
     Schema::create('usuarios', function (Blueprint $table) {
         $table->id();
         $table->string('nombre');
+        $table->string('gmail')->nullable();
         $table->string('contrasenia');
     });
 
@@ -48,6 +49,21 @@ test('un usuario válido puede iniciar sesión y ser redirigido al inicio', func
     $response->assertRedirect(route('home'));
     $this->assertTrue(session()->has('usuario_id'));
     $this->assertTrue(session()->has('usuario_nom'));
+    $this->assertSame('Milton', session('usuario_nom'));
+});
+
+test('un usuario puede iniciar sesión con su Gmail', function () {
+    DB::table('usuarios')->insert([
+        'nombre' => 'Milton',
+        'gmail' => 'milton@example.com',
+        'contrasenia' => '2580',
+    ]);
+
+    $this->post('/login', [
+        'nombre' => 'Milton',
+        'gmail' => 'milton@example.com',
+    ])->assertRedirect(route('home'));
+
     $this->assertSame('Milton', session('usuario_nom'));
 });
 

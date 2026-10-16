@@ -41,21 +41,6 @@ Route::post('/Categoria/guardar', [ProductoController::class, 'registroCategoria
 
 
 // Rutas de mesas
-<<<<<<< HEAD
-Route::get('/Mesas', [MesasController::class, 'mostrarMesas'])->name('intefaz_mesa');
-Route::post('/Mesas/pagar', [MesasController::class, 'procesarPago'])->name('pedidos.pagar');
-Route::put('/Mesas/actualizar', [MesasController::class, 'actualizarPedido'])->name('pedidos.actualizar');
-
-
-// Registro de nuevo usuario
-Route::get('/Usuario', [UsuariosController::class, 'mostrarUsuarios'])->name('usuario.index');
-Route::post('/Usuario/guardar', [UsuariosController::class, 'nuevoUsuario'])->name('usuario.store');
-Route::post('/Usuario/modificar', [UsuariosController::class, 'modificarUsuario'])->name('usuario.update');
-Route::delete('/Usuario/{id}/eliminar', [UsuariosController::class, 'eliminarUsuario'])->name('usuario.destroy');
-
-// Ruta pedidos para llevar
-Route::get('/Admin/Pedidos', [SeccionController::class, 'obtenerSeecion'])->name('muestra_pedido');
-=======
 Route::get('/Mesas', [MesasController::class, 'mostrarMesas'])->name('mesas.index');
 
 Route::post('/Mesas/pagar', [MesasController::class, 'procesarPago'])->name('pedido.pagar');
@@ -68,4 +53,3 @@ Route::get('/pedidos/crear/{mesa}', [PedidoController::class, 'create'])->name('
 
 
 // Ruta de ventas
->>>>>>> control/pedidos

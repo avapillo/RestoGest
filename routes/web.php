@@ -26,6 +26,8 @@ Route::get('/Inicio', function () {
     return view('home');
 })->name('home');
 
+Route::view('/mantenimiento', 'mantenimiento')->name('mantenimiento');
+
 // Producto para llevar
 Route::get('/ProductoLlevar', function (){
     return view('interfaz_paraLlevar');
@@ -42,6 +44,12 @@ Route::post('/Categoria/guardar', [ProductoController::class, 'registroCategoria
 
 // Rutas de mesas
 Route::get('/Mesas', [MesasController::class, 'mostrarMesas'])->name('mesas.index');
+
+// Rutas de control de usuarios
+Route::get('/Usuarios', [UsuariosController::class, 'mostrarUsuarios'])->name('usuario.index');
+Route::post('/Usuarios/guardar', [UsuariosController::class, 'nuevoUsuario'])->name('usuario.store');
+Route::post('/Usuarios/modificar', [UsuariosController::class, 'modificarUsuario'])->name('usuario.update');
+Route::delete('/Usuarios/{id}/eliminar', [UsuariosController::class, 'eliminarUsuario'])->name('usuario.destroy');
 
 Route::post('/Mesas/pagar', [MesasController::class, 'procesarPago'])->name('pedido.pagar');
 

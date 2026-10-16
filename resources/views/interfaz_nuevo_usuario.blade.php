@@ -16,10 +16,10 @@
       </div>
       <nav class="menu-navegacion">
         <a href="{{ route('home') }}" class="opcion-menu">Principal</a>
-        <a href="{{ route('intefaz_mesa') }}" class="opcion-menu">Mesas</a>
+        <a href="{{ route('mesas.index') }}" class="opcion-menu">Mesas</a>
         <a href="{{ route('producto.index') }}" class="opcion-menu">Producto</a>
         <a href="{{ route('usuario.index') }}" class="opcion-menu activa">Control de Usuario</a>
-        <a href="{{ route('interfaz_paraLlevar') }}" class="opcion-menu">Para Llevar</a>
+        <a href="{{ route('mantenimiento') }}" class="opcion-menu">Ventas</a>
       </nav>
     </aside>
 

@@ -21,10 +21,10 @@
       <!-- Opciones del menú -->
       <nav class="menu-navegacion">
         <a href="{{ route('home') }}" class="opcion-menu">Principal</a>
-        <a href="{{ route('intefaz_mesa') }}" class="opcion-menu">Mesas</a>
+        <a href="{{ route('mesas.index') }}" class="opcion-menu">Mesas</a>
         <a href="{{ route('producto.index') }}" class="opcion-menu">Producto</a>
-        <a href="interfaz_ventas" class="opcion-menu activa">Ventas</a>
-
+        <a href="{{ route('usuario.index') }}" class="opcion-menu">Control de Usuario</a>
+        <a href="{{ route('mantenimiento') }}" class="opcion-menu activa">Ventas</a>
       </nav>
     </aside>
 

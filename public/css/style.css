@@ -190,3 +190,253 @@ tr:nth-child(even) {
 tr:hover {
   background-color: #e2e8f0;
 }
+/* ============================================================
+   ENCABEZADO DE CAJA
+   ============================================================ */
+
+.encabezado-caja {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+
+/* TÍTULO */
+
+.encabezado-caja h2 {
+    margin: 0;
+}
+
+
+/* BOTONES */
+
+.controles-caja {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.btn-abrir-caja,
+.btn-cerrar-caja {
+    border: none;
+    padding: 12px 22px;
+    border-radius: 8px;
+    color: white;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-abrir-caja {
+    background: #16a34a;
+}
+
+.btn-cerrar-caja {
+    background: #dc2626;
+}
+
+
+/* TOTAL */
+
+.total-caja {
+    background: #eef5ff;
+    border-radius: 10px;
+    padding: 10px 18px;
+    min-width: 170px;
+    text-align: left;
+}
+
+.total-caja span {
+    display: block;
+    font-size: 13px;
+    color: #666;
+}
+
+.total-caja strong {
+    display: block;
+    margin-top: 3px;
+    font-size: 20px;
+    color: #174a75;
+}
+
+
+/* MENSAJE DE SINCRONIZACIÓN */
+
+.mensaje-estado {
+    margin-top: 0;
+}
+/* ============================================================
+   HISTORIAL DE CAJA - DISTRIBUCIÓN FINAL
+   ============================================================ */
+
+.barra-superior {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 600px;
+    align-items: start;
+    gap: 30px;
+    margin-bottom: 28px;
+}
+
+
+/* ============================================================
+   TÍTULO Y BOTONES - LADO IZQUIERDO
+   ============================================================ */
+
+.titulo-caja {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+
+.titulo-caja h2 {
+    margin: 0;
+    color: #0f172a;
+    font-size: 28px;
+    font-weight: 700;
+}
+
+
+/*
+   Los botones quedan debajo del título.
+*/
+
+.barra-superior > .titulo-caja::after {
+    content: "";
+}
+
+
+.titulo-caja + .panel-caja {
+    /* El panel se mantiene en la columna derecha */
+}
+
+
+/* ============================================================
+   PANEL DERECHO
+   ============================================================ */
+
+.panel-caja {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+
+/* ============================================================
+   BOTONES
+   ============================================================ */
+
+.controles-caja {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 12px;
+}
+
+
+.btn-abrir-caja,
+.btn-cerrar-caja {
+    border: none;
+    padding: 12px 28px;
+    border-radius: 9px;
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+
+.btn-abrir-caja {
+    background-color: #16a34a;
+}
+
+
+.btn-abrir-caja:hover {
+    background-color: #15803d;
+}
+
+
+.btn-cerrar-caja {
+    background-color: #dc2626;
+}
+
+
+.btn-cerrar-caja:hover {
+    background-color: #b91c1c;
+}
+
+
+/* ============================================================
+   TOTAL DEL DÍA - DERECHA
+   ============================================================ */
+
+.total-caja {
+    width: 100%;
+    box-sizing: border-box;
+    background-color: #eef6ff;
+    border-radius: 10px;
+    padding: 15px 20px;
+    text-align: left;
+    border: 1px solid #dbeafe;
+}
+
+
+.total-caja span {
+    display: block;
+    font-size: 14px;
+    color: #64748b;
+}
+
+
+.total-caja strong {
+    display: block;
+    margin-top: 3px;
+    font-size: 28px;
+    color: #174a75;
+}
+
+
+/* ============================================================
+   SINCRONIZACIÓN - DERECHA
+   ============================================================ */
+
+.panel-caja .mensaje-estado {
+    width: 100%;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 12px 16px;
+    border-radius: 10px;
+    background-color: #dcfce7;
+    color: #15803d;
+    font-weight: 600;
+    border: 1px solid #bbf7d0;
+}
+
+
+/* ============================================================
+   TABLA
+   ============================================================ */
+
+.seccion-tabla {
+    margin-top: 28px;
+}
+
+
+/* ============================================================
+   PANTALLAS MÁS CHICAS
+   ============================================================ */
+
+@media (max-width: 1000px) {
+
+    .barra-superior {
+        grid-template-columns: 1fr;
+    }
+
+    .panel-caja {
+        width: 100%;
+    }
+
+}

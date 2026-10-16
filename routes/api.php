@@ -2,11 +2,9 @@
 use App\Http\Controllers\ApiCocinaController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
 use App\Http\Controllers\HistorialCajaController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ApiProductoController;
-use App\Http\Controllers\ApiCocinaController;
 
 // Ruta que ya tenías
 Route::get('/historial-caja', [HistorialCajaController::class, 'index']);

@@ -16,7 +16,7 @@
     <!-- BARRA LATERAL (MENU) -->
     <aside class="barra-lateral">
       <div class="logo-sistema">
-        <h3>Sanwichería Gabriel</h3>
+        <img src="{{ asset('img/Sanwicheria Gabriel icon.png') }}" alt="Sanwichería Gabriel">
       </div>
 
       <!-- Opciones del menú -->
@@ -48,15 +48,14 @@
         id="btn-abrir-caja"
         class="btn-abrir-caja"
       >
-        🟢 Abrir Caja
+        Abrir Caja
       </button>
 
       <button
         id="btn-cerrar-caja"
         class="btn-cerrar-caja"
-        style="display: none;"
       >
-        🔴 Cerrar Caja
+        Cerrar Caja
       </button>
 
     </div>

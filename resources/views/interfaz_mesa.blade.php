@@ -12,7 +12,7 @@
 
     <aside class="barra-lateral">
       <div class="logo-sistema">
-        <h3>Sandwichería Gabriel</h3>
+        <img src="{{ asset('img/Sanwicheria Gabriel icon.png') }}" alt="Sandwichería Gabriel">
       </div>
       <nav class="menu-navegacion">
         <a href="{{ route('home') }}" class="opcion-menu">Principal</a>

@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="{{ asset('img/Sanwicheria Gabriel icon.png') }}">
   <title>Panel de Control - Cevichería Gabriel</title>
   <!-- Enlace al archivo de estilos CSS en la carpeta public/css -->
   <link rel="stylesheet" href="{{ asset('css/style_paraLlevar.css') }}">

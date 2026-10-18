@@ -1,3 +1,24 @@
+:root {
+  --bg-sidebar: #121a2b;
+  --bg-sidebar-hover: #1e293b;
+  --bg-main: #f8f6f0;
+  --bg-card: #ffffff;
+  --border-color: #e2e8f0;
+  --text-primary: #1e293b;
+  --text-muted: #64748b;
+  --text-light: #f8fafc;
+  --accent-orange: #d97706;
+  --accent-orange-hover: #b45309;
+  --accent-green: #10b981;
+  --accent-green-hover: #059669;
+  --bg-success-badge: #ecfdf5;
+  --text-success-badge: #065f46;
+  --radius-card: 16px;
+  --radius-btn: 10px;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
 /* ==========================================
    ESTILOS GENERALES Y RESETEO
    ========================================== */
@@ -5,8 +26,8 @@ body {
   font-family: 'Segoe UI', Arial, sans-serif;
   margin: 0;
   padding: 0;
-  background-color: #f1f5f9; /* Fondo gris claro para la aplicación */
-  color: #334155;
+  background-color: var(--bg-main);
+  color: var(--text-primary);
 }
 
 /* Contenedor que usa Flexbox para poner el menú a la izquierda y el contenido a la derecha */
@@ -20,45 +41,50 @@ body {
    ========================================== */
 .barra-lateral {
   width: 260px; /* Ancho fijo del menú lateral */
-  background-color: #0f172a; /* Azul muy oscuro/negro */
-  color: #ffffff;
+  background-color: var(--bg-sidebar);
+  color: var(--text-light);
   display: flex;
   flex-direction: column;
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 2px 0 12px rgba(18, 26, 43, 0.12);
 }
 
 .logo-sistema {
-  padding: 20px;
+  padding: 16px 12px;
   text-align: center;
-  border-bottom: 3px solid #1e293b; /* Línea divisoria sutil */
+  border-bottom: 1px solid var(--bg-sidebar-hover);
 }
 
-.logo-sistema h3 {
-  margin: 0;
-  font-size: 1.2rem;
-  color: #38bdf8; /* Azul celeste llamativo */
+.logo-sistema img {
+  display: block;
+  width: 100%;
+  max-width: 180px;
+  height: auto;
+  margin: 0 auto;
 }
 
 .menu-navegacion {
   display: flex;
   flex-direction: column;
   padding: 15px 0;
+  gap: 6px;
 }
 
 /* Estilo para cada botón/enlace del menú */
 .opcion-menu {
-  color: #93a9c8; /* Gris claro para texto no seleccionado */
+  color: #94a3b8;
   padding: 12px 20px;
   text-decoration: none; /* Quita el subrayado */
   display: block;
-  transition: all 0.3s ease; /* Suaviza el cambio de color */
+  border-left: 4px solid transparent;
+  border-radius: 0 var(--radius-btn) var(--radius-btn) 0;
+  transition: all 0.2s ease;
 }
 
 /* Cuando pasas el mouse por encima o la opción está activa */
 .opcion-menu:hover, .opcion-menu.activa {
-  background-color: #1e293b; /* Fondo un poco más claro */
-  color: #ffffff;            /* Texto blanco */
-  border-left: 4px solid #38bdf8; /* Barra celeste decorativa a la izquierda */
+  background-color: var(--bg-sidebar-hover);
+  color: var(--text-light);
+  border-left-color: var(--accent-orange);
 }
 
 /* ==========================================
@@ -68,7 +94,7 @@ body {
 /* Layout para el contenido al costado del menú */
 .contenido-principal {
   flex: 1;
-  padding: 30px;
+  padding: 32px;
   display: flex;
   flex-direction: column;
   gap: 25px;
@@ -78,33 +104,32 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 2px solid #e2e8f0;
+  border-bottom: 1px solid var(--border-color);
   padding-bottom: 15px;
 }
 
 .encabezado-seccion h2 {
   margin: 0;
   font-size: 1.8rem;
-  color: #0f172a;
+  color: var(--text-primary);
 }
 
 /* Botón Nuevo Producto */
 .btn-agregar {
-  background-color: #38bdf8;
-  color: #0f172a;
+  background-color: var(--accent-orange);
+  color: #ffffff;
   border: none;
   padding: 12px 24px;
   font-size: 1rem;
   font-weight: bold;
-  border-radius: 8px;
+  border-radius: var(--radius-btn);
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
 
 .btn-agregar:hover {
-  background-color: #0ea5e9;
+  background-color: var(--accent-orange-hover);
   color: #ffffff;
-  margin-left: 2px;
 }
 
 /* ==========================================
@@ -120,9 +145,10 @@ body {
 
 /* Estilos de las Tarjetas de Producto */
 .tarjeta-usuario {
-  background-color: #e2e8f0;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-md);
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -131,7 +157,7 @@ body {
 .foto-usuario {
   width: 100%;
   height: 180px;
-  background-color: #0f172a;
+  background-color: var(--bg-sidebar);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -141,7 +167,7 @@ body {
 }
 
 .info-usuario {
-  padding: 15px;
+  padding: 18px;
   display: flex;
   flex-direction: column;
   gap: 5px;
@@ -151,55 +177,73 @@ body {
 .info-usuario h4 {
   margin: 0;
   font-size: 1.2rem;
-  color: #677487;
+  color: var(--text-primary);
 }
 
 .info-usuario .rol-usuario {
-  font-size: 1.30rem;
-  color: #677487;
+  font-size: 0.9rem;
+  color: var(--text-muted);
   margin: 2px 0;
 }
 
-.info-usuario p.precio-usuario,
-.info-usuario p strong {
+.info-usuario p.precio-usuario {
   margin: 0;
-  font-size: 1.1rem;
-  color: #0ea5e9;
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  overflow-wrap: anywhere;
+}
+
+.info-usuario p.precio-usuario strong {
+  color: var(--text-primary);
   font-weight: bold;
 }
 
 /* Botones Modificar y Eliminar en la tarjeta */
 .acciones-tarjeta {
   display: flex;
-  border-top: 1px solid #e2e8f0;
+  gap: 8px;
+  padding: 12px 15px;
+  border-top: 1px solid var(--border-color);
   margin-top: auto;
+}
+
+.acciones-tarjeta form {
+  display: flex;
+  flex: 1;
 }
 
 .btn-accion {
   flex: 1;
-  padding: 12px;
-  border: none;
+  min-width: 0;
+  padding: 10px 8px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-btn);
   background: none;
+  color: #ffffff;
   cursor: pointer;
   font-weight: bold;
-  transition: background-color 0.2s;
+  transition: background-color 0.2s ease;
 }
 
 .btn-modificar {
-  color: #0ea5e9;
+  background-color: var(--accent-orange);
+  border-color: var(--accent-orange);
 }
 
 .btn-modificar:hover {
-  background-color: #f0f9ff;
+  background-color: var(--accent-orange-hover);
+  border-color: var(--accent-orange-hover);
 }
 
 .btn-eliminar {
-  color: #ef4444;
-  border-left: 1px solid #e2e8f0;
+  width: 100%;
+  background-color: #dc2626;
+  border-color: #dc2626;
 }
 
 .btn-eliminar:hover {
-  background-color: #fef2f2;
+  background-color: #b91c1c;
+  border-color: #b91c1c;
 }
 
 /* ==========================================
@@ -219,17 +263,18 @@ body {
 }
 
 .modal-content {
-  background-color: #ffffff;
+  background-color: var(--bg-card);
   padding: 30px;
-  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-card);
   width: 100%;
   max-width: 450px;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 20px 40px rgba(18, 26, 43, 0.18);
 }
 
 .modal-content h3 {
   margin-top: 0;
-  color: #0f172a;
+  color: var(--text-primary);
   margin-bottom: 20px;
 }
 
@@ -258,8 +303,8 @@ body {
 
 .grupo-campo input:focus,
 .select-categoria:focus {
-  border-color: #38bdf8;
-  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
+  border-color: var(--accent-orange);
+  box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.14);
 }
 
 .modal-botones {
@@ -285,34 +330,34 @@ body {
 }
 
 .btn-guardar {
-  background-color: #0f172a;
+  background-color: var(--accent-green);
   color: #ffffff;
   border: none;
   padding: 10px 20px;
-  border-radius: 6px;
+  border-radius: var(--radius-btn);
   cursor: pointer;
   font-weight: 600;
   transition: background-color 0.2s;
 }
 
 .btn-guardar:hover {
-  background-color: #1e293b;
+  background-color: var(--accent-green-hover);
 }
 
 /* ==========================================
    MENSAJES DE ESTADO Y VALIDACIONES
    ========================================== */
 .mensaje-exito {
-  background-color: #d1fae5;
-  color: #065f46;
+  background-color: var(--bg-success-badge);
+  color: var(--text-success-badge);
   padding: 12px;
-  border-radius: 6px;
+  border-radius: var(--radius-btn);
   border: 1px solid #a7f3d0;
   font-size: 0.95rem;
 }
 
 .error-texto {
-  color: #ef4444;
+  color: #b91c1c;
   font-size: 0.8rem;
   font-weight: 600;
 }
@@ -320,7 +365,7 @@ body {
 .sin-productos {
   grid-column: 1 / -1;
   text-align: center;
-  color: #64748b;
+  color: var(--text-muted);
   padding: 40px;
   font-size: 1rem;
 }
@@ -336,8 +381,8 @@ body {
 
 /* Botón Activo: idéntico al botón "+ Nuevo Producto" */
 .btn-filtro.activo {
-  background-color: #38bdf8;
-  color: #0f172a;
-  border: 1px solid #38bdf8;
-  box-shadow: 0 4px 6px -1px rgba(56, 189, 248, 0.3);
+  background-color: var(--accent-orange);
+  color: #ffffff;
+  border: 1px solid var(--accent-orange);
+  box-shadow: 0 4px 10px rgba(217, 119, 6, 0.2);
 }

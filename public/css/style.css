@@ -312,7 +312,7 @@ tr:hover {
 }
 
 .titulo-caja h2 {
-    margin: 0;
+    margin: 3px;
     color: #0f172a;
     font-size: 28px;
     font-weight: 700;

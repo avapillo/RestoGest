@@ -305,13 +305,11 @@ tr:hover {
 /* ============================================================
    TÍTULO Y BOTONES - LADO IZQUIERDO
    ============================================================ */
-
 .titulo-caja {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
 }
-
 
 .titulo-caja h2 {
     margin: 0;
@@ -328,28 +326,12 @@ tr:hover {
 .barra-superior > .titulo-caja::after {
     content: "";
 }
-
-
-.titulo-caja + .panel-caja {
-    /* El panel se mantiene en la columna derecha */
-}
-
-
-/* ============================================================
-   PANEL DERECHO
-   ============================================================ */
-
 .panel-caja {
     width: 100%;
     display: flex;
     flex-direction: column;
     gap: 12px;
 }
-
-
-/* ============================================================
-   BOTONES
-   ============================================================ */
 
 .controles-caja {
     display: flex;

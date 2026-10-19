@@ -210,6 +210,10 @@ body {
   object-fit: cover;
 }
 
+.foto-producto .sin-imagen {
+  font-size: 0.9rem;
+}
+
 .info-producto {
   padding: 15px;
   display: flex;

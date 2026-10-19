@@ -69,6 +69,14 @@
         @forelse ($productos as $producto)
           <div class="tarjeta-producto" id="producto-{{ $producto->id }}">
 
+            <div class="foto-producto">
+              @if ($producto->imagen)
+                <img src="{{ asset('storage/' . $producto->imagen) }}" alt="{{ $producto->nombre }}">
+              @else
+                <span class="sin-imagen">Sin imagen</span>
+              @endif
+            </div>
+
             <div class="info-producto">
               <h4>{{ $producto->nombre }}</h4>
               <p class="categoria-etiqueta">

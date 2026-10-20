@@ -36,6 +36,11 @@
             {{ session('status') }}
           </div>
         @endif
+        @if (session('error'))
+          <div class="mensaje-error">
+            {{ session('error') }}
+          </div>
+        @endif
 
         <div class="contenedor-botones-header">
           <button id="btnAbrirModalProducto" class="btn-agregar">➕ Nuevo Producto</button>
@@ -206,12 +211,13 @@
   <!-- ========================================== -->
   <!-- MODAL 3: REGISTRAR CATEGORÍA              -->
   <!-- ========================================== -->
-  <div id="modalCategoria" class="modal-overlay hidden">
-    <div class="modal-content">
-      <h3>Agregar Nueva Categoría</h3>
+  <div id="modalCategoria" class="modal-overlay {{ old('_categoria_form') === 'crear' ? '' : 'hidden' }}">
+    <div class="modal-content modal-categorias">
+      <h3>Gestionar Categorías</h3>
 
       <form id="formCategoria" action="{{ route('categoria.store') }}" method="POST">
         @csrf
+        <input type="hidden" name="_categoria_form" value="crear">
 
         <div class="grupo-campo">
           <label for="input_categoria">Nombre de la Categoría:</label>
@@ -223,6 +229,32 @@
         <div class="modal-botones">
           <button type="button" id="btnCerrarModalCategoria" class="btn-cancelar">Cancelar</button>
           <button type="submit" class="btn-guardar">Guardar Categoría</button>
+        </div>
+      </form>
+
+      <div class="separador-categorias"></div>
+      <h4 class="titulo-lista-categorias">Categorías registradas</h4>
+      <div id="listaCategorias" class="grilla-categorias" data-url="{{ route('categoria.index') }}">
+        <p class="cargando-categorias">Cargando categorías...</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="modalEditarCategoria" class="modal-overlay {{ old('_categoria_form') === 'modificar' ? '' : 'hidden' }}">
+    <div class="modal-content">
+      <h3>Modificar Categoría</h3>
+      <form action="{{ route('categoria.update') }}" method="POST">
+        @csrf
+        <input type="hidden" name="_categoria_form" value="modificar">
+        <input type="hidden" id="edit_categoria_id" name="id">
+        <div class="grupo-campo">
+          <label for="edit_categoria_nombre">Nombre de la Categoría:</label>
+          <input type="text" id="edit_categoria_nombre" name="categoria" required maxlength="50">
+          @error('categoria') <span class="error-texto">{{ $message }}</span> @enderror
+        </div>
+        <div class="modal-botones">
+          <button type="button" id="btnCerrarEditarCategoria" class="btn-cancelar">Cancelar</button>
+          <button type="submit" class="btn-guardar">Guardar Cambios</button>
         </div>
       </form>
     </div>

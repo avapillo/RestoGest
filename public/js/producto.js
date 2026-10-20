@@ -27,10 +27,32 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnCerrarModalCategoria = document.getElementById('btnCerrarModalCategoria'); // ✅ Agregado
   const modalCategoria = document.getElementById('modalCategoria');
   const formCategoria = document.getElementById('formCategoria');
+  const listaCategorias = document.getElementById('listaCategorias');
+  const modalEditarCategoria = document.getElementById('modalEditarCategoria');
+  const inputEditarCategoriaId = document.getElementById('edit_categoria_id');
+  const inputEditarCategoriaNombre = document.getElementById('edit_categoria_nombre');
+  const btnCerrarEditarCategoria = document.getElementById('btnCerrarEditarCategoria');
+
+  const cargarCategorias = async () => {
+    if (!listaCategorias) return;
+
+    listaCategorias.innerHTML = '<p class="cargando-categorias">Cargando categorías...</p>';
+
+    try {
+      const response = await fetch(listaCategorias.dataset.url, {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+      });
+      if (!response.ok) throw new Error('No se pudieron cargar las categorías.');
+      listaCategorias.innerHTML = await response.text();
+    } catch (error) {
+      listaCategorias.innerHTML = '<p class="sin-categorias">No se pudieron cargar las categorías.</p>';
+    }
+  };
 
   if (btnAbrirModalCategoria && modalCategoria) {
     btnAbrirModalCategoria.addEventListener('click', () => {
       modalCategoria.classList.remove('hidden');
+      cargarCategorias();
     });
   }
 
@@ -38,6 +60,23 @@ document.addEventListener('DOMContentLoaded', () => {
     btnCerrarModalCategoria.addEventListener('click', () => {
       modalCategoria.classList.add('hidden');
       if (formCategoria) formCategoria.reset();
+    });
+  }
+
+  if (listaCategorias) {
+    listaCategorias.addEventListener('click', event => {
+      const botonEditar = event.target.closest('.btn-modificar-categoria');
+      if (!botonEditar) return;
+
+      if (inputEditarCategoriaId) inputEditarCategoriaId.value = botonEditar.dataset.id;
+      if (inputEditarCategoriaNombre) inputEditarCategoriaNombre.value = botonEditar.dataset.nombre;
+      if (modalEditarCategoria) modalEditarCategoria.classList.remove('hidden');
+    });
+  }
+
+  if (btnCerrarEditarCategoria && modalEditarCategoria) {
+    btnCerrarEditarCategoria.addEventListener('click', () => {
+      modalEditarCategoria.classList.add('hidden');
     });
   }
 

@@ -39,7 +39,7 @@
 
         <div class="contenedor-botones-header">
           <button id="btnAbrirModalProducto" class="btn-agregar">➕ Nuevo Producto</button>
-          <!-- <button id="btnAbrirModalCategoria" class="btn-agregar">➕ Nueva Categoría</button> -->
+          <button id="btnAbrirModalCategoria" class="btn-agregar">➕ Nueva Categoría</button>
         </div>
 
       </header>

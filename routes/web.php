@@ -39,7 +39,7 @@ Route::get('/Producto', [ProductoController::class, 'mostrarProducto'])->name('p
 Route::post('/Producto/guardar', [ProductoController::class, 'registroProducto'])->name('producto.store');
 Route::post('/Producto/modificar', [ProductoController::class, 'modificarProducto'])->name('producto.update');
 Route::delete('/Producto/{id}/eliminar', [ProductoController::class, 'eliminarProducto'])->name('producto.destroy');
-Route::post('/Categoria/guardar', [ProductoController::class, 'registroCategoria'])->name('categoria.store');
+Route::post('/Categoria/guardar', [CategoriaController::class, 'registroCategoria'])->name('categoria.store');
 
 
 // Rutas de mesas

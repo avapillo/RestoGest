@@ -18,6 +18,6 @@ class CategoriaController extends Controller
             'categoria' => $request->categoria
         ]);
 
-        return redirect()->route('categoria.store')->with('status', '¡Categoria registrada con éxito!');
+        return redirect()->route('producto.index')->with('status', '¡Categoría registrada con éxito!');
     }
 }

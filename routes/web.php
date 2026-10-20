@@ -53,6 +53,10 @@ Route::get('/Usuarios', [UsuariosController::class, 'mostrarUsuarios'])->name('u
 Route::post('/Usuarios/guardar', [UsuariosController::class, 'nuevoUsuario'])->name('usuario.store');
 Route::post('/Usuarios/modificar', [UsuariosController::class, 'modificarUsuario'])->name('usuario.update');
 Route::delete('/Usuarios/{id}/eliminar', [UsuariosController::class, 'eliminarUsuario'])->name('usuario.destroy');
+Route::get('/Roles/listar', [UsuariosController::class, 'mostrarRoles'])->name('rol.index');
+Route::post('/Roles/guardar', [UsuariosController::class, 'nuevoRol'])->name('rol.store');
+Route::post('/Roles/modificar', [UsuariosController::class, 'modificarRol'])->name('rol.update');
+Route::delete('/Roles/{id}/eliminar', [UsuariosController::class, 'eliminarRol'])->name('rol.destroy');
 
 Route::post('/Mesas/pagar', [MesasController::class, 'procesarPago'])->name('pedido.pagar');
 

@@ -34,9 +34,15 @@
             {{ session('status') }}
           </div>
         @endif
+        @if (session('error'))
+          <div class="mensaje-error">
+            {{ session('error') }}
+          </div>
+        @endif
 
         <div class="contenedor-botones-header">
           <button id="btnAbrirNuevoUsuario" class="btn-agregar">➕ Nuevo Usuario</button>
+          <button id="btnAbrirModalRoles" class="btn-agregar">➕ Nuevo Rol</button>
         </div>
 
       </header>
@@ -159,6 +165,60 @@
 
       <div class="modal-botones">
         <button type="button" id="btnCerrarModalEditar" class="btn-cancelar">Cancelar</button>
+        <button type="submit" class="btn-guardar">Guardar Cambios</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ================== Modal de gestión de roles =================== -->
+<div id="modalRoles" class="modal-overlay {{ old('_rol_form') === 'crear' ? '' : 'hidden' }}">
+  <div class="modal-content modal-roles">
+    <h3>Gestionar Roles</h3>
+
+    <form id="formRol" action="{{ route('rol.store') }}" method="POST">
+      @csrf
+      <input type="hidden" name="_rol_form" value="crear">
+      <div class="grupo-campo">
+        <label for="rol_nombre">Nombre del rol:</label>
+        <input type="text" id="rol_nombre" name="rol_nombre" maxlength="50" required placeholder="Ej: Administrador" value="{{ old('rol_nombre') }}">
+        @if (old('_rol_form') === 'crear')
+          @error('rol_nombre') <span class="error-texto">{{ $message }}</span> @enderror
+          @error('_rol_form') <span class="error-texto">{{ $message }}</span> @enderror
+        @endif
+      </div>
+      <div class="modal-botones">
+        <button type="button" id="btnCerrarModalRoles" class="btn-cancelar">Cancelar</button>
+        <button type="submit" class="btn-guardar">Guardar Rol</button>
+      </div>
+    </form>
+
+    <div class="separador-roles"></div>
+    <h4 class="titulo-lista-roles">Roles registrados</h4>
+    <div id="listaRoles" class="grilla-roles" data-url="{{ route('rol.index') }}">
+      <p class="cargando-roles">Cargando roles...</p>
+    </div>
+  </div>
+</div>
+
+<div id="modalEditarRol" class="modal-overlay {{ old('_rol_form') === 'modificar' ? '' : 'hidden' }}">
+  <div class="modal-content">
+    <h3>Modificar Rol</h3>
+    <form action="{{ route('rol.update') }}" method="POST">
+      @csrf
+      <input type="hidden" name="_rol_form" value="modificar">
+      <input type="hidden" id="edit_rol_id" name="id_rol" value="{{ old('id_rol') }}">
+      <div class="grupo-campo">
+        <label for="edit_rol_nombre">Nombre del rol:</label>
+        <input type="text" id="edit_rol_nombre" name="rol_nombre" maxlength="50" required value="{{ old('_rol_form') === 'modificar' ? old('rol_nombre') : '' }}">
+        @if (old('_rol_form') === 'modificar')
+          @error('rol_nombre') <span class="error-texto">{{ $message }}</span> @enderror
+          @error('id_rol') <span class="error-texto">{{ $message }}</span> @enderror
+          @error('_rol_form') <span class="error-texto">{{ $message }}</span> @enderror
+        @endif
+      </div>
+      <div class="modal-botones">
+        <button type="button" id="btnCerrarEditarRol" class="btn-cancelar">Cancelar</button>
         <button type="submit" class="btn-guardar">Guardar Cambios</button>
       </div>
     </form>

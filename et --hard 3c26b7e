@@ -1,0 +1,106 @@
+[33mfec2c83[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m, [m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m)[m HEAD@{0}: checkout: moving from solucion to master
+[33m3c26b7e[m[33m ([m[1;32msolucion[m[33m, [m[1;32mfeat/agregar-seccion-mesas[m[33m)[m HEAD@{1}: checkout: moving from feat/agregar-seccion-mesas to solucion
+[33m3c26b7e[m[33m ([m[1;32msolucion[m[33m, [m[1;32mfeat/agregar-seccion-mesas[m[33m)[m HEAD@{2}: checkout: moving from master to feat/agregar-seccion-mesas
+[33mfec2c83[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m, [m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m)[m HEAD@{3}: checkout: moving from feat/agregar-seccion-mesas to master
+[33m3c26b7e[m[33m ([m[1;32msolucion[m[33m, [m[1;32mfeat/agregar-seccion-mesas[m[33m)[m HEAD@{4}: checkout: moving from master to feat/agregar-seccion-mesas
+[33mfec2c83[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m, [m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m)[m HEAD@{5}: pull origin master: Fast-forward
+[33m075afb4[m HEAD@{6}: checkout: moving from develop to master
+[33mbdd8c34[m[33m ([m[1;32mdevelop[m[33m)[m HEAD@{7}: commit (merge): j
+[33m3c26b7e[m[33m ([m[1;32msolucion[m[33m, [m[1;32mfeat/agregar-seccion-mesas[m[33m)[m HEAD@{8}: merge feat/agregar-seccion-mesas: Fast-forward
+[33m28eea10[m[33m ([m[1;31morigin/develop[m[33m, [m[1;32mfeat/agregar-categoria[m[33m)[m HEAD@{9}: checkout: moving from feat/agregar-seccion-mesas to develop
+[33m3c26b7e[m[33m ([m[1;32msolucion[m[33m, [m[1;32mfeat/agregar-seccion-mesas[m[33m)[m HEAD@{10}: commit: feat: implementacion de CRUD registro de nuevo rol
+[33m28eea10[m[33m ([m[1;31morigin/develop[m[33m, [m[1;32mfeat/agregar-categoria[m[33m)[m HEAD@{11}: checkout: moving from develop to feat/agregar-seccion-mesas
+[33m28eea10[m[33m ([m[1;31morigin/develop[m[33m, [m[1;32mfeat/agregar-categoria[m[33m)[m HEAD@{12}: checkout: moving from feat/agregar-seccion-mesas to develop
+[33m28eea10[m[33m ([m[1;31morigin/develop[m[33m, [m[1;32mfeat/agregar-categoria[m[33m)[m HEAD@{13}: checkout: moving from develop to feat/agregar-seccion-mesas
+[33m28eea10[m[33m ([m[1;31morigin/develop[m[33m, [m[1;32mfeat/agregar-categoria[m[33m)[m HEAD@{14}: merge feat/agregar-categoria: Fast-forward
+[33m075afb4[m HEAD@{15}: checkout: moving from master to develop
+[33m075afb4[m HEAD@{16}: checkout: moving from feat/agregar-categoria to master
+[33m28eea10[m[33m ([m[1;31morigin/develop[m[33m, [m[1;32mfeat/agregar-categoria[m[33m)[m HEAD@{17}: commit: feat: implementación CRUD en registro nueva categoria
+[33md32773c[m HEAD@{18}: reset: moving to HEAD
+[33md32773c[m HEAD@{19}: commit: feat: Integracion de boton de nueva categoria
+[33m075afb4[m HEAD@{20}: checkout: moving from master to feat/agregar-categoria
+[33m075afb4[m HEAD@{21}: checkout: moving from feat/agregar-categoria to master
+[33mbf5aa32[m HEAD@{22}: commit: j
+[33m075afb4[m HEAD@{23}: checkout: moving from master to feat/agregar-categoria
+[33m075afb4[m HEAD@{24}: checkout: moving from feat/agregar-categoria to master
+[33m075afb4[m HEAD@{25}: checkout: moving from master to feat/agregar-categoria
+[33m075afb4[m HEAD@{26}: checkout: moving from control/pedidos to master
+[33m11fc193[m HEAD@{27}: checkout: moving from master to control/pedidos
+[33m075afb4[m HEAD@{28}: merge condfig/DB: Fast-forward
+[33m4664446[m HEAD@{29}: checkout: moving from condfig/DB to master
+[33m075afb4[m HEAD@{30}: commit: fix: Solución a la muestra de img de un producto
+[33m5c95c59[m HEAD@{31}: commit: Implementación de tablas en migrations
+[33m4664446[m HEAD@{32}: checkout: moving from master to condfig/DB
+[33m4664446[m HEAD@{33}: merge configStyle: Fast-forward
+[33m512a431[m HEAD@{34}: checkout: moving from configStyle to master
+[33m4664446[m HEAD@{35}: commit: style: Cambio estilo al login
+[33m512a431[m HEAD@{36}: checkout: moving from master to configStyle
+[33m512a431[m HEAD@{37}: merge configStyle: Fast-forward
+[33m1a0c23b[m HEAD@{38}: checkout: moving from configStyle to master
+[33m512a431[m HEAD@{39}: commit: style: Modificacion de estilo contrl usuarios e implementacion de favicon en cada vists
+[33m10a6b68[m HEAD@{40}: commit: style: Cambio de estilo Control Producto
+[33m7866aef[m HEAD@{41}: commit: style: cambio de estilo en control de mesas
+[33m8e47dd6[m HEAD@{42}: commit: style: actualización de diseño interfaz principal
+[33m31b5122[m HEAD@{43}: commit: fix/Nuevo aspecto visual de Control Mesas
+[33m1a0c23b[m HEAD@{44}: checkout: moving from master to configStyle
+[33m1a0c23b[m HEAD@{45}: merge configMenu: Fast-forward
+[33m5a0b443[m HEAD@{46}: checkout: moving from configMenu to master
+[33m1a0c23b[m HEAD@{47}: commit: fix/cambio de direccion del boton regresar, de interfaz mantenimiento
+[33m5a0b443[m HEAD@{48}: checkout: moving from master to configMenu
+[33m5a0b443[m HEAD@{49}: merge configMenu: Fast-forward
+[33mb25ff69[m HEAD@{50}: checkout: moving from configMenu to master
+[33m5a0b443[m HEAD@{51}: commit: Solución de interfaz
+[33mb25ff69[m HEAD@{52}: checkout: moving from master to configMenu
+[33mb25ff69[m HEAD@{53}: reset: moving to origin/master
+[33mb25ff69[m HEAD@{54}: pull origin master: Fast-forward
+[33mbc2e26f[m HEAD@{55}: checkout: moving from control/usuario to master
+[33m455333f[m[33m ([m[1;31morigin/control/usuario[m[33m)[m HEAD@{56}: checkout: moving from master to control/usuario
+[33mbc2e26f[m HEAD@{57}: commit (merge): Solución de Conflicto
+[33m40452a8[m HEAD@{58}: commit: o
+[33me835593[m HEAD@{59}: pull: updating HEAD
+[33me835593[m HEAD@{60}: pull: updating HEAD
+[33me835593[m HEAD@{61}: commit (merge): Solución de Conflicto
+[33m9113d76[m HEAD@{62}: checkout: moving from control/pedidos to master
+[33m11fc193[m HEAD@{63}: checkout: moving from master to control/pedidos
+[33m9113d76[m HEAD@{64}: checkout: moving from control/pedidos to master
+[33m11fc193[m HEAD@{65}: commit: J
+[33m0e70776[m HEAD@{66}: checkout: moving from master to control/pedidos
+[33m9113d76[m HEAD@{67}: checkout: moving from control/pedidos to master
+[33m0e70776[m HEAD@{68}: checkout: moving from master to control/pedidos
+[33m9113d76[m HEAD@{69}: checkout: moving from control/pedidos to master
+[33m0e70776[m HEAD@{70}: commit: Registro de peidos
+[33ma9af7ee[m[33m ([m[1;31morigin/control/pedidos[m[33m)[m HEAD@{71}: commit: Cambio de muestra de interfaz
+[33m4ad4939[m HEAD@{72}: commit: fix/renombramiento y eliminación de rutas de del menu
+[33m10ef2a5[m HEAD@{73}: checkout: moving from master to control/pedidos
+[33m9113d76[m HEAD@{74}: commit: Problema con la activación de la función de modificar solucionado
+[33m68d70ed[m HEAD@{75}: commit (merge): Solución de conflicto
+[33m2ac5dc4[m HEAD@{76}: checkout: moving from control/usuario to master
+[33m455333f[m[33m ([m[1;31morigin/control/usuario[m[33m)[m HEAD@{77}: commit: Validación unica para el Gmail
+[33mf9f7df0[m HEAD@{78}: commit: Validación de usuario de una contraseña a la utilización de un Gmail
+[33m92dd51e[m HEAD@{79}: checkout: moving from control/pedidos to control/usuario
+[33m10ef2a5[m HEAD@{80}: commit: Registro de pedido por el sistema, fucniona falta implementar botónes para modificar y otro para reagistrar el pago
+[33m06587af[m HEAD@{81}: commit: Muestra de pedidos funcional, modificar grilla de registro de pedidos
+[33m8d28d0f[m HEAD@{82}: commit: Muestra de pedidos funcional, falta implementar botones de Moficacion y Registro de Pago
+[33m85ba98a[m HEAD@{83}: checkout: moving from master to control/pedidos
+[33m2ac5dc4[m HEAD@{84}: checkout: moving from control/pedidos to master
+[33m85ba98a[m HEAD@{85}: checkout: moving from control/usuario to control/pedidos
+[33m92dd51e[m HEAD@{86}: checkout: moving from control/pedidos to control/usuario
+[33m85ba98a[m HEAD@{87}: commit: Muestra pedios terminar
+[33m8e1b033[m HEAD@{88}: checkout: moving from control/usuario to control/pedidos
+[33m92dd51e[m HEAD@{89}: commit: Funcion de multiples roles
+[33m090f3e9[m HEAD@{90}: checkout: moving from master to control/usuario
+[33m2ac5dc4[m HEAD@{91}: checkout: moving from control/usuario to master
+[33m090f3e9[m HEAD@{92}: checkout: moving from master to control/usuario
+[33m2ac5dc4[m HEAD@{93}: checkout: moving from control/usuario to master
+[33m090f3e9[m HEAD@{94}: checkout: moving from control/pedidos to control/usuario
+[33m8e1b033[m HEAD@{95}: checkout: moving from master to control/pedidos
+[33m2ac5dc4[m HEAD@{96}: commit: Realización de Pruebas
+[33m090f3e9[m HEAD@{97}: checkout: moving from control/usuario to master
+[33m090f3e9[m HEAD@{98}: checkout: moving from master to control/usuario
+[33m090f3e9[m HEAD@{99}: commit: Cambios en la interfaz
+[33m8e8459e[m HEAD@{100}: checkout: moving from control/pedidos to master
+[33m8e1b033[m HEAD@{101}: commit: Guardado de avace
+[33mfe8b60d[m HEAD@{102}: checkout: moving from master to control/pedidos
+[33m8e8459e[m HEAD@{103}: checkout: moving from control/pedidos to master
+[33mfe8b60d[m HEAD@{104}: commit: Arreglo de la pantalla de inicio
+[33m7807799[m HEAD@{105}: commit: Muestra y filtro funcional de las mesas

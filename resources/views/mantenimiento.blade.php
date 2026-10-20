@@ -4,6 +4,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta name="theme-color" content="#f2f0e8">
+	<link rel="icon" type="image/png" href="{{ asset('img/Sanwicheria Gabriel icon.png') }}">
 	<title>Mantenimiento | RestoGest</title>
 	<style>
 		:root {
@@ -315,11 +316,6 @@
 		window.setInterval(updateTimer, 1000);
 
 		backButton.addEventListener('click', () => {
-			if (window.history.length > 1) {
-				window.history.back();
-				return;
-			}
-
 			window.location.href = backButton.dataset.home;
 		});
 

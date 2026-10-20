@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel de Control - Sandwichería Gabriel</title>
-    <link rel="stylesheet" href="{{ asset('css/style_producto.css') }}">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="{{ asset('img/Sanwicheria Gabriel icon.png') }}">
+  <title>Panel de Control - Sandwichería Gabriel</title>
+  <link rel="stylesheet" href="{{ asset('css/style_producto.css') }}">
 </head>
 <body>
 
@@ -12,15 +13,16 @@
 
     <!-- BARRA LATERAL -->
     <aside class="barra-lateral">
-        <div class="logo-sistema">
-            <h3>Sandwichería Gabriel</h3>
-        </div>
-
-        <nav class="menu-navegacion">
-            <a href="{{ route('home') }}" class="opcion-menu">Principal</a>
-            <a href="{{ route('mesas.index') }}" class="opcion-menu">Mesas</a>
-            <a href="{{ route('producto.index') }}" class="opcion-menu activa">Producto</a>
-        </nav>
+      <div class="logo-sistema">
+        <img src="{{ asset('img/Sanwicheria Gabriel icon.png') }}" alt="Sandwichería Gabriel">
+      </div>
+      <nav class="menu-navegacion">
+        <a href="{{ route('home') }}" class="opcion-menu">Principal</a>
+        <a href="{{ route('mesas.index') }}" class="opcion-menu">Mesas</a>
+        <a href="{{ route('producto.index') }}" class="opcion-menu activa">Producto</a>
+        <a href="{{ route('usuario.index') }}" class="opcion-menu">Control de Usuario</a>
+        <a href="{{ route('mantenimiento') }}" class="opcion-menu">Ventas</a>
+      </nav>
     </aside>
 
     <!-- CONTENIDO PRINCIPAL -->
@@ -82,18 +84,21 @@
 
                         @if (!empty($producto->imagen))
 
-                            <img
-                                src="{{ \Illuminate\Support\Str::startsWith($producto->imagen, ['http://', 'https://']) ? $producto->imagen : asset('storage/' . ltrim($producto->imagen, '/')) }}"
-                                alt="{{ $producto->nombre }}"
-                                loading="lazy"
-                                style="
-                                    display: block;
-                                    width: 100%;
-                                    height: 180px;
-                                    object-fit: cover;
-                                "
-                                onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
-                            >
+            <div class="foto-producto">
+              @if ($producto->imagen)
+                <img src="{{ asset('storage/' . $producto->imagen) }}" alt="{{ $producto->nombre }}">
+              @else
+                <span class="sin-imagen">Sin imagen</span>
+              @endif
+            </div>
+
+            <div class="info-producto">
+              <h4>{{ $producto->nombre }}</h4>
+              <p class="categoria-etiqueta">
+                Categoría: <strong>{{ $producto->categoria->categoria ?? 'Sin Categoría' }}</strong>
+              </p>
+              <p class="precio-producto"><strong>${{ $producto->precio }}</strong></p>
+            </div>
 
                             <div style="
                                 display: none;

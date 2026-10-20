@@ -1,14 +1,35 @@
+:root {
+  --bg-sidebar: #121a2b;
+  --bg-sidebar-hover: #1e293b;
+  --bg-main: #f8f6f0;
+  --bg-card: #ffffff;
+  --border-color: #e2e8f0;
+  --text-primary: #1e293b;
+  --text-muted: #64748b;
+  --text-light: #f8fafc;
+  --accent-orange: #d97706;
+  --accent-orange-hover: #b45309;
+  --accent-green: #10b981;
+  --accent-green-hover: #059669;
+  --bg-success-badge: #ecfdf5;
+  --text-success-badge: #065f46;
+  --radius-card: 16px;
+  --radius-btn: 10px;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
 /* ==========================================
    ESTILOS GENERALES Y BASE
    ========================================== */
 .tarjeta-mesa {
-  background-color: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  background-color: var(--bg-card);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-md);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--border-color);
 }
 
 .contenedor-consumo {
@@ -68,8 +89,8 @@ body {
   font-family: 'Segoe UI', Arial, sans-serif;
   margin: 0;
   padding: 0;
-  background-color: #f1f5f9; /* Fondo gris claro para la aplicación */
-  color: #334155;
+  background-color: var(--bg-main);
+  color: var(--text-primary);
 }
 
 /* Contenedor que usa Flexbox para poner el menú a la izquierda y el contenido a la derecha */
@@ -83,28 +104,30 @@ body {
    ========================================== */
 .barra-lateral {
   width: 260px; /* Ancho fijo del menú lateral */
-  background-color: #0f172a; /* Azul muy oscuro/negro */
-  color: #ffffff;
+  background-color: var(--bg-sidebar);
+  color: var(--text-light);
   display: flex;
   flex-direction: column;
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 2px 0 12px rgba(18, 26, 43, 0.12);
 }
 
 .logo-sistema {
-  padding: 20px;
+  padding: 16px 12px;
   text-align: center;
-  border-bottom: 3px solid #1e293b; /* Línea divisoria sutil */
+  border-bottom: 1px solid var(--bg-sidebar-hover);
 }
 
-.logo-sistema h3 {
-  margin: 0;
-  font-size: 1.2rem;
-  color: #38bdf8; /* Azul celeste llamativo */
+.logo-sistema img {
+  display: block;
+  width: 100%;
+  max-width: 180px;
+  height: auto;
+  margin: 0 auto;
 }
 
 .tabla-grilla-pedidos th {
-  background-color: #f8fafc;
-  color: #0f172a;
+  background-color: #f1f5f9;
+  color: var(--text-primary);
 }
 
 .input-cantidad-grilla {
@@ -124,18 +147,20 @@ body {
 
 /* Estilo para cada botón/enlace del menú */
 .opcion-menu {
-  color: #93a9c8; /* Gris claro para texto no seleccionado */
+  color: #94a3b8;
   padding: 12px 20px;
   text-decoration: none; /* Quita el subrayado */
   display: block;
-  transition: all 0.3s ease; /* Suaviza el cambio de color */
+  border-left: 4px solid transparent;
+  border-radius: 0 var(--radius-btn) var(--radius-btn) 0;
+  transition: all 0.2s ease;
 }
 
 /* Cuando pasas el mouse por encima o la opción está activa */
 .opcion-menu:hover, .opcion-menu.activa {
-  background-color: #1e293b; /* Fondo un poco más claro */
-  color: #ffffff;            /* Texto blanco */
-  border-left: 4px solid #38bdf8; /* Barra celeste decorativa a la izquierda */
+  background-color: var(--bg-sidebar-hover);
+  color: var(--text-light);
+  border-left-color: var(--accent-orange);
 }
 
 /* ==========================================
@@ -145,7 +170,7 @@ body {
 /* Layout para el contenido al costado del menú */
 .contenido-principal {
   flex: 1;
-  padding: 30px;
+  padding: 32px;
   display: flex;
   flex-direction: column;
   gap: 25px;
@@ -153,34 +178,51 @@ body {
 
 .encabezado-seccion {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
-  border-bottom: 2px solid #e2e8f0;
+  flex-wrap: wrap;
+  gap: 20px;
+  border-bottom: 1px solid var(--border-color);
   padding-bottom: 15px;
+}
+
+.contenedor-botones-header {
+  display: flex;
+  gap: 20px;
+}
+
+.encabezado-seccion .contenedor-botones-header:nth-last-child(2) {
+  margin-left: auto;
 }
 
 .encabezado-seccion h2 {
   margin: 0;
   font-size: 1.8rem;
-  color: #0f172a;
+  color: var(--text-primary);
 }
 
 /* Botón Nuevo Producto / Agregar */
 .btn-agregar {
-  background-color: #38bdf8;
-  color: #0f172a;
+  background-color: var(--accent-orange);
+  color: #ffffff;
   border: none;
   padding: 12px 24px;
   font-size: 1rem;
   font-weight: bold;
-  border-radius: 8px;
+  border-radius: var(--radius-btn);
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.2s ease, transform 0.1s ease;
 }
 
 .btn-agregar:hover {
-  background-color: #0ea5e9;
+  background-color: var(--accent-orange-hover);
   color: #ffffff;
+}
+
+.btn-agregar:active,
+.btn-filtro:active,
+.btn-accion:active {
+  transform: scale(0.98);
 }
 
 /* ==========================================
@@ -196,29 +238,29 @@ body {
 }
 
 .btn-filtro {
-  background-color: #ffffff;
-  color: #0f172a;
-  border: 1px solid #cbd5e1;
+  background-color: var(--bg-card);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
   padding: 10px 22px;
-  border-radius: 8px;
+  border-radius: var(--radius-btn);
   font-weight: bold;
   font-size: 0.95rem;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-sm);
 }
 
 .btn-filtro:hover {
-  background-color: #38bdf8;
-  color: #0f172a;
-  border-color: #38bdf8;
+  background-color: #fff7ed;
+  color: var(--accent-orange-hover);
+  border-color: var(--accent-orange);
 }
 
 .btn-filtro.activo {
-  background-color: #38bdf8;
-  color: #0f172a;
-  border: 1px solid #38bdf8;
-  box-shadow: 0 4px 6px -1px rgba(56, 189, 248, 0.3);
+  background-color: var(--accent-orange);
+  color: #ffffff;
+  border: 1px solid var(--accent-orange);
+  box-shadow: 0 4px 10px rgba(217, 119, 6, 0.2);
 }
 
 /* ==========================================
@@ -232,9 +274,10 @@ body {
 }
 
 .tarjeta-producto {
-  background-color: #e2e8f0;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-md);
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -268,12 +311,12 @@ body {
 .info-producto h4 {
   margin: 0;
   font-size: 1.2rem;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .categoria-etiqueta {
   font-size: 0.85rem;
-  color: #64748b;
+  color: var(--text-muted);
   margin: 2px 0;
 }
 
@@ -281,7 +324,7 @@ body {
 .info-producto p strong {
   margin: 0;
   font-size: 1.1rem;
-  color: #0ea5e9;
+  color: var(--accent-orange-hover);
   font-weight: bold;
 }
 
@@ -298,8 +341,8 @@ body {
 }
 
 .acciones-pedido .btn-accion {
-  border: 1px solid #cbd5e1;
-  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-btn);
   padding: 9px 12px;
 }
 
@@ -308,14 +351,18 @@ body {
   opacity: 0.5;
 }
 
-.btn-pedido-cobrar {
+.acciones-pedido .btn-pedido-cobrar,
+.acciones-pedido .btn-pedido-cobrar:hover,
+.acciones-pedido .btn-pedido-cobrar:focus,
+.acciones-pedido .btn-pedido-cobrar:active {
   flex: 1;
-  background-color: #15803d;
+  background-color: var(--accent-green);
   color: #ffffff;
-}
-
-.btn-pedido-cobrar:hover {
-  background-color: #166534;
+  border-color: var(--accent-green);
+  box-shadow: none;
+  filter: none;
+  transition: none;
+  transform: none;
 }
 
 .total-cobro {
@@ -334,11 +381,11 @@ body {
 }
 
 .btn-modificar {
-  color: #0ea5e9;
+  color: var(--accent-orange-hover);
 }
 
 .btn-modificar:hover {
-  background-color: #f0f9ff;
+  background-color: #fff7ed;
 }
 
 .btn-eliminar {
@@ -368,20 +415,21 @@ body {
 }
 
 .modal-content {
-  background-color: #ffffff;
+  background-color: var(--bg-card);
   padding: 24px;
-  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-card);
   width: 100%;
   max-width: 1050px;
   max-height: 90vh;
   overflow-y: auto;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 20px 40px rgba(18, 26, 43, 0.18);
   box-sizing: border-box;
 }
 
 .modal-content h3 {
   margin-top: 0;
-  color: #0f172a;
+  color: var(--text-primary);
   margin-bottom: 20px;
 }
 
@@ -481,8 +529,8 @@ body {
 .grupo-campo input:focus,
 .grupo-campo select:focus,
 .select-categoria:focus {
-  border-color: #38bdf8;
-  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
+  border-color: var(--accent-orange);
+  box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.14);
 }
 
 /* Botón de quitar fila (X / Basura) */
@@ -549,28 +597,28 @@ body {
 }
 
 .btn-guardar {
-  background-color: #0f172a;
+  background-color: var(--accent-green);
   color: #ffffff;
   border: none;
   padding: 10px 20px;
-  border-radius: 6px;
+  border-radius: var(--radius-btn);
   cursor: pointer;
   font-weight: 600;
   transition: background-color 0.2s;
 }
 
 .btn-guardar:hover {
-  background-color: #1e293b;
+  background-color: var(--accent-green-hover);
 }
 
 /* ==========================================
    MENSAJES DE ESTADO Y VALIDACIONES
    ========================================== */
 .mensaje-exito {
-  background-color: #d1fae5;
-  color: #065f46;
+  background-color: var(--bg-success-badge);
+  color: var(--text-success-badge);
   padding: 12px;
-  border-radius: 6px;
+  border-radius: var(--radius-btn);
   border: 1px solid #a7f3d0;
   font-size: 0.95rem;
 }

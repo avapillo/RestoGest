@@ -306,8 +306,6 @@ window.registrarNuevoPago = function(monto) {
 function actualizarInterfazCaja() {
 
     const {
-        btnAbrir,
-        btnCerrar,
         visorTotal
     } = obtenerElementosCaja();
 
@@ -318,30 +316,6 @@ function actualizarInterfazCaja() {
 
     }
 
-
-    if (cajaAbierta) {
-
-        // Caja abierta
-        if (btnAbrir) {
-            btnAbrir.style.display = 'none';
-        }
-
-        if (btnCerrar) {
-            btnCerrar.style.display = 'inline-block';
-        }
-
-    } else {
-
-        // Caja cerrada
-        if (btnAbrir) {
-            btnAbrir.style.display = 'inline-block';
-        }
-
-        if (btnCerrar) {
-            btnCerrar.style.display = 'none';
-        }
-
-    }
 
 }
 
@@ -409,10 +383,9 @@ function solicitarDatosServidor() {
 
             if (etiquetaEstado) {
 
-                etiquetaEstado.textContent =
-                    '✅ Datos sincronizados con éxito';
-
-                etiquetaEstado.style.color = '#16a34a';
+                etiquetaEstado.textContent = '';
+                etiquetaEstado.hidden = true;
+                etiquetaEstado.classList.remove('estado-error');
 
             }
 
@@ -425,10 +398,10 @@ function solicitarDatosServidor() {
 
             if (etiquetaEstado) {
 
+                etiquetaEstado.hidden = false;
                 etiquetaEstado.textContent =
-                    '❌ Error al conectar con el servidor';
-
-                etiquetaEstado.style.color = '#dc2626';
+                    'Error al conectar con el servidor';
+                etiquetaEstado.classList.add('estado-error');
 
             }
 

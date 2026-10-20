@@ -1,89 +1,113 @@
 /* --- ESTILOS GENERALES Y VARIABLES --- */
 :root {
-    --bg-main: #0f172a;        /* Azul oscuro de fondo */
-    --card-bg: #1e293b;       /* Azul contenedor */
-    --accent-blue: #0284c7;   /* Azul primario (botones) */
-    --accent-hover: #0369a1;  /* Azul oscuro hover */
-    --text-primary: #f8fafc;  /* Texto blanco/claro */
-    --text-secondary: #94a3b8;/* Texto gris */
-    --border-color: #334155;  /* Líneas y bordes */
-    --input-bg: #0f172a;      /* Fondo inputs */
-    --danger-color: #ef4444;  /* Color errores */
+    --bg-main: #121a2b;
+    --card-bg: #f8f6f0;
+    --accent-blue: #1a6096;
+    --accent-hover: #144b76;
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --border-color: #cbd5e1;
+    --input-bg: #ffffff;
+    --danger-color: #b91c1c;
 }
 
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+html,
+body {
+    width: 100%;
+    min-height: 100%;
 }
 
 body.login-body {
     background-color: var(--bg-main);
     min-height: 100vh;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     padding: 20px;
+}
+
+body.login-body::before {
+    content: "";
+    display: block;
+    flex: 0 0 auto;
+    width: min(180px, 60vw);
+    aspect-ratio: 1;
+    margin-bottom: 24px;
+    background: url("../img/Sanwicheria%20Gabriel%20icon.png") center / contain no-repeat;
 }
 
 /* --- TARJETA DE LOGIN --- */
 .login-card {
     background-color: var(--card-bg);
     width: 100%;
-    max-width: 420px;
-    padding: 40px 30px;
+    max-width: 380px;
+    padding: 32px 28px;
     border-radius: 16px;
-    border: 1px solid var(--border-color);
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(217, 119, 6, 0.3);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-sizing: border-box;
 }
 
 .login-header {
     text-align: center;
-    margin-bottom: 30px;
+    width: 100%;
+    margin-bottom: 24px;
 }
 
 .brand-logo {
-    width: 60px;
-    height: 60px;
-    background-color: var(--accent-blue);
-    color: #ffffff;
-    border-radius: 12px;
+    width: 44px;
+    height: 44px;
+    background-color: #f3e8d3;
+    color: #d97706;
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 26px;
-    margin: 0 auto 15px auto;
+    font-size: 1.2rem;
+    margin: 0 auto 12px;
 }
 
 .login-header h2 {
     color: var(--text-primary);
-    font-size: 24px;
+    font-size: 1.25rem;
     font-weight: 700;
-    margin-bottom: 6px;
+    margin-bottom: 0;
 }
 
 .login-header p {
     color: var(--text-secondary);
-    font-size: 14px;
+    font-size: 0.8rem;
+    margin: 4px 0 0;
 }
 
 /* --- FORMULARIO Y INPUTS --- */
 .login-form {
+    width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 16px;
 }
 
 .form-group {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
 }
 
 .form-group label {
-    color: var(--text-primary);
-    font-size: 13px;
+    color: #334155;
+    font-size: 0.8rem;
     font-weight: 600;
 }
 
@@ -95,30 +119,31 @@ body.login-body {
 
 .input-icon {
     position: absolute;
-    left: 14px;
+    left: 12px;
     color: var(--text-secondary);
-    font-size: 16px;
+    font-size: 0.85rem;
+    pointer-events: none;
 }
 
 .input-container input {
     width: 100%;
-    padding: 12px 14px 12px 42px;
+    padding: 10px 12px 10px 36px;
     background-color: var(--input-bg);
     border: 1px solid var(--border-color);
     border-radius: 8px;
     color: var(--text-primary);
-    font-size: 14px;
+    font-size: 0.85rem;
     outline: none;
-    transition: all 0.2s ease;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .input-container input:focus {
-    border-color: var(--accent-blue);
-    box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.2);
+    border-color: #d97706;
+    box-shadow: 0 0 0 2px rgba(217, 119, 6, 0.2);
 }
 
 .input-container input::placeholder {
-    color: #64748b;
+    color: #94a3b8;
 }
 
 /* --- OPCIONES SECUNDARIAS --- */
@@ -138,7 +163,7 @@ body.login-body {
 }
 
 .remember-me input[type="checkbox"] {
-    accent-color: var(--accent-blue);
+    accent-color: #d97706;
     width: 16px;
     height: 16px;
 }
@@ -146,12 +171,13 @@ body.login-body {
 /* --- BOTÓN DE INGRESO --- */
 .btn-login {
     width: 100%;
-    padding: 12px;
+    margin-top: 8px;
+    padding: 11px;
     background-color: var(--accent-blue);
     color: #ffffff;
     border: none;
     border-radius: 8px;
-    font-size: 15px;
+    font-size: 0.9rem;
     font-weight: 600;
     cursor: pointer;
     display: flex;
@@ -159,7 +185,6 @@ body.login-body {
     justify-content: center;
     gap: 8px;
     transition: background-color 0.2s ease, transform 0.1s ease;
-    margin-top: 10px;
 }
 
 .btn-login:hover {

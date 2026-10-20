@@ -17,7 +17,11 @@ return new class extends Migration
 
             $table->dateTime('momento_apertura')->nullable();
 
-            $table->unsignedBigInteger('id_usuario')->nullable();
+            $table->integer('id_usuario')->nullable();
+
+            $table->foreign('id_usuario', 'fk_caja_estado_usuario')
+                ->references('id')
+                ->on('usuarios');
 
             $table->timestamps();
         });

@@ -1,3 +1,24 @@
+:root {
+  --bg-sidebar: #121a2b;
+  --bg-sidebar-hover: #1e293b;
+  --bg-main: #f8f6f0;
+  --bg-card: #ffffff;
+  --border-color: #e2e8f0;
+  --text-primary: #1e293b;
+  --text-muted: #64748b;
+  --text-light: #f8fafc;
+  --accent-orange: #d97706;
+  --accent-orange-hover: #b45309;
+  --accent-green: #10b981;
+  --accent-green-hover: #059669;
+  --bg-success-badge: #ecfdf5;
+  --text-success-badge: #065f46;
+  --radius-card: 16px;
+  --radius-btn: 10px;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
 /* ==========================================
    ESTILOS GENERALES Y RESETEO
    ========================================== */
@@ -5,8 +26,8 @@ body {
   font-family: 'Segoe UI', Arial, sans-serif;
   margin: 0;
   padding: 0;
-  background-color: #f1f5f9; /* Fondo gris claro para la aplicación */
-  color: #000000; /* Color del texto de la tabla */
+  background-color: var(--bg-main);
+  color: var(--text-primary);
 }
 
 /* Contenedor que usa Flexbox para poner el menú a la izquierda y el contenido a la derecha */
@@ -20,23 +41,25 @@ body {
    ========================================== */
 .barra-lateral {
   width: 260px; /* Ancho fijo del menú lateral */
-  background-color: #0f172a; /* Azul muy oscuro/negro */
-  color: #ffffff;
+  background-color: var(--bg-sidebar);
+  color: var(--text-light);
   display: flex;
   flex-direction: column;
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 2px 0 12px rgba(18, 26, 43, 0.12);
 }
 
 .logo-sistema {
   padding: 20px;
   text-align: center;
-  border-bottom: 3px solid #1e293b; /* Línea divisoria sutil */
+  border-bottom: 1px solid var(--bg-sidebar-hover);
 }
 
-.logo-sistema h3 {
-  margin: 0;
-  font-size: 1.2rem;
-  color: #38bdf8; /* Azul celeste llamativo */
+.logo-sistema img {
+  display: block;
+  width: 100%;
+  max-width: 180px;
+  height: auto;
+  margin: 0 auto;
 }
 
 .menu-navegacion {
@@ -47,7 +70,7 @@ body {
 
 /* Estilo para cada botón/enlace del menú */
 .opcion-menu {
-  color: #94a3b8; /* Gris claro para texto no seleccionado */
+  color: #94a3b8;
   padding: 12px 20px;
   text-decoration: none; /* Quita el subrayado */
   display: block;
@@ -56,9 +79,9 @@ body {
 
 /* Cuando pasas el mouse por encima o la opción está activa */
 .opcion-menu:hover, .opcion-menu.activa {
-  background-color: #1e293b; /* Fondo un poco más claro */
-  color: #ffffff;            /* Texto blanco */
-  border-left: 4px solid #38bdf8; /* Barra celeste decorativa a la izquierda */
+  background-color: var(--bg-sidebar-hover);
+  color: var(--text-light);
+  border-left: 4px solid var(--accent-orange);
 }
 
 /* ==========================================
@@ -282,16 +305,14 @@ tr:hover {
 /* ============================================================
    TÍTULO Y BOTONES - LADO IZQUIERDO
    ============================================================ */
-
 .titulo-caja {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
 }
 
-
 .titulo-caja h2 {
-    margin: 0;
+    margin: 3px;
     color: #0f172a;
     font-size: 28px;
     font-weight: 700;
@@ -305,17 +326,6 @@ tr:hover {
 .barra-superior > .titulo-caja::after {
     content: "";
 }
-
-
-.titulo-caja + .panel-caja {
-    /* El panel se mantiene en la columna derecha */
-}
-
-
-/* ============================================================
-   PANEL DERECHO
-   ============================================================ */
-
 .panel-caja {
     width: 100%;
     display: flex;
@@ -323,16 +333,11 @@ tr:hover {
     gap: 12px;
 }
 
-
-/* ============================================================
-   BOTONES
-   ============================================================ */
-
 .controles-caja {
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    gap: 12px;
+  gap: 20px;
 }
 
 
@@ -340,27 +345,27 @@ tr:hover {
 .btn-cerrar-caja {
     border: none;
     padding: 12px 28px;
-    border-radius: 9px;
+    border-radius: var(--radius-btn);
     color: #ffffff;
     font-size: 15px;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: background-color 0.2s ease;
 }
 
 
 .btn-abrir-caja {
-    background-color: #16a34a;
+  background-color: var(--accent-green);
 }
 
 
 .btn-abrir-caja:hover {
-    background-color: #15803d;
+  background-color: var(--accent-green-hover);
 }
 
 
 .btn-cerrar-caja {
-    background-color: #dc2626;
+  background-color: #dc2626;
 }
 
 
@@ -376,11 +381,12 @@ tr:hover {
 .total-caja {
     width: 100%;
     box-sizing: border-box;
-    background-color: #eef6ff;
-    border-radius: 10px;
+  background-color: var(--bg-card);
+  border-radius: var(--radius-card);
     padding: 15px 20px;
     text-align: left;
-    border: 1px solid #dbeafe;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
 }
 
 
@@ -395,7 +401,11 @@ tr:hover {
     display: block;
     margin-top: 3px;
     font-size: 28px;
-    color: #174a75;
+    color: var(--text-primary);
+}
+
+.total-caja strong #total-pagos {
+  display: inline;
 }
 
 
@@ -408,11 +418,22 @@ tr:hover {
     box-sizing: border-box;
     margin: 0;
     padding: 12px 16px;
-    border-radius: 10px;
-    background-color: #dcfce7;
-    color: #15803d;
+    border-radius: var(--radius-btn);
+    background-color: var(--bg-card);
+    color: var(--text-muted);
     font-weight: 600;
-    border: 1px solid #bbf7d0;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .panel-caja .mensaje-estado.estado-error {
+    background-color: #fef2f2;
+    color: #b91c1c;
+    border-color: #fecaca;
+  }
+
+  .mensaje-estado[hidden] {
+    display: none;
 }
 
 
@@ -422,6 +443,22 @@ tr:hover {
 
 .seccion-tabla {
     margin-top: 28px;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-md);
+}
+
+th {
+  background-color: var(--bg-sidebar-hover);
+}
+
+tr:nth-child(even) {
+  background-color: #fafafa;
+}
+
+tr:hover {
+  background-color: #f1f5f9;
 }
 
 

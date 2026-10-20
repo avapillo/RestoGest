@@ -29,6 +29,64 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ==========================================
+  // MODAL Y LISTADO DE ROLES
+  // ==========================================
+  const btnAbrirModalRoles = document.getElementById('btnAbrirModalRoles');
+  const btnCerrarModalRoles = document.getElementById('btnCerrarModalRoles');
+  const modalRoles = document.getElementById('modalRoles');
+  const listaRoles = document.getElementById('listaRoles');
+  const modalEditarRol = document.getElementById('modalEditarRol');
+  const btnCerrarEditarRol = document.getElementById('btnCerrarEditarRol');
+  const inputEditarRolId = document.getElementById('edit_rol_id');
+  const inputEditarRolNombre = document.getElementById('edit_rol_nombre');
+
+  const cargarRoles = async () => {
+    if (!listaRoles) return;
+
+    listaRoles.innerHTML = '<p class="cargando-roles">Cargando roles...</p>';
+
+    try {
+      const response = await fetch(listaRoles.dataset.url, {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+      });
+      if (!response.ok) throw new Error('No se pudieron cargar los roles.');
+      listaRoles.innerHTML = await response.text();
+    } catch (error) {
+      listaRoles.innerHTML = '<p class="sin-roles">No se pudieron cargar los roles.</p>';
+    }
+  };
+
+  if (btnAbrirModalRoles && modalRoles) {
+    btnAbrirModalRoles.addEventListener('click', () => {
+      modalRoles.classList.remove('hidden');
+      cargarRoles();
+    });
+  }
+
+  if (btnCerrarModalRoles && modalRoles) {
+    btnCerrarModalRoles.addEventListener('click', () => {
+      modalRoles.classList.add('hidden');
+    });
+  }
+
+  if (listaRoles) {
+    listaRoles.addEventListener('click', event => {
+      const botonEditarRol = event.target.closest('.btn-modificar-rol');
+      if (!botonEditarRol) return;
+
+      if (inputEditarRolId) inputEditarRolId.value = botonEditarRol.dataset.id;
+      if (inputEditarRolNombre) inputEditarRolNombre.value = botonEditarRol.dataset.nombre;
+      if (modalEditarRol) modalEditarRol.classList.remove('hidden');
+    });
+  }
+
+  if (btnCerrarEditarRol && modalEditarRol) {
+    btnCerrarEditarRol.addEventListener('click', () => {
+      modalEditarRol.classList.add('hidden');
+    });
+  }
+
+  // ==========================================
   // FUNCIÓN AUXILIAR PARA CREAR Y ELIMINAR SELECTS
   // ==========================================
   function crearComboRol(valorSeleccionado = '') {

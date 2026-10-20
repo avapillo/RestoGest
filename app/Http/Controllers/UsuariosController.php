@@ -18,6 +18,62 @@ class UsuariosController extends Controller
         return view('interfaz_nuevo_usuario', compact('usuarios',"roles"));
     }
 
+    public function mostrarRoles()
+    {
+        $roles = RolUsuario::orderBy('rol_nombre')->get();
+
+        return view('partials.roles', compact('roles'));
+    }
+
+    public function nuevoRol(Request $request)
+    {
+        $request->validate([
+            'rol_nombre' => 'required|string|max:50|unique:rol_usuario,rol_nombre',
+            '_rol_form' => 'required|in:crear',
+        ]);
+
+        DB::transaction(function () use ($request) {
+            $idRol = (int) (DB::table('rol_usuario')->lockForUpdate()->max('id_rol') ?? 0) + 1;
+            $rol = new RolUsuario();
+            $rol->id_rol = $idRol;
+            $rol->rol_nombre = $request->rol_nombre;
+            $rol->save();
+        });
+
+        return redirect()->route('usuario.index')->with('status', '¡Rol registrado con éxito!');
+    }
+
+    public function modificarRol(Request $request)
+    {
+        $request->validate([
+            'id_rol' => 'required|exists:rol_usuario,id_rol',
+            'rol_nombre' => 'required|string|max:50|unique:rol_usuario,rol_nombre,' . $request->id_rol . ',id_rol',
+            '_rol_form' => 'required|in:modificar',
+        ]);
+
+        $rol = RolUsuario::findOrFail($request->id_rol);
+        $rol->rol_nombre = $request->rol_nombre;
+        $rol->save();
+
+        return redirect()->route('usuario.index')->with('status', '¡Rol modificado con éxito!');
+    }
+
+    public function eliminarRol($id)
+    {
+        $rol = RolUsuario::findOrFail($id);
+
+        $asignadoEnPivote = DB::table('usuario_roles')->where('fk_id_rol', $rol->id_rol)->exists();
+        $asignadoEnUsuario = DB::table('usuarios')->where('id_rol_usuario', $rol->id_rol)->exists();
+
+        if ($asignadoEnPivote || $asignadoEnUsuario) {
+            return redirect()->route('usuario.index')->with('error', 'No se puede eliminar un rol asignado a usuarios.');
+        }
+
+        $rol->delete();
+
+        return redirect()->route('usuario.index')->with('status', '¡Rol eliminado con éxito!');
+    }
+
    public function nuevoUsuario(Request $request)
 {
     $request->validate([

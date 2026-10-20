@@ -14,61 +14,69 @@ class ApiCocinaController extends Controller
      * Las bebidas siguen guardadas en la base de datos,
      * pero no se incluyen en la respuesta de este endpoint.
      */
-    public function pedidos(): JsonResponse
-    {
-        $pedidos = Pedido::with([
-            'mesa',
-            'detalles.producto.categoria',
-            'detalles.combo',
-        ])
-        ->orderBy('hora_pedido', 'desc')
-        ->get()
-        ->map(function ($pedido) {
-            $detalles = $pedido->detalles
-                ->filter(function ($detalle) {
-                    // Excluir bebidas solamente de la respuesta de cocina.
-                    if ($detalle->producto) {
-                        return (int) $detalle->producto->fk_id_categoria !== 4;
-                    }
+    
+public function pedidos(): JsonResponse
+{
+    $pedidos = Pedido::with([
+        'mesa',
+        'detalles.producto.categoria',
+        'detalles.combo',
+    ])
+    ->orderBy('hora_pedido', 'desc')
+    ->get()
+    ->map(function ($pedido) {
+        $detalles = $pedido->detalles
+            ->filter(function ($detalle) {
+                // Excluir bebidas de la respuesta de cocina.
+                if ($detalle->producto) {
+                    return (int) $detalle->producto->fk_id_categoria !== 4;
+                }
 
-                    // Conservar los combos.
-                    return true;
-                })
-                ->values()
-                ->map(function ($detalle) {
-                    $nombre = $detalle->producto->nombre
-                        ?? $detalle->combo->nombre
-                        ?? ('Combo #' . $detalle->fk_id_combo);
+                // Conservar los combos.
+                return true;
+            })
+            ->values()
+            ->map(function ($detalle) {
+                $producto = $detalle->producto;
+                $combo = $detalle->combo;
 
-                    return [
-                        'id_detalle' => $detalle->id_detalle,
-                        'fk_id_producto' => $detalle->fk_id_producto,
-                        'fk_id_combo' => $detalle->fk_id_combo,
-                        'nombre' => $nombre,
-                        'producto' => $nombre,
-                        'cantidad' => $detalle->cantidad,
-                        'subtotal' => $detalle->subtotal,
-                        'descripcion' => $detalle->descripcion,
-                    ];
-                });
+                $nombre = $producto->nombre
+                    ?? $combo->nombre
+                    ?? ('Combo #' . $detalle->fk_id_combo);
 
-            return [
-                'id_pedido' => $pedido->id_pedido,
-                'mesa' => $pedido->fk_id_mesa,
-                'fecha_pedido' => $pedido->fecha_pedido,
-                'monto_total' => $pedido->monto_total,
-                'es_para_llevar' => $pedido->es_para_llevar,
-                'detalles' => $detalles,
-            ];
-        })
-        // No mostrar pedidos que solo tengan bebidas en cocina.
-        ->filter(function ($pedido) {
-            return $pedido['detalles']->isNotEmpty();
-        })
-        ->values();
+                $imagen = $producto->imagen ?? null;
 
-        return response()->json($pedidos);
-        }
+                return [
+                    'id_detalle' => $detalle->id_detalle,
+                    'fk_id_producto' => $detalle->fk_id_producto,
+                    'fk_id_combo' => $detalle->fk_id_combo,
+                    'nombre' => $nombre,
+                    'producto' => $nombre,
+                    'imagen' => $imagen,
+                    'cantidad' => $detalle->cantidad,
+                    'subtotal' => $detalle->subtotal,
+                    'descripcion' => $detalle->descripcion,
+                ];
+            });
+
+        return [
+            'id_pedido' => $pedido->id_pedido,
+            'mesa' => $pedido->fk_id_mesa,
+            'fecha_pedido' => $pedido->hora_pedido,
+            'monto_total' => $pedido->monto_total,
+            'es_para_llevar' => $pedido->es_para_llevar,
+            'detalles' => $detalles,
+        ];
+    })
+    // Ocultar pedidos que solo tengan bebidas.
+    ->filter(function ($pedido) {
+        return $pedido['detalles']->isNotEmpty();
+    })
+    ->values();
+
+    return response()->json($pedidos);
+}
+
         
 public function guardar(Request $request)
 {

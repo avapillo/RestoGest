@@ -56,3 +56,14 @@ Route::get('/v1/productos/categoria/{id}', [ApiProductoController::class, 'obten
 // Pedidos para la aplicación de cocina
 Route::get('/cocina/pedidos', [ApiCocinaController::class, 'pedidos']);
 Route::post('/cocina/pedidos', [ApiCocinaController::class, 'guardar']);
+
+
+Route::get('/imagen-producto/{path}', function ($path) {
+    $ruta = storage_path('app/public/' . $path);
+
+    if (!is_file($ruta)) {
+        abort(404);
+    }
+
+    return response()->file($ruta);
+})->where('path', '.*');

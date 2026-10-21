@@ -43,6 +43,24 @@ public function mostrarMesas(Request $request)
     return view('interfaz_mesa', compact('mesas', 'secciones', 'seccionSeleccionada', 'categorias', 'productos', 'combos', 'tiposPago'));
 }
 
+public function registrarMesa(Request $request)
+{
+    $datos = $request->validate([
+        'numero_mesa' => ['required', 'integer', 'min:1'],
+        'fk_id_seccion' => ['required', 'exists:seccion,id_seccion'],
+        '_mesa_form' => ['required', 'in:crear'],
+    ]);
+
+    Mesas::create([
+        'numero_mesa' => $datos['numero_mesa'],
+        'fk_id_seccion' => $datos['fk_id_seccion'],
+    ]);
+
+    return redirect()
+        ->route('mesas.index', ['fk_id_seccion' => $datos['fk_id_seccion']])
+        ->with('status', 'Mesa registrada correctamente.');
+}
+
 public function mostrarOrdenesPedidos(Request $request){
     $seccionSeleccionada = $request->query('fk_id_seccion', 'todas');
     $secciones = Seccion::all();

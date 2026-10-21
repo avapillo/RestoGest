@@ -47,6 +47,7 @@ Route::delete('/Categoria/{id}/eliminar', [CategoriaController::class, 'eliminar
 
 // Rutas de mesas
 Route::get('/Mesas', [MesasController::class, 'mostrarMesas'])->name('mesas.index');
+Route::post('/Mesas/guardar', [MesasController::class, 'registrarMesa'])->name('mesas.store');
 Route::get('/Secciones/listar', [SeccionController::class, 'mostrarSecciones'])->name('seccion.index');
 Route::post('/Secciones/guardar', [SeccionController::class, 'registrarSeccion'])->name('seccion.store');
 Route::post('/Secciones/modificar', [SeccionController::class, 'modificarSeccion'])->name('seccion.update');

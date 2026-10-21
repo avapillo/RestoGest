@@ -47,7 +47,7 @@
 
 
         <div class="contenedor-botones-header">
-          <button id="btnAbrirModalProducto" class="btn-agregar">➕ Nueva Mesa</button>
+          <button id="btnAbrirModalMesa" class="btn-agregar">➕ Nueva Mesa</button>
           <button id="btnAbrirModalSecciones" class="btn-agregar">➕ Nueva Sección</button>
         </div>
 
@@ -174,6 +174,41 @@
 
 
     </main>
+  </div>
+
+  <div id="modalMesa" class="modal-overlay {{ old('_mesa_form') === 'crear' ? '' : 'hidden' }}">
+    <div class="modal-content">
+      <h3>Nueva Mesa</h3>
+      <form action="{{ route('mesas.store') }}" method="POST">
+        @csrf
+        <input type="hidden" name="_mesa_form" value="crear">
+        <div class="grupo-campo">
+          <label for="numero_mesa">Número de mesa:</label>
+          <input type="number" id="numero_mesa" name="numero_mesa" min="1" required value="{{ old('numero_mesa') }}">
+          @if (old('_mesa_form') === 'crear')
+            @error('numero_mesa') <span class="error-texto">{{ $message }}</span> @enderror
+          @endif
+        </div>
+        <div class="grupo-campo">
+          <label for="fk_id_seccion_mesa">Sección:</label>
+          <select id="fk_id_seccion_mesa" name="fk_id_seccion" required class="select-categoria">
+            <option value="">Seleccionar sección</option>
+            @foreach ($secciones as $sec)
+              <option value="{{ $sec->id_seccion }}" {{ old('fk_id_seccion') == $sec->id_seccion ? 'selected' : '' }}>
+                {{ $sec->seccion }}
+              </option>
+            @endforeach
+          </select>
+          @if (old('_mesa_form') === 'crear')
+            @error('fk_id_seccion') <span class="error-texto">{{ $message }}</span> @enderror
+          @endif
+        </div>
+        <div class="modal-botones">
+          <button type="button" id="btnCerrarModalMesa" class="btn-cancelar">Cancelar</button>
+          <button type="submit" class="btn-guardar" {{ $secciones->isEmpty() ? 'disabled' : '' }}>Guardar Mesa</button>
+        </div>
+      </form>
+    </div>
   </div>
 
   <!-- ========================================== -->

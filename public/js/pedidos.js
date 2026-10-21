@@ -3,6 +3,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnAbrirModalPedido = document.getElementById('btnAbrirModalProducto');
   const btnCerrarModalPedido = document.getElementById('btnCerrarModal');
   const modalProducto = document.getElementById('modalProducto');
+  const btnAbrirModalMesa = document.getElementById('btnAbrirModalMesa');
+  const btnCerrarModalMesa = document.getElementById('btnCerrarModalMesa');
+  const modalMesa = document.getElementById('modalMesa');
   const formPedido = document.getElementById('formProducto');
   const selectSeccion = document.getElementById('fk_id_seccion');
   const selectMesa = document.getElementById('fk_id_mesa');
@@ -103,6 +106,14 @@ document.addEventListener('DOMContentLoaded', () => {
       modalProducto.classList.add('hidden');
      // if (formProducto) formProducto.reset(); // Limpia los campos al cerrar
     });
+  }
+
+  if (btnAbrirModalMesa && modalMesa) {
+    btnAbrirModalMesa.addEventListener('click', () => modalMesa.classList.remove('hidden'));
+  }
+
+  if (btnCerrarModalMesa && modalMesa) {
+    btnCerrarModalMesa.addEventListener('click', () => modalMesa.classList.add('hidden'));
   }
 
   if (selectSeccion && selectMesa) {

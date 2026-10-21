@@ -46,9 +46,17 @@ public function mostrarMesas(Request $request)
 public function registrarMesa(Request $request)
 {
     $datos = $request->validate([
-        'numero_mesa' => ['required', 'integer', 'min:1'],
+        'numero_mesa' => [
+            'required',
+            'integer',
+            'min:1',
+            Rule::unique('mesas', 'numero_mesa')
+                ->where(fn ($query) => $query->where('fk_id_seccion', $request->input('fk_id_seccion'))),
+        ],
         'fk_id_seccion' => ['required', 'exists:seccion,id_seccion'],
         '_mesa_form' => ['required', 'in:crear'],
+    ], [
+        'numero_mesa.unique' => 'Ya existe una mesa con ese número en la sección seleccionada.',
     ]);
 
     Mesas::create([

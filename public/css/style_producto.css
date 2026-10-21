@@ -40,6 +40,13 @@ body {
    ESTILOS DE LA BARRA LATERAL (MENU)
    ========================================== */
 .barra-lateral {
+  position: sticky;
+  top: 0;
+  align-self: flex-start;
+  flex: 0 0 260px;
+  height: 100vh;
+  box-sizing: border-box;
+  overflow-y: auto;
   width: 260px; /* Ancho fijo del menú lateral */
   background-color: var(--bg-sidebar);
   color: var(--text-light);

@@ -34,6 +34,11 @@
             {{ session('status') }}
           </div>
         @endif
+        @if (session('error'))
+          <div class="mensaje-error">
+            {{ session('error') }}
+          </div>
+        @endif
 
         <div class="contenedor-botones-header">
         <button id="btnAbrirModalProducto" class="btn-agregar">➕ Tomar Pedido</button>
@@ -43,7 +48,7 @@
 
         <div class="contenedor-botones-header">
           <button id="btnAbrirModalProducto" class="btn-agregar">➕ Nueva Mesa</button>
-          <!-- <button id="btnAbrirModalCategoria" class="btn-agregar">➕ Nueva Categoría</button> -->
+          <button id="btnAbrirModalSecciones" class="btn-agregar">➕ Nueva Sección</button>
         </div>
 
       </header>
@@ -287,6 +292,57 @@
         <div class="modal-botones">
           <button type="button" id="btnCerrarModalCobro" class="btn-cancelar">Cancelar</button>
           <button type="submit" class="btn-guardar" {{ $tiposPago->isEmpty() ? 'disabled' : '' }}>Confirmar cobro</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="modalSecciones" class="modal-overlay {{ old('_seccion_form') === 'crear' ? '' : 'hidden' }}">
+    <div class="modal-content modal-secciones">
+      <h3>Gestionar Secciones</h3>
+      <form action="{{ route('seccion.store') }}" method="POST">
+        @csrf
+        <input type="hidden" name="_seccion_form" value="crear">
+        <div class="grupo-campo">
+          <label for="seccion_nombre">Nombre de la sección:</label>
+          <input type="text" id="seccion_nombre" name="seccion" maxlength="60" required placeholder="Ej: Terraza" value="{{ old('seccion') }}">
+          @if (old('_seccion_form') === 'crear')
+            @error('seccion') <span class="error-texto">{{ $message }}</span> @enderror
+            @error('_seccion_form') <span class="error-texto">{{ $message }}</span> @enderror
+          @endif
+        </div>
+        <div class="modal-botones">
+          <button type="button" id="btnCerrarModalSecciones" class="btn-cancelar">Cancelar</button>
+          <button type="submit" class="btn-guardar">Guardar Sección</button>
+        </div>
+      </form>
+
+      <div class="separador-secciones"></div>
+      <h4 class="titulo-lista-secciones">Secciones registradas</h4>
+      <div id="listaSecciones" class="grilla-secciones" data-url="{{ route('seccion.index') }}">
+        <p class="cargando-secciones">Cargando secciones...</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="modalEditarSeccion" class="modal-overlay {{ old('_seccion_form') === 'modificar' ? '' : 'hidden' }}">
+    <div class="modal-content">
+      <h3>Modificar Sección</h3>
+      <form action="{{ route('seccion.update') }}" method="POST">
+        @csrf
+        <input type="hidden" name="_seccion_form" value="modificar">
+        <input type="hidden" id="edit_seccion_id" name="id_seccion" value="{{ old('id_seccion') }}">
+        <div class="grupo-campo">
+          <label for="edit_seccion_nombre">Nombre de la sección:</label>
+          <input type="text" id="edit_seccion_nombre" name="seccion" maxlength="60" required value="{{ old('_seccion_form') === 'modificar' ? old('seccion') : '' }}">
+          @if (old('_seccion_form') === 'modificar')
+            @error('seccion') <span class="error-texto">{{ $message }}</span> @enderror
+            @error('id_seccion') <span class="error-texto">{{ $message }}</span> @enderror
+          @endif
+        </div>
+        <div class="modal-botones">
+          <button type="button" id="btnCerrarEditarSeccion" class="btn-cancelar">Cancelar</button>
+          <button type="submit" class="btn-guardar">Guardar Cambios</button>
         </div>
       </form>
     </div>

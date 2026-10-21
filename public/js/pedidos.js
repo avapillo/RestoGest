@@ -9,6 +9,57 @@ document.addEventListener('DOMContentLoaded', () => {
   const listaProductosPedido = document.getElementById('listaProductosPedido');
   let actualizarFilas = () => {};
 
+  const btnAbrirModalSecciones = document.getElementById('btnAbrirModalSecciones');
+  const btnCerrarModalSecciones = document.getElementById('btnCerrarModalSecciones');
+  const modalSecciones = document.getElementById('modalSecciones');
+  const listaSecciones = document.getElementById('listaSecciones');
+  const modalEditarSeccion = document.getElementById('modalEditarSeccion');
+  const btnCerrarEditarSeccion = document.getElementById('btnCerrarEditarSeccion');
+  const inputEditarSeccionId = document.getElementById('edit_seccion_id');
+  const inputEditarSeccionNombre = document.getElementById('edit_seccion_nombre');
+
+  const cargarSecciones = async () => {
+    if (!listaSecciones) return;
+
+    listaSecciones.innerHTML = '<p class="cargando-secciones">Cargando secciones...</p>';
+
+    try {
+      const response = await fetch(listaSecciones.dataset.url, {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+      });
+      if (!response.ok) throw new Error('No se pudieron cargar las secciones.');
+      listaSecciones.innerHTML = await response.text();
+    } catch (error) {
+      listaSecciones.innerHTML = '<p class="sin-secciones">No se pudieron cargar las secciones.</p>';
+    }
+  };
+
+  if (btnAbrirModalSecciones && modalSecciones) {
+    btnAbrirModalSecciones.addEventListener('click', () => {
+      modalSecciones.classList.remove('hidden');
+      cargarSecciones();
+    });
+  }
+
+  if (btnCerrarModalSecciones && modalSecciones) {
+    btnCerrarModalSecciones.addEventListener('click', () => modalSecciones.classList.add('hidden'));
+  }
+
+  if (listaSecciones) {
+    listaSecciones.addEventListener('click', event => {
+      const botonEditar = event.target.closest('.btn-modificar-seccion');
+      if (!botonEditar) return;
+
+      if (inputEditarSeccionId) inputEditarSeccionId.value = botonEditar.dataset.id;
+      if (inputEditarSeccionNombre) inputEditarSeccionNombre.value = botonEditar.dataset.nombre;
+      if (modalEditarSeccion) modalEditarSeccion.classList.remove('hidden');
+    });
+  }
+
+  if (btnCerrarEditarSeccion && modalEditarSeccion) {
+    btnCerrarEditarSeccion.addEventListener('click', () => modalEditarSeccion.classList.add('hidden'));
+  }
+
   const limpiarFilasPedido = () => {
     if (!listaProductosPedido) return;
 

@@ -440,6 +440,89 @@ body {
   margin-bottom: 20px;
 }
 
+.modal-secciones {
+  max-width: 760px;
+}
+
+.separador-secciones {
+  border-top: 1px solid var(--border-color);
+  margin: 24px 0 18px;
+}
+
+.titulo-lista-secciones {
+  margin: 0 0 12px;
+  color: var(--text-primary);
+}
+
+.grilla-secciones {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.tarjeta-seccion {
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.nombre-seccion {
+  display: block;
+  overflow-wrap: anywhere;
+  margin-bottom: 12px;
+  color: var(--text-primary);
+}
+
+.acciones-seccion {
+  display: flex;
+  gap: 8px;
+}
+
+.acciones-seccion form {
+  display: flex;
+  flex: 1;
+}
+
+.acciones-seccion .btn-accion {
+  padding: 8px 6px;
+  font-size: 0.85rem;
+}
+
+.acciones-seccion .btn-modificar {
+  color: #ffffff;
+  background-color: var(--accent-orange);
+  border: 1px solid var(--accent-orange);
+}
+
+.acciones-seccion .btn-modificar:hover {
+  color: #ffffff;
+  background-color: var(--accent-orange-hover);
+  border-color: var(--accent-orange-hover);
+}
+
+.acciones-seccion .btn-eliminar {
+  color: #ffffff;
+  background-color: #dc2626;
+  border: 1px solid #dc2626;
+}
+
+.acciones-seccion .btn-eliminar:hover {
+  color: #ffffff;
+  background-color: #b91c1c;
+  border-color: #b91c1c;
+}
+
+.cargando-secciones,
+.sin-secciones {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 16px 0;
+  color: var(--text-muted);
+  text-align: center;
+}
+
 /* Fila para los dos primeros combo box (Área y Mesa) - AHORA MÁS COMPACTOS Y AL LADO */
 .fila-horizontal.contenedor-mesas-area {
   display: flex;

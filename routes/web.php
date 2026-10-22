@@ -73,3 +73,8 @@ Route::get('/pedidos/crear/{mesa}', [PedidoController::class, 'create'])->name('
 
 
 // Ruta de ventas
+
+use App\Http\Controllers\CatalogoController;
+
+Route::get('/catalogo', [CatalogoController::class, 'index'])
+    ->name('catalogo');

@@ -9,6 +9,7 @@ use Illuminate\Validation\ValidationException;
 use App\Models\Categoria;
 use App\Models\Combo;
 use App\Models\DetallePedido;
+use App\Models\CajaEstado;
 use App\Models\Pedido;
 use App\Models\Producto;
 use App\Models\Seccion;
@@ -107,6 +108,14 @@ public function mostrarOrdenesPedidos(Request $request){
         }
 
         DB::transaction(function () use ($datos, $monto) {
+            $caja = CajaEstado::query()->lockForUpdate()->first();
+
+            if (!$caja || !$caja->abierta) {
+                throw ValidationException::withMessages([
+                    'id_pedido' => 'Debe abrir la caja antes de procesar cobros.',
+                ]);
+            }
+
             $pedido = Pedido::where('id_pedido', $datos['id_pedido'])
                 ->lockForUpdate()
                 ->firstOrFail();
@@ -122,6 +131,8 @@ public function mostrarOrdenesPedidos(Request $request){
                 'fk_tipo_pago' => $datos['fk_tipo_pago'],
                 'fk_id_pedido' => $pedido->id_pedido,
             ]);
+
+            $caja->increment('monto_actual', $monto);
         });
 
         return redirect()->back()->with('status', 'Pago procesado exitosamente.');

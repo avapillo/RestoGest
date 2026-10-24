@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Login;
+use App\Support\AdminAccess;
 
 class LoginController extends Controller
 {
@@ -16,7 +17,7 @@ class LoginController extends Controller
     }
 
     // Valida y procesa el formulario enviado
-    public function validarUsuario(Request $request)
+    public function validarUsuario(Request $request, AdminAccess $adminAccess)
     {
         $request->merge(['gmail' => strtolower(trim((string) $request->input('gmail')))]);
 
@@ -39,16 +40,26 @@ class LoginController extends Controller
             : hash_equals($storedPassword, (string) $request->contrasenia));
 
         if ($credentialsValid) {
+            if (!$adminAccess->isAdmin((int) $usuario->id)) {
+                return back()
+                    ->with('error', 'Solo los usuarios con rol Admin pueden ingresar al sistema.')
+                    ->withInput($request->only('gmail'));
+            }
+
             if (!$isHashed) {
                 DB::table('usuarios')->where('id', $usuario->id)->update([
                     'contrasenia' => Hash::make($request->contrasenia),
                 ]);
             }
 
+            $request->session()->regenerate();
+
             session([
                 'usuario_id'  => $usuario->id,
                 'usuario_nom' => $usuario->nombre
             ]);
+
+            $adminAccess->record((int) $usuario->id, 'ingreso_sistema');
 
             return redirect()->route('home');
         }

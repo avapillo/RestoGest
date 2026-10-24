@@ -28,26 +28,6 @@
         <form action="{{ route('login.post') }}" method="POST" class="login-form">
             @csrf <!-- Token de seguridad obligatorio en Laravel -->
 
-            <!-- Campo Nombre de Usuario -->
-            <div class="form-group">
-                <label for="nombre">Nombre de Usuario</label>
-                <div class="input-container">
-                    <i class="fa-solid fa-user input-icon"></i>
-                    <input
-                        type="text"
-                        id="id"
-                        name="nombre"
-                        placeholder="Ej: Gabriel"
-                        value="{{ old('nombre') }}"
-                        required
-                        autofocus>
-                </div>
-                @error('nombre')
-                    <span class="error-texto">{{ $message }}</span>
-                @enderror
-            </div>
-
-            <!-- Campo Gmail -->
             <div class="form-group">
                 <label for="gmail">Gmail</label>
                 <div class="input-container">
@@ -58,9 +38,26 @@
                         name="gmail"
                         placeholder="Ej: nombre@gmail.com"
                         value="{{ old('gmail') }}"
+                        autocomplete="username"
                         required>
                 </div>
                 @error('gmail')
+                    <span class="error-texto">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <div class="form-group">
+                <label for="contrasenia">Contraseña</label>
+                <div class="input-container">
+                    <i class="fa-solid fa-lock input-icon"></i>
+                    <input
+                        type="password"
+                        id="contrasenia"
+                        name="contrasenia"
+                        autocomplete="current-password"
+                        required>
+                </div>
+                @error('contrasenia')
                     <span class="error-texto">{{ $message }}</span>
                 @enderror
             </div>

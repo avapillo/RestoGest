@@ -104,8 +104,19 @@
 
       <div class="grupo-campo">
         <label for="gmail">Gmail:</label>
-        <input type="email" id="gmail" name="gmail" required placeholder="Ej: juan@gmail.com" value="{{ old('gmail') }}">
+        <input type="email" id="gmail" name="gmail" required placeholder="Ej: juan@gmail.com" value="{{ old('gmail') }}" autocomplete="email">
         @error('gmail') <span class="error-texto">{{ $message }}</span> @enderror
+      </div>
+
+      <div class="grupo-campo">
+        <label for="contrasenia">Contraseña:</label>
+        <input type="password" id="contrasenia" name="contrasenia" required minlength="8" autocomplete="new-password">
+        @error('contrasenia') <span class="error-texto">{{ $message }}</span> @enderror
+      </div>
+
+      <div class="grupo-campo">
+        <label for="contrasenia_confirmation">Confirmar contraseña:</label>
+        <input type="password" id="contrasenia_confirmation" name="contrasenia_confirmation" required minlength="8" autocomplete="new-password">
       </div>
 
       <!-- Contenedor dinámico de Comboboxes de Roles -->

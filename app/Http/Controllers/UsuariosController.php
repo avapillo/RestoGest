@@ -6,6 +6,7 @@ use App\Models\Usuarios;
 use App\Models\RolUsuario;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
 class UsuariosController extends Controller
@@ -76,13 +77,19 @@ class UsuariosController extends Controller
 
    public function nuevoUsuario(Request $request)
 {
+    $request->merge(['gmail' => strtolower(trim((string) $request->input('gmail')))]);
+
     $request->validate([
         'nombre'      => 'required|string|max:50',
-        'gmail'       => 'required|email|max:255|unique:usuarios,gmail',
+        'gmail'       => 'required|email|max:255|ends_with:@gmail.com|unique:usuarios,gmail',
+        'contrasenia' => 'required|string|min:8|confirmed',
         'roles'       => 'required|array|min:1',
         'roles.*'     => 'exists:rol_usuario,id_rol',
     ], [
         'gmail.unique'  => 'No se pueden repetir los Gmail.',
+        'gmail.ends_with' => 'Debes ingresar una dirección @gmail.com.',
+        'contrasenia.min' => 'La contraseña debe tener al menos 8 caracteres.',
+        'contrasenia.confirmed' => 'Las contraseñas no coinciden.',
         'roles.required' => 'Debes seleccionar un rol para el nuevo usuario.',
         'roles.min'      => 'Debes seleccionar un rol para el nuevo usuario.',
     ]);
@@ -91,6 +98,7 @@ class UsuariosController extends Controller
     $usuario = Usuarios::create([
         'nombre' => $request->nombre,
         'gmail'  => $request->gmail,
+        'contrasenia' => Hash::make($request->contrasenia),
     ]);
 
     // 2. Insertar los roles en la tabla pivote 'usuario_roles'
@@ -103,10 +111,12 @@ class UsuariosController extends Controller
 
     public function modificarUsuario(Request $request)
 {
+        $request->merge(['gmail' => strtolower(trim((string) $request->input('gmail')))]);
+
     $request->validate([
         'id'          => 'required|exists:usuarios,id',
         'nombre'      => 'required|string|max:50',
-        'gmail'       => 'required|email|max:255|unique:usuarios,gmail,' . $request->id,
+            'gmail'       => 'required|email|max:255|ends_with:@gmail.com|unique:usuarios,gmail,' . $request->id,
         'roles'       => 'nullable|array', // Recibe los nuevos roles seleccionados
         'roles.*'     => 'exists:rol_usuario,id_rol',
     ]);

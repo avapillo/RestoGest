@@ -282,6 +282,8 @@ body {
   border-radius: var(--radius-card);
   width: 100%;
   max-width: 450px;
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
   box-shadow: 0 20px 40px rgba(18, 26, 43, 0.18);
 }
 

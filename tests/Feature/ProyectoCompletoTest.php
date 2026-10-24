@@ -135,6 +135,23 @@ test('no se puede registrar un Gmail repetido ni contraseñas distintas', functi
     ])->assertSessionHasErrors('contrasenia');
 });
 
+test('la contraseña se puede cambiar desde el formulario de edición', function () {
+    $passwordId = DB::table('usuarios')->insertGetId([
+        'nombre' => 'Milton',
+        'gmail' => 'milton@gmail.com',
+        'contrasenia' => Hash::make('clave-anterior'),
+    ]);
+
+    $this->post('/Usuarios/modificar', [
+        'id' => $passwordId,
+        'nombre' => 'Milton',
+        'gmail' => 'milton@gmail.com',
+        'contrasenia' => 'clave-nueva',
+    ])->assertRedirect(route('usuario.index'));
+
+    $this->assertTrue(Hash::check('clave-nueva', DB::table('usuarios')->where('id', $passwordId)->value('contrasenia')));
+});
+
 test('la vista de productos muestra categorías y productos registrados', function () {
     $categoriaId = DB::table('categoria')->insertGetId([
         'categoria' => 'Bebidas',

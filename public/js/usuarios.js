@@ -1,4 +1,27 @@
 document.addEventListener('DOMContentLoaded', () => {
+  const ocultarCamposContrasenia = contenedor => {
+    contenedor.querySelectorAll('[data-toggle-password]').forEach(button => {
+      const input = document.getElementById(button.dataset.togglePassword);
+      if (!input) return;
+
+      input.type = 'password';
+      button.textContent = 'Mostrar';
+      button.setAttribute('aria-label', `Mostrar ${button.dataset.togglePassword.includes('confirmation') ? 'confirmación de contraseña' : 'contraseña'}`);
+    });
+  };
+
+  document.querySelectorAll('[data-toggle-password]').forEach(button => {
+    button.addEventListener('click', () => {
+      const input = document.getElementById(button.dataset.togglePassword);
+      if (!input) return;
+
+      const isVisible = input.type === 'text';
+      input.type = isVisible ? 'password' : 'text';
+      button.textContent = isVisible ? 'Mostrar' : 'Ocultar';
+      button.setAttribute('aria-label', `${isVisible ? 'Mostrar' : 'Ocultar'} ${button.dataset.togglePassword.includes('confirmation') ? 'confirmación de contraseña' : 'contraseña'}`);
+    });
+  });
+
   // ==========================================
   // 1. MODAL NUEVO USUARIO
   // ==========================================
@@ -9,6 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (btnAbrirModalUsuario && modalUsuario) {
     btnAbrirModalUsuario.addEventListener('click', () => {
+      ocultarCamposContrasenia(modalUsuario);
       modalUsuario.classList.remove('hidden');
     });
   }
@@ -16,6 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (btnCerrarModalUsuario && modalUsuario) {
     btnCerrarModalUsuario.addEventListener('click', () => {
       modalUsuario.classList.add('hidden');
+      ocultarCamposContrasenia(modalUsuario);
       if (formUsuario) formUsuario.reset(); // Limpia los campos al cerrar
 
       // Reinicia el contenedor de roles a un solo select inicial
@@ -175,6 +200,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (inputEditId) inputEditId.value = id;
       if (inputEditNombre) inputEditNombre.value = nombre;
       if (inputEditGmail) inputEditGmail.value = gmail;
+      ocultarCamposContrasenia(modalEditar);
+      document.getElementById('edit_contrasenia').value = '';
 
       // Cargar comboboxes por cada rol en el modal de edición
       if (contenedorEditar) {
@@ -198,6 +225,8 @@ document.addEventListener('DOMContentLoaded', () => {
   if (btnCerrarEditar && modalEditar) {
     btnCerrarEditar.addEventListener('click', () => {
       modalEditar.classList.add('hidden');
+      ocultarCamposContrasenia(modalEditar);
+      document.getElementById('edit_contrasenia').value = '';
     });
   }
 });

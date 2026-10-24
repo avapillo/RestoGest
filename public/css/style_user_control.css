@@ -322,6 +322,30 @@ body {
   outline: none;
 }
 
+.campo-contrasenia {
+  display: flex;
+  gap: 8px;
+}
+
+.campo-contrasenia input {
+  flex: 1;
+  min-width: 0;
+}
+
+.btn-visibilidad-contrasenia {
+  flex: 0 0 auto;
+  padding: 0 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  background: #fff;
+  color: #334155;
+  cursor: pointer;
+}
+
+.btn-visibilidad-contrasenia:hover {
+  background: #f1f5f9;
+}
+
 .grupo-campo input:focus,
 .select-categoria:focus {
   border-color: var(--accent-orange);

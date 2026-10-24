@@ -117,6 +117,7 @@ class UsuariosController extends Controller
         'id'          => 'required|exists:usuarios,id',
         'nombre'      => 'required|string|max:50',
             'gmail'       => 'required|email|max:255|ends_with:@gmail.com|unique:usuarios,gmail,' . $request->id,
+        'contrasenia' => 'nullable|string|min:8',
         'roles'       => 'nullable|array', // Recibe los nuevos roles seleccionados
         'roles.*'     => 'exists:rol_usuario,id_rol',
     ]);
@@ -125,6 +126,9 @@ class UsuariosController extends Controller
     $usuario = Usuarios::findOrFail($request->id);
     $usuario->nombre = $request->nombre;
     $usuario->gmail = $request->gmail;
+    if ($request->filled('contrasenia')) {
+        $usuario->contrasenia = Hash::make($request->contrasenia);
+    }
     $usuario->save();
 
     // 2. Sincronizar roles en la tabla pivote 'usuario_roles'

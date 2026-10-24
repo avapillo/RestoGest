@@ -20,13 +20,34 @@
         <img src="{{ asset('img/Sanwicheria Gabriel icon.png') }}" alt="Sanwichería Gabriel">
       </div>
 
-      <!-- Opciones del menú -->
+            <!-- Opciones del menú -->
       <nav class="menu-navegacion">
         <a href="{{ route('home') }}" class="opcion-menu activa">Principal</a>
         <a href="{{ route('mesas.index') }}" class="opcion-menu">Mesas</a>
         <a href="{{ route('producto.index') }}" class="opcion-menu">Producto</a>
         <a href="{{ route('usuario.index') }}" class="opcion-menu">Control de Usuario</a>
         <a href="{{ route('mantenimiento') }}" class="opcion-menu">Ventas</a>
+      </nav>
+
+      <!-- Botón para cerrar sesión -->
+      <div class="cerrar-sesion-contenedor">
+        <a href="{{ route('logout') }}" class="cerrar-sesion">
+          <svg xmlns="http://www.w3.org/2000/svg"
+               width="24" height="24"
+               viewBox="0 0 24 24"
+               fill="none"
+               stroke="currentColor"
+               stroke-width="2"
+               stroke-linecap="round"
+               stroke-linejoin="round"
+               aria-hidden="true">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+            <polyline points="16 17 21 12 16 7"/>
+            <line x1="21" y1="12" x2="9" y2="12"/>
+          </svg>
+          <span>Cerrar sesión</span>
+        </a>
+      </div>
       </nav>
     </aside>
 

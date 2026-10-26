@@ -7,7 +7,7 @@ use App\Http\Controllers\MesasController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\UsuariosController;
-use App\Http\Controllers\AdminPedidoController;
+use App\Http\Controllers\VentasController;
 use App\Http\Controllers\SeccionController;
 use App\Http\Controllers\ComboController;
 // Login
@@ -78,4 +78,4 @@ Route::get('/pedidos/crear/{mesa}', [PedidoController::class, 'create'])->name('
 
 
 // Ruta de ventas
-Route::get('/Ventas', [AdminPedidoController::class, 'mostrarVentas'])->name('ventas.index');
+Route::get('/Ventas', [VentasController::class, 'index'])->name('ventas.index');

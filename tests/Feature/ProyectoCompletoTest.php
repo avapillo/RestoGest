@@ -69,6 +69,8 @@ beforeEach(function () {
         $table->increments('id_registro');
         $table->decimal('monto', 10, 2)->nullable();
         $table->integer('fk_tipo_pago')->nullable();
+        $table->date('fecha_pago')->nullable();
+        $table->integer('fk_id_historial')->nullable();
         $table->integer('fk_id_pedido')->nullable();
     });
 
@@ -419,4 +421,57 @@ test('el cobro no se registra cuando la caja está cerrada', function () {
     ])->assertSessionHasErrors('id_pedido');
 
     $this->assertDatabaseCount('registro_pago', 0);
+});
+
+test('la búsqueda de ventas filtra por parámetros y pagina los resultados', function () {
+    $efectivoId = DB::table('tipo_pago')->insertGetId(['tipo_pago' => 'Efectivo']);
+    $tarjetaId = DB::table('tipo_pago')->insertGetId(['tipo_pago' => 'Tarjeta']);
+
+    $ventaCoincidenteId = DB::table('registro_pago')->insertGetId([
+        'monto' => 1500,
+        'fk_tipo_pago' => $efectivoId,
+        'fecha_pago' => '2026-10-20',
+    ]);
+    $ventaTarjetaId = DB::table('registro_pago')->insertGetId([
+        'monto' => 2500,
+        'fk_tipo_pago' => $tarjetaId,
+        'fecha_pago' => '2026-10-21',
+    ]);
+    $segundaVentaId = DB::table('registro_pago')->insertGetId([
+        'monto' => 1500,
+        'fk_tipo_pago' => $efectivoId,
+        'fecha_pago' => '2026-10-19',
+    ]);
+
+    $this->getJson('/api/ventas?fk_tipo_pago='.$efectivoId.'&monto=1500&per_page=1')
+        ->assertOk()
+        ->assertJsonPath('data.0.id_registro', $ventaCoincidenteId)
+        ->assertJsonPath('total', 2)
+        ->assertJsonPath('per_page', 1);
+
+    $this->getJson('/api/ventas?fk_tipo_pago='.$efectivoId.'&monto=1500&per_page=1&page=2')
+        ->assertOk()
+        ->assertJsonPath('data.0.id_registro', $segundaVentaId);
+
+    $this->getJson('/api/ventas?fecha_desde=2026-10-21&fecha_hasta=2026-10-21')
+        ->assertOk()
+        ->assertJsonPath('data.0.id_registro', $ventaTarjetaId)
+        ->assertJsonPath('total', 1);
+
+    $this->getJson('/api/ventas?fecha_hasta=2026-10-20')
+        ->assertOk()
+        ->assertJsonPath('total', 2);
+
+    $this->getJson('/api/ventas?per_page=101')->assertUnprocessable();
+});
+
+test('la página de ventas carga los tipos de pago y los controles de búsqueda', function () {
+    DB::table('tipo_pago')->insert(['tipo_pago' => 'Efectivo']);
+
+    $this->get('/Ventas')
+        ->assertOk()
+        ->assertViewIs('interfaz_ventas')
+        ->assertSee('Efectivo')
+        ->assertSee('id="filtrosVentas"', false)
+        ->assertSee('js/ventas.js');
 });

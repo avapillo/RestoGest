@@ -1,5 +1,6 @@
 <?php
 use App\Http\Controllers\ApiCocinaController;
+use App\Http\Controllers\VentasController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HistorialCajaController;
@@ -10,6 +11,7 @@ use App\Http\Controllers\ApiProductoController;
 Route::middleware('web')->group(function () {
     Route::get('/historial-caja', [HistorialCajaController::class, 'index']);
     Route::get('/caja/estado', [HistorialCajaController::class, 'estado']);
+    Route::get('/ventas', [VentasController::class, 'buscar']);
 
     Route::post('/caja/abrir', [HistorialCajaController::class, 'abrir']);
 

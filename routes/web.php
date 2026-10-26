@@ -78,3 +78,4 @@ Route::get('/pedidos/crear/{mesa}', [PedidoController::class, 'create'])->name('
 
 
 // Ruta de ventas
+Route::get('/Ventas', [AdminPedidoController::class, 'mostrarVentas'])->name('ventas.index');

@@ -20,7 +20,7 @@
         <a href="{{ route('mesas.index') }}" class="opcion-menu activa">Mesas</a>
         <a href="{{ route('producto.index') }}" class="opcion-menu">Producto</a>
         <a href="{{ route('usuario.index') }}" class="opcion-menu">Control de Usuario</a>
-        <a href="{{ route('mantenimiento') }}" class="opcion-menu">Ventas</a>
+        <a href="{{ route('ventas.index') }}" class="opcion-menu">Ventas</a>
       </nav>
     </aside>
 

@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-  const btnAbrirModalPedido = document.getElementById('btnAbrirModalProducto');
+  const botonesAbrirModalPedido = document.querySelectorAll('.btn-tomar-pedido');
   const btnCerrarModalPedido = document.getElementById('btnCerrarModal');
   const modalProducto = document.getElementById('modalProducto');
   const btnAbrirModalMesa = document.getElementById('btnAbrirModalMesa');
@@ -93,11 +93,13 @@ document.addEventListener('DOMContentLoaded', () => {
     formPedido.querySelector('button[type="submit"]').textContent = 'Registrar Pedido';
   };
 
-  if (btnAbrirModalPedido && modalProducto) {
-    btnAbrirModalPedido.addEventListener('click', () => {
+  if (modalProducto) {
+    botonesAbrirModalPedido.forEach(boton => boton.addEventListener('click', () => {
       prepararNuevoPedido();
+      selectSeccion.value = boton.dataset.seccionId;
+      selectMesa.value = boton.dataset.mesaId;
       modalProducto.classList.remove('hidden');
-    });
+    }));
   }
 
 

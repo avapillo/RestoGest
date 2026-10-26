@@ -41,12 +41,6 @@
         @endif
 
         <div class="contenedor-botones-header">
-        <button id="btnAbrirModalProducto" class="btn-agregar">➕ Tomar Pedido</button>
-          <!-- <button id="btnAbrirModalCategoria" class="btn-agregar">➕ Nueva Categoría</button> -->
-        </div>
-
-
-        <div class="contenedor-botones-header">
           <button id="btnAbrirModalMesa" class="btn-agregar">➕ Nueva Mesa</button>
           <button id="btnAbrirModalSecciones" class="btn-agregar">➕ Nueva Sección</button>
         </div>
@@ -162,6 +156,15 @@
           </div>
         @endif
 
+        @if ($mesa->pedidos->isEmpty())
+          <button
+            type="button"
+            class="btn-agregar btn-tomar-pedido"
+            data-seccion-id="{{ $mesa->fk_id_seccion }}"
+            data-mesa-id="{{ $mesa->id_mesa }}">
+            ➕ Tomar Pedido
+          </button>
+        @endif
 
       </div>
 

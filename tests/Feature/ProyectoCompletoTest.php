@@ -426,11 +426,17 @@ test('el cobro no se registra cuando la caja está cerrada', function () {
 test('la búsqueda de ventas filtra por parámetros y pagina los resultados', function () {
     $efectivoId = DB::table('tipo_pago')->insertGetId(['tipo_pago' => 'Efectivo']);
     $tarjetaId = DB::table('tipo_pago')->insertGetId(['tipo_pago' => 'Tarjeta']);
+    $historialId = DB::table('historial_caja')->insertGetId([
+        'monto_total' => 1500,
+        'momento_cierre' => '2026-10-20 20:00:00',
+        'id_usuario' => session('usuario_id'),
+    ]);
 
     $ventaCoincidenteId = DB::table('registro_pago')->insertGetId([
         'monto' => 1500,
         'fk_tipo_pago' => $efectivoId,
         'fecha_pago' => '2026-10-20',
+        'fk_id_historial' => $historialId,
     ]);
     $ventaTarjetaId = DB::table('registro_pago')->insertGetId([
         'monto' => 2500,
@@ -446,6 +452,7 @@ test('la búsqueda de ventas filtra por parámetros y pagina los resultados', fu
     $this->getJson('/api/ventas?fk_tipo_pago='.$efectivoId.'&monto=1500&per_page=1')
         ->assertOk()
         ->assertJsonPath('data.0.id_registro', $ventaCoincidenteId)
+        ->assertJsonPath('data.0.historial_caja.usuario.nombre', 'Admin de prueba')
         ->assertJsonPath('total', 2)
         ->assertJsonPath('per_page', 1);
 
@@ -473,5 +480,10 @@ test('la página de ventas carga los tipos de pago y los controles de búsqueda'
         ->assertViewIs('interfaz_ventas')
         ->assertSee('Efectivo')
         ->assertSee('id="filtrosVentas"', false)
+        ->assertSee('name="fk_tipo_pago"', false)
+        ->assertSee('name="fecha_desde"', false)
+        ->assertSee('name="fecha_hasta"', false)
+        ->assertDontSee('name="monto"', false)
+        ->assertSee('Quién cerró caja')
         ->assertSee('js/ventas.js');
 });

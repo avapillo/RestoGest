@@ -24,7 +24,7 @@
         <a href="{{ route('mesas.index') }}" class="opcion-menu">Mesas</a>
         <a href="{{ route('producto.index') }}" class="opcion-menu">Producto</a>
         <a href="{{ route('usuario.index') }}" class="opcion-menu">Control de Usuario</a>
-        <a href="{{ route('ventas.index') }}" class="opcion-menu activa">Ventas</a>
+        <a href="{{ route('ventas.index') }}" class="opcion-menu activa">Administración de Ventas</a>
       </nav>
     </aside>
 
@@ -34,7 +34,7 @@
           <p class="sobre-titulo">Administración</p>
           <h1>Ventas</h1>
         </div>
-        <p class="resumen-encabezado">Consulta pagos por fecha, monto y referencia.</p>
+        <p class="resumen-encabezado">Consulta pagos por fecha y tipo de pago.</p>
       </header>
 
       <section class="panel-filtros" aria-labelledby="tituloFiltros">
@@ -48,14 +48,6 @@
 
         <form id="filtrosVentas" class="formulario-filtros" data-api-url="{{ url('/api/ventas') }}" novalidate>
           <div class="rejilla-filtros">
-            <div class="grupo-campo">
-              <label for="id_registro">N.º de venta</label>
-              <input id="id_registro" name="id_registro" type="number" min="1" step="1" placeholder="Ej. 104">
-            </div>
-            <div class="grupo-campo">
-              <label for="monto">Monto</label>
-              <input id="monto" name="monto" type="number" min="0" step="0.01" placeholder="Ej. 15000">
-            </div>
             <div class="grupo-campo">
               <label for="fk_tipo_pago">Tipo de pago</label>
               <select id="fk_tipo_pago" name="fk_tipo_pago">
@@ -72,23 +64,6 @@
             <div class="grupo-campo">
               <label for="fecha_hasta">Hasta</label>
               <input id="fecha_hasta" name="fecha_hasta" type="date">
-            </div>
-            <div class="grupo-campo">
-              <label for="fk_id_pedido">N.º de pedido</label>
-              <input id="fk_id_pedido" name="fk_id_pedido" type="number" min="1" step="1" placeholder="Todos">
-            </div>
-            <div class="grupo-campo">
-              <label for="fk_id_historial">N.º de cierre de caja</label>
-              <input id="fk_id_historial" name="fk_id_historial" type="number" min="1" step="1" placeholder="Todos">
-            </div>
-            <div class="grupo-campo">
-              <label for="per_page">Resultados por página</label>
-              <select id="per_page" name="per_page">
-                <option value="15" selected>15</option>
-                <option value="25">25</option>
-                <option value="50">50</option>
-                <option value="100">100</option>
-              </select>
             </div>
           </div>
 
@@ -116,16 +91,14 @@
           <table class="tabla-ventas">
             <thead>
               <tr>
-                <th scope="col">Venta</th>
                 <th scope="col">Fecha</th>
                 <th scope="col">Monto</th>
                 <th scope="col">Tipo de pago</th>
-                <th scope="col">Pedido</th>
-                <th scope="col">Cierre de caja</th>
+                <th scope="col">Quién cerró caja</th>
               </tr>
             </thead>
             <tbody id="filasVentas">
-              <tr><td class="fila-vacia" colspan="6">Cargando registros...</td></tr>
+              <tr><td class="fila-vacia" colspan="4">Cargando registros...</td></tr>
             </tbody>
           </table>
         </div>

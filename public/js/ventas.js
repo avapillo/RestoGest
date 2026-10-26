@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const row = document.createElement('tr');
       const cell = document.createElement('td');
       cell.className = 'fila-vacia';
-      cell.colSpan = 6;
+      cell.colSpan = 4;
       cell.textContent = 'No se encontraron ventas con esos parámetros.';
       row.append(cell);
       tbody.append(row);
@@ -57,7 +57,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     rows.forEach(venta => {
       const row = document.createElement('tr');
-      addCell(row, `#${venta.id_registro}`);
       addCell(row, formatDate(venta.fecha_pago));
       addCell(
         row,
@@ -65,8 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'celda-monto',
       );
       addCell(row, paymentTypes.get(String(venta.fk_tipo_pago)) ?? '-');
-      addCell(row, venta.fk_id_pedido ? `#${venta.fk_id_pedido}` : '-');
-      addCell(row, venta.fk_id_historial ? `#${venta.fk_id_historial}` : '-');
+      addCell(row, venta.historial_caja?.usuario?.nombre ?? '-');
       tbody.append(row);
     });
   }

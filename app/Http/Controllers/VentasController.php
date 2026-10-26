@@ -38,7 +38,9 @@ class VentasController extends Controller
 
         $filtros = $request->validate($reglas);
 
-        $ventas = Ventas::query()->buscar($filtros);
+        $ventas = Ventas::query()
+            ->with('historialCaja.usuario:id,nombre')
+            ->buscar($filtros);
 
         if (!empty($filtros['fecha_desde'])) {
             $ventas->whereDate('fecha_pago', '>=', $filtros['fecha_desde']);

@@ -24,6 +24,11 @@ class Ventas extends Model
         'fecha_pago' => 'date',
     ];
 
+    public function historialCaja()
+    {
+        return $this->belongsTo(HistorialCaja::class, 'fk_id_historial', 'id_historial');
+    }
+
     public function scopeBuscar(Builder $query, array $filtros): Builder
     {
         foreach ([

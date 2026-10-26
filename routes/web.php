@@ -9,6 +9,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\UsuariosController;
 use App\Http\Controllers\AdminPedidoController;
 use App\Http\Controllers\SeccionController;
+use App\Http\Controllers\ComboController;
 // Login
 
 // Mostrar formulario
@@ -52,6 +53,10 @@ Route::get('/Secciones/listar', [SeccionController::class, 'mostrarSecciones'])-
 Route::post('/Secciones/guardar', [SeccionController::class, 'registrarSeccion'])->name('seccion.store');
 Route::post('/Secciones/modificar', [SeccionController::class, 'modificarSeccion'])->name('seccion.update');
 Route::delete('/Secciones/{id}/eliminar', [SeccionController::class, 'eliminarSeccion'])->name('seccion.destroy');
+Route::get('/Combos/listar', [ComboController::class, 'mostrarCombos'])->name('combo.index');
+Route::post('/Combos/guardar', [ComboController::class, 'registrarCombo'])->name('combo.store');
+Route::post('/Combos/modificar', [ComboController::class, 'modificarCombo'])->name('combo.update');
+Route::delete('/Combos/{id}/eliminar', [ComboController::class, 'eliminarCombo'])->name('combo.destroy');
 
 // Rutas de control de usuarios
 Route::get('/Usuarios', [UsuariosController::class, 'mostrarUsuarios'])->name('usuario.index');

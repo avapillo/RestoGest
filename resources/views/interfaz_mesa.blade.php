@@ -43,6 +43,7 @@
         <div class="contenedor-botones-header">
           <button id="btnAbrirModalMesa" class="btn-agregar">➕ Nueva Mesa</button>
           <button id="btnAbrirModalSecciones" class="btn-agregar">➕ Nueva Sección</button>
+          <button id="btnAbrirModalCombos" class="btn-agregar">➕ Agregar Combo</button>
         </div>
 
       </header>
@@ -380,6 +381,57 @@
         </div>
         <div class="modal-botones">
           <button type="button" id="btnCerrarEditarSeccion" class="btn-cancelar">Cancelar</button>
+          <button type="submit" class="btn-guardar">Guardar Cambios</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="modalCombos" class="modal-overlay {{ old('_combo_form') === 'crear' ? '' : 'hidden' }}">
+    <div class="modal-content modal-secciones">
+      <h3>Gestionar Combos</h3>
+      <form action="{{ route('combo.store') }}" method="POST">
+        @csrf
+        <input type="hidden" name="_combo_form" value="crear">
+        <div class="grupo-campo">
+          <label for="combo_nombre">Nombre del combo:</label>
+          <input type="text" id="combo_nombre" name="combo" maxlength="50" required placeholder="Ej: Hamburguesa completa" value="{{ old('combo') }}">
+          @if (old('_combo_form') === 'crear')
+            @error('combo') <span class="error-texto">{{ $message }}</span> @enderror
+            @error('_combo_form') <span class="error-texto">{{ $message }}</span> @enderror
+          @endif
+        </div>
+        <div class="modal-botones">
+          <button type="button" id="btnCerrarModalCombos" class="btn-cancelar">Cancelar</button>
+          <button type="submit" class="btn-guardar">Guardar Combo</button>
+        </div>
+      </form>
+
+      <div class="separador-secciones"></div>
+      <h4 class="titulo-lista-secciones">Combos registrados</h4>
+      <div id="listaCombos" class="grilla-secciones" data-url="{{ route('combo.index') }}">
+        <p class="cargando-secciones">Cargando combos...</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="modalEditarCombo" class="modal-overlay {{ old('_combo_form') === 'modificar' ? '' : 'hidden' }}">
+    <div class="modal-content">
+      <h3>Modificar Combo</h3>
+      <form action="{{ route('combo.update') }}" method="POST">
+        @csrf
+        <input type="hidden" name="_combo_form" value="modificar">
+        <input type="hidden" id="edit_combo_id" name="id_combo" value="{{ old('id_combo') }}">
+        <div class="grupo-campo">
+          <label for="edit_combo_nombre">Nombre del combo:</label>
+          <input type="text" id="edit_combo_nombre" name="combo" maxlength="50" required value="{{ old('_combo_form') === 'modificar' ? old('combo') : '' }}">
+          @if (old('_combo_form') === 'modificar')
+            @error('combo') <span class="error-texto">{{ $message }}</span> @enderror
+            @error('id_combo') <span class="error-texto">{{ $message }}</span> @enderror
+          @endif
+        </div>
+        <div class="modal-botones">
+          <button type="button" id="btnCerrarEditarCombo" class="btn-cancelar">Cancelar</button>
           <button type="submit" class="btn-guardar">Guardar Cambios</button>
         </div>
       </form>

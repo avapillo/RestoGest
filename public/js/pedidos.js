@@ -20,6 +20,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnCerrarEditarSeccion = document.getElementById('btnCerrarEditarSeccion');
   const inputEditarSeccionId = document.getElementById('edit_seccion_id');
   const inputEditarSeccionNombre = document.getElementById('edit_seccion_nombre');
+  const btnAbrirModalCombos = document.getElementById('btnAbrirModalCombos');
+  const btnCerrarModalCombos = document.getElementById('btnCerrarModalCombos');
+  const modalCombos = document.getElementById('modalCombos');
+  const listaCombos = document.getElementById('listaCombos');
+  const modalEditarCombo = document.getElementById('modalEditarCombo');
+  const btnCerrarEditarCombo = document.getElementById('btnCerrarEditarCombo');
+  const inputEditarComboId = document.getElementById('edit_combo_id');
+  const inputEditarComboNombre = document.getElementById('edit_combo_nombre');
 
   const cargarSecciones = async () => {
     if (!listaSecciones) return;
@@ -61,6 +69,48 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (btnCerrarEditarSeccion && modalEditarSeccion) {
     btnCerrarEditarSeccion.addEventListener('click', () => modalEditarSeccion.classList.add('hidden'));
+  }
+
+  const cargarCombos = async () => {
+    if (!listaCombos) return;
+
+    listaCombos.innerHTML = '<p class="cargando-secciones">Cargando combos...</p>';
+
+    try {
+      const response = await fetch(listaCombos.dataset.url, {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+      });
+      if (!response.ok) throw new Error('No se pudieron cargar los combos.');
+      listaCombos.innerHTML = await response.text();
+    } catch (error) {
+      listaCombos.innerHTML = '<p class="sin-secciones">No se pudieron cargar los combos.</p>';
+    }
+  };
+
+  if (btnAbrirModalCombos && modalCombos) {
+    btnAbrirModalCombos.addEventListener('click', () => {
+      modalCombos.classList.remove('hidden');
+      cargarCombos();
+    });
+  }
+
+  if (btnCerrarModalCombos && modalCombos) {
+    btnCerrarModalCombos.addEventListener('click', () => modalCombos.classList.add('hidden'));
+  }
+
+  if (listaCombos) {
+    listaCombos.addEventListener('click', event => {
+      const botonEditar = event.target.closest('.btn-modificar-combo');
+      if (!botonEditar) return;
+
+      if (inputEditarComboId) inputEditarComboId.value = botonEditar.dataset.id;
+      if (inputEditarComboNombre) inputEditarComboNombre.value = botonEditar.dataset.nombre;
+      if (modalEditarCombo) modalEditarCombo.classList.remove('hidden');
+    });
+  }
+
+  if (btnCerrarEditarCombo && modalEditarCombo) {
+    btnCerrarEditarCombo.addEventListener('click', () => modalEditarCombo.classList.add('hidden'));
   }
 
   const limpiarFilasPedido = () => {

@@ -91,14 +91,13 @@
           <table class="tabla-ventas">
             <thead>
               <tr>
-                <th scope="col">Fecha</th>
+                <th scope="col">Fecha de pago</th>
                 <th scope="col">Monto</th>
                 <th scope="col">Tipo de pago</th>
-                <th scope="col">Quién cerró caja</th>
               </tr>
             </thead>
             <tbody id="filasVentas">
-              <tr><td class="fila-vacia" colspan="4">Cargando registros...</td></tr>
+              <tr><td class="fila-vacia" colspan="3">Cargando registros...</td></tr>
             </tbody>
           </table>
         </div>
@@ -115,6 +114,7 @@
           </div>
         </footer>
       </section>
+
     </main>
   </div>
 

@@ -16,29 +16,27 @@ document.addEventListener('DOMContentLoaded', () => {
   let lastPage = 1;
   let activeRequest;
 
-  const paymentTypes = new Map(
-    Array.from(form.querySelector('#fk_tipo_pago').options)
-      .filter(option => option.value)
-      .map(option => [option.value, option.textContent.trim()]),
-  );
-
   function setStatus(message, isError = false) {
     status.textContent = message;
     status.classList.toggle('error', isError);
   }
 
-  function addCell(row, value, className = '') {
+  function addCell(row, value, className = '', label = '') {
     const cell = document.createElement('td');
     cell.textContent = value ?? '-';
     if (className) cell.className = className;
+    if (label) cell.dataset.label = label;
     row.append(cell);
   }
 
-  function formatDate(value) {
+  function formatPaymentDate(value) {
     if (!value) return '-';
 
-    const [year, month, day] = String(value).slice(0, 10).split('-').map(Number);
-    return new Intl.DateTimeFormat('es-CL').format(new Date(year, month - 1, day));
+    const [date, time] = String(value).split(/[T ]/);
+    const [year, month, day] = date.split('-').map(Number);
+    const formattedDate = new Intl.DateTimeFormat('es-CL').format(new Date(year, month - 1, day));
+
+    return time ? `${formattedDate} ${time.slice(0, 5)}` : formattedDate;
   }
 
   function renderRows(rows) {
@@ -57,14 +55,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     rows.forEach(venta => {
       const row = document.createElement('tr');
-      addCell(row, formatDate(venta.fecha_pago));
+      row.className = 'fila-venta';
+
+      // 1. Fecha en que se cobró la venta
+      addCell(row, formatPaymentDate(venta.fecha_pago), '', 'Fecha de pago');
+
+      // 2. Monto total
       addCell(
         row,
         venta.monto === null ? '-' : `$ ${currencyFormatter.format(Number(venta.monto))}`,
         'celda-monto',
+        'Monto',
       );
-      addCell(row, paymentTypes.get(String(venta.fk_tipo_pago)) ?? '-');
-      addCell(row, venta.historial_caja?.usuario?.nombre ?? '-');
+
+      // 3. Método de pago
+      addCell(row, venta.metodo_pago ?? '-', '', 'Tipo de pago');
+
       tbody.append(row);
     });
   }

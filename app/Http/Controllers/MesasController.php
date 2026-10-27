@@ -126,9 +126,16 @@ public function mostrarOrdenesPedidos(Request $request){
                 ]);
             }
 
+            if ($caja->id_registro_inicio === null) {
+                $caja->update([
+                    'id_registro_inicio' => DB::table('registro_pago')->max('id_registro') ?? 0,
+                ]);
+            }
+
             DB::table('registro_pago')->insert([
                 'monto' => $monto,
                 'fk_tipo_pago' => $datos['fk_tipo_pago'],
+                'fecha_pago' => now()->toDateString(),
                 'fk_id_pedido' => $pedido->id_pedido,
             ]);
 

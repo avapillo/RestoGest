@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Ventas;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -21,14 +20,9 @@ class VentasController extends Controller
     public function buscar(Request $request)
     {
         $reglas = [
-            'id_registro' => 'sometimes|nullable|integer|min:1',
-            'monto' => 'sometimes|nullable|numeric|min:0',
             'fk_tipo_pago' => 'sometimes|nullable|integer|exists:tipo_pago,id',
-            'fecha_pago' => 'sometimes|nullable|date',
             'fecha_desde' => 'sometimes|nullable|date',
             'fecha_hasta' => 'sometimes|nullable|date',
-            'fk_id_historial' => 'sometimes|nullable|integer|exists:historial_caja,id_historial',
-            'fk_id_pedido' => 'sometimes|nullable|integer|exists:pedidos,id_pedido',
             'per_page' => 'sometimes|integer|min:1|max:100',
         ];
 
@@ -38,21 +32,29 @@ class VentasController extends Controller
 
         $filtros = $request->validate($reglas);
 
-        $ventas = Ventas::query()
-            ->with('historialCaja.usuario:id,nombre')
-            ->buscar($filtros);
+        $ventas = DB::table('registro_pago as pago')
+            ->leftJoin('tipo_pago as tipo', 'tipo.id', '=', 'pago.fk_tipo_pago')
+            ->select([
+                'pago.fecha_pago',
+                'pago.monto',
+                'tipo.tipo_pago as metodo_pago',
+            ]);
+
+        if (!empty($filtros['fk_tipo_pago'])) {
+            $ventas->where('pago.fk_tipo_pago', $filtros['fk_tipo_pago']);
+        }
 
         if (!empty($filtros['fecha_desde'])) {
-            $ventas->whereDate('fecha_pago', '>=', $filtros['fecha_desde']);
+            $ventas->whereDate('pago.fecha_pago', '>=', $filtros['fecha_desde']);
         }
 
         if (!empty($filtros['fecha_hasta'])) {
-            $ventas->whereDate('fecha_pago', '<=', $filtros['fecha_hasta']);
+            $ventas->whereDate('pago.fecha_pago', '<=', $filtros['fecha_hasta']);
         }
 
         $resultados = $ventas
-            ->orderByDesc('fecha_pago')
-            ->orderByDesc('id_registro')
+            ->orderByDesc('pago.fecha_pago')
+            ->orderByDesc('pago.id_registro')
             ->paginate($filtros['per_page'] ?? 15)
             ->withQueryString();
 

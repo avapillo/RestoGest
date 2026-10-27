@@ -140,7 +140,7 @@ return new class extends Migration
             $table->integer('id_registro')->autoIncrement()->primary();
             $table->decimal('monto', 10, 0)->nullable();
             $table->integer('fk_tipo_pago')->nullable();
-            $table->date('fecha_pago')->nullable();
+            $table->date('fecha_pago')->nullable()->default(DB::raw('(CURRENT_DATE)'));
             $table->integer('fk_id_historial')->nullable();
 
             $table->foreign('fk_tipo_pago', 'fk_tipo_pago')

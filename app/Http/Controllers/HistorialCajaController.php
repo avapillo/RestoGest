@@ -51,6 +51,7 @@ class HistorialCajaController extends Controller
                     'monto_actual' => 0,
                     'momento_apertura' => now(),
                     'id_usuario' => session('usuario_id'),
+                    'id_registro_inicio' => DB::table('registro_pago')->max('id_registro') ?? 0,
                 ]);
             } else {
                 $caja->update([
@@ -58,6 +59,7 @@ class HistorialCajaController extends Controller
                     'monto_actual' => 0,
                     'momento_apertura' => now(),
                     'id_usuario' => session('usuario_id'),
+                    'id_registro_inicio' => DB::table('registro_pago')->max('id_registro') ?? 0,
                 ]);
             }
 
@@ -118,9 +120,17 @@ class HistorialCajaController extends Controller
                 'id_usuario' => session('usuario_id'),
             ]);
 
+            if ($caja->id_registro_inicio !== null) {
+                DB::table('registro_pago')
+                    ->where('id_registro', '>', $caja->id_registro_inicio)
+                    ->whereNull('fk_id_historial')
+                    ->update(['fk_id_historial' => $cierre->id_historial]);
+            }
+
             $caja->update([
                 'abierta' => false,
                 'monto_actual' => 0,
+                'id_registro_inicio' => null,
             ]);
 
             $adminAccess->record((int) session('usuario_id'), 'cierre_caja');

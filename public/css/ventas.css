@@ -434,6 +434,67 @@ body {
     padding-bottom: 0;
   }
 
+  .envoltura-tabla {
+    overflow: visible;
+    border: 0;
+  }
+
+  .tabla-ventas,
+  .tabla-ventas tbody {
+    display: block;
+    width: 100%;
+  }
+
+  .tabla-ventas thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .tabla-ventas tbody {
+    display: grid;
+    gap: 10px;
+  }
+
+  .tabla-ventas tbody tr.fila-venta {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    padding: 12px;
+    border: 1px solid var(--ventas-border);
+    border-radius: 6px;
+    background: var(--ventas-surface);
+  }
+
+  .tabla-ventas tbody tr.fila-venta td {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 4px;
+    padding: 0;
+    border: 0;
+    overflow-wrap: anywhere;
+    white-space: normal;
+  }
+
+  .tabla-ventas tbody tr.fila-venta td::before {
+    color: var(--ventas-muted);
+    content: attr(data-label);
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  .tabla-ventas tbody tr:not(.fila-venta) td {
+    display: block;
+  }
+
   .titulo-panel,
   .encabezado-resultados {
     align-items: flex-start;

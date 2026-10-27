@@ -39,6 +39,7 @@ beforeEach(function () {
         $table->decimal('monto_actual', 12, 2)->default(0);
         $table->dateTime('momento_apertura')->nullable();
         $table->integer('id_usuario')->nullable();
+        $table->integer('id_registro_inicio')->nullable();
         $table->timestamps();
     });
 
@@ -405,6 +406,21 @@ test('el cobro suma su importe al total actual de la caja', function () {
     $this->getJson('/api/caja/estado')
         ->assertOk()
         ->assertJsonPath('monto_actual', 3500);
+
+    $cierre = $this->postJson('/api/caja/cerrar')
+        ->assertCreated()
+        ->json('data');
+
+    expect($cierre['id_usuario'])->toBe(session('usuario_id'));
+    $this->assertDatabaseHas('registro_pago', [
+        'fk_id_historial' => $cierre['id_historial'],
+        'fecha_pago' => now()->toDateString(),
+    ]);
+
+    $ventas = $this->getJson('/api/ventas')
+        ->assertOk()
+        ->assertJsonPath('data.0.metodo_pago', 'Efectivo');
+    expect($ventas->json('data.0.fecha_pago'))->toBe(now()->toDateString());
 });
 
 test('el cobro no se registra cuando la caja está cerrada', function () {
@@ -428,7 +444,7 @@ test('la búsqueda de ventas filtra por parámetros y pagina los resultados', fu
     $tarjetaId = DB::table('tipo_pago')->insertGetId(['tipo_pago' => 'Tarjeta']);
     $historialId = DB::table('historial_caja')->insertGetId([
         'monto_total' => 1500,
-        'momento_cierre' => '2026-10-20 20:00:00',
+        'momento_cierre' => '2026-10-25 20:00:00',
         'id_usuario' => session('usuario_id'),
     ]);
 
@@ -438,31 +454,46 @@ test('la búsqueda de ventas filtra por parámetros y pagina los resultados', fu
         'fecha_pago' => '2026-10-20',
         'fk_id_historial' => $historialId,
     ]);
-    $ventaTarjetaId = DB::table('registro_pago')->insertGetId([
+    $historialTarjetaId = DB::table('historial_caja')->insertGetId([
+        'monto_total' => 2500,
+        'momento_cierre' => '2026-10-21 20:00:00',
+        'id_usuario' => session('usuario_id'),
+    ]);
+    DB::table('registro_pago')->insert([
         'monto' => 2500,
         'fk_tipo_pago' => $tarjetaId,
         'fecha_pago' => '2026-10-21',
+        'fk_id_historial' => $historialTarjetaId,
     ]);
-    $segundaVentaId = DB::table('registro_pago')->insertGetId([
+    DB::table('registro_pago')->insert([
         'monto' => 1500,
         'fk_tipo_pago' => $efectivoId,
         'fecha_pago' => '2026-10-19',
     ]);
 
-    $this->getJson('/api/ventas?fk_tipo_pago='.$efectivoId.'&monto=1500&per_page=1')
+    $respuestaVentas = $this->getJson('/api/ventas?fk_tipo_pago='.$efectivoId.'&per_page=1')
         ->assertOk()
-        ->assertJsonPath('data.0.id_registro', $ventaCoincidenteId)
-        ->assertJsonPath('data.0.historial_caja.usuario.nombre', 'Admin de prueba')
+        ->assertJsonPath('data.0.fecha_pago', '2026-10-20')
+        ->assertJsonPath('data.0.monto', 1500)
+        ->assertJsonPath('data.0.metodo_pago', 'Efectivo')
         ->assertJsonPath('total', 2)
         ->assertJsonPath('per_page', 1);
+    expect(array_keys($respuestaVentas->json('data.0')))->toEqualCanonicalizing([
+        'fecha_pago',
+        'monto',
+        'metodo_pago',
+    ]);
 
-    $this->getJson('/api/ventas?fk_tipo_pago='.$efectivoId.'&monto=1500&per_page=1&page=2')
+    $this->getJson('/api/ventas?fk_tipo_pago='.$efectivoId.'&per_page=1&page=2')
         ->assertOk()
-        ->assertJsonPath('data.0.id_registro', $segundaVentaId);
+        ->assertJsonPath('data.0.fecha_pago', '2026-10-19')
+        ->assertJsonPath('data.0.monto', 1500)
+        ->assertJsonPath('data.0.metodo_pago', 'Efectivo');
 
     $this->getJson('/api/ventas?fecha_desde=2026-10-21&fecha_hasta=2026-10-21')
         ->assertOk()
-        ->assertJsonPath('data.0.id_registro', $ventaTarjetaId)
+        ->assertJsonPath('data.0.fecha_pago', '2026-10-21')
+        ->assertJsonPath('data.0.metodo_pago', 'Tarjeta')
         ->assertJsonPath('total', 1);
 
     $this->getJson('/api/ventas?fecha_hasta=2026-10-20')
@@ -484,6 +515,11 @@ test('la página de ventas carga los tipos de pago y los controles de búsqueda'
         ->assertSee('name="fecha_desde"', false)
         ->assertSee('name="fecha_hasta"', false)
         ->assertDontSee('name="monto"', false)
-        ->assertSee('Quién cerró caja')
+        ->assertSee('<th scope="col">Monto</th>', false)
+        ->assertSee('<th scope="col">Tipo de pago</th>', false)
+        ->assertSee('<th scope="col">Fecha de pago</th>', false)
+        ->assertDontSee('Quién cerró caja')
+        ->assertDontSee('Cierres de caja')
+        ->assertDontSee('data-historial-api-url=', false)
         ->assertSee('js/ventas.js');
 });

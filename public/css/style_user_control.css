@@ -282,6 +282,8 @@ body {
   border-radius: var(--radius-card);
   width: 100%;
   max-width: 450px;
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
   box-shadow: 0 20px 40px rgba(18, 26, 43, 0.18);
 }
 
@@ -318,6 +320,30 @@ body {
   background-color: #ffffff;
   color: #334155;
   outline: none;
+}
+
+.campo-contrasenia {
+  display: flex;
+  gap: 8px;
+}
+
+.campo-contrasenia input {
+  flex: 1;
+  min-width: 0;
+}
+
+.btn-visibilidad-contrasenia {
+  flex: 0 0 auto;
+  padding: 0 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  background: #fff;
+  color: #334155;
+  cursor: pointer;
+}
+
+.btn-visibilidad-contrasenia:hover {
+  background: #f1f5f9;
 }
 
 .grupo-campo input:focus,

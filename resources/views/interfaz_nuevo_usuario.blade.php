@@ -20,7 +20,7 @@
         <a href="{{ route('mesas.index') }}" class="opcion-menu">Mesas</a>
         <a href="{{ route('producto.index') }}" class="opcion-menu">Producto</a>
         <a href="{{ route('usuario.index') }}" class="opcion-menu activa">Control de Usuario</a>
-        <a href="{{ route('mantenimiento') }}" class="opcion-menu">Ventas</a>
+        <a href="{{ route('ventas.index') }}" class="opcion-menu">Administración de Ventas</a>
       </nav>
       
       <div class="cerrar-sesion-contenedor">
@@ -124,8 +124,25 @@
 
       <div class="grupo-campo">
         <label for="gmail">Gmail:</label>
-        <input type="email" id="gmail" name="gmail" required placeholder="Ej: juan@gmail.com" value="{{ old('gmail') }}">
+        <input type="email" id="gmail" name="gmail" required placeholder="Ej: juan@gmail.com" value="{{ old('gmail') }}" autocomplete="email">
         @error('gmail') <span class="error-texto">{{ $message }}</span> @enderror
+      </div>
+
+      <div class="grupo-campo">
+        <label for="contrasenia">Contraseña:</label>
+        <div class="campo-contrasenia">
+          <input type="password" id="contrasenia" name="contrasenia" required minlength="8" autocomplete="new-password">
+          <button type="button" class="btn-visibilidad-contrasenia" data-toggle-password="contrasenia" aria-label="Mostrar contraseña">Mostrar</button>
+        </div>
+        @error('contrasenia') <span class="error-texto">{{ $message }}</span> @enderror
+      </div>
+
+      <div class="grupo-campo">
+        <label for="contrasenia_confirmation">Confirmar contraseña:</label>
+        <div class="campo-contrasenia">
+          <input type="password" id="contrasenia_confirmation" name="contrasenia_confirmation" required minlength="8" autocomplete="new-password">
+          <button type="button" class="btn-visibilidad-contrasenia" data-toggle-password="contrasenia_confirmation" aria-label="Mostrar confirmación de contraseña">Mostrar</button>
+        </div>
       </div>
 
       <!-- Contenedor dinámico de Comboboxes de Roles -->
@@ -171,6 +188,15 @@
       <div class="grupo-campo">
         <label for="edit_gmail">Gmail:</label>
         <input type="email" id="edit_gmail" name="gmail" required>
+      </div>
+
+      <div class="grupo-campo">
+        <label for="edit_contrasenia">Contraseña:</label>
+        <div class="campo-contrasenia">
+          <input type="password" id="edit_contrasenia" name="contrasenia" minlength="8" autocomplete="new-password">
+          <button type="button" class="btn-visibilidad-contrasenia" data-toggle-password="edit_contrasenia" aria-label="Mostrar nueva contraseña">Mostrar</button>
+        </div>
+        @error('contrasenia') <span class="error-texto">{{ $message }}</span> @enderror
       </div>
 
       <!-- Contenedor dinámico de Comboboxes en la Edición -->

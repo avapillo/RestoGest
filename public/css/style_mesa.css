@@ -196,10 +196,9 @@ body {
 .contenedor-botones-header {
   display: flex;
   gap: 20px;
-}
-
-.encabezado-seccion .contenedor-botones-header:nth-last-child(2) {
   margin-left: auto;
+  justify-content: flex-end;
+  flex-wrap: wrap;
 }
 
 .encabezado-seccion h2 {

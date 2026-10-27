@@ -386,12 +386,12 @@ tr:hover {
    ============================================================ */
 
 .total-caja {
-    width: 100%;
-    box-sizing: border-box;
+  width: 100%;
+  box-sizing: border-box;
   background-color: var(--bg-card);
   border-radius: var(--radius-card);
-    padding: 15px 20px;
-    text-align: left;
+  padding: 15px 20px;
+  text-align: left;
   border: 1px solid var(--border-color);
   box-shadow: var(--shadow-sm);
 }
@@ -413,6 +413,7 @@ tr:hover {
 
 .total-caja strong #total-pagos {
   display: inline;
+  font-size: 32px;
 }
 
 

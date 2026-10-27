@@ -13,6 +13,7 @@ class CajaEstado extends Model
         'monto_actual',
         'momento_apertura',
         'id_usuario',
+        'id_registro_inicio',
     ];
 
     protected $casts = [

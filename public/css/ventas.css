@@ -1,0 +1,526 @@
+:root {
+  --ventas-sidebar: #121a2b;
+  --ventas-sidebar-hover: #1e293b;
+  --ventas-background: #f8f6f0;
+  --ventas-surface: #ffffff;
+  --ventas-border: #e2e8f0;
+  --ventas-text: #1e293b;
+  --ventas-muted: #64748b;
+  --ventas-accent: #d97706;
+  --ventas-accent-hover: #b45309;
+  --ventas-danger: #b91c1c;
+  --ventas-radius: 8px;
+  --ventas-shadow: 0 4px 12px rgba(18, 26, 43, 0.05);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  color: var(--ventas-text);
+  background: var(--ventas-background);
+  font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+.contenedor-sitio {
+  display: flex;
+  min-height: 100vh;
+}
+
+.barra-lateral {
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex: 0 0 260px;
+  flex-direction: column;
+  align-self: flex-start;
+  width: 260px;
+  height: 100vh;
+  overflow-y: auto;
+  color: #f8fafc;
+  background: var(--ventas-sidebar);
+  box-shadow: 2px 0 12px rgba(18, 26, 43, 0.12);
+}
+
+.logo-sistema {
+  padding: 16px 12px;
+  border-bottom: 1px solid var(--ventas-sidebar-hover);
+}
+
+.logo-sistema img {
+  display: block;
+  width: 100%;
+  max-width: 180px;
+  height: auto;
+  margin: 0 auto;
+}
+
+.menu-navegacion {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 15px 0;
+}
+
+.opcion-menu {
+  display: block;
+  padding: 12px 20px;
+  border-left: 4px solid transparent;
+  border-radius: 0 8px 8px 0;
+  color: #94a3b8;
+  text-decoration: none;
+  transition: background-color 160ms ease, color 160ms ease;
+}
+
+.opcion-menu:hover,
+.opcion-menu.activa {
+  border-left-color: var(--ventas-accent);
+  color: #ffffff;
+  background: var(--ventas-sidebar-hover);
+}
+
+.contenido-principal {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+  gap: 22px;
+  padding: 32px;
+}
+
+.encabezado-seccion,
+.encabezado-resultados,
+.titulo-panel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.encabezado-seccion {
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--ventas-border);
+}
+
+.sobre-titulo {
+  margin: 0 0 5px;
+  color: var(--ventas-accent-hover);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.encabezado-seccion h1 {
+  margin: 0;
+  font-size: 1.8rem;
+}
+
+.resumen-encabezado,
+.resumen-resultados {
+  margin: 0;
+  color: var(--ventas-muted);
+  font-size: 0.9rem;
+}
+
+.panel-filtros,
+.panel-resultados {
+  min-width: 0;
+  padding: 22px;
+  border: 1px solid var(--ventas-border);
+  border-radius: var(--ventas-radius);
+  background: var(--ventas-surface);
+  box-shadow: var(--ventas-shadow);
+}
+
+.titulo-panel {
+  margin-bottom: 18px;
+}
+
+.titulo-panel h2,
+.encabezado-resultados h2 {
+  margin: 0;
+  font-size: 1.12rem;
+}
+
+.indicador-filtros {
+  padding: 6px 10px;
+  border: 1px solid #fed7aa;
+  border-radius: 5px;
+  color: #9a3412;
+  background: #fff7ed;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.rejilla-filtros {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.grupo-campo {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.grupo-campo label {
+  color: #475569;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.grupo-campo input,
+.grupo-campo select {
+  width: 100%;
+  min-width: 0;
+  height: 40px;
+  padding: 8px 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 5px;
+  outline: none;
+  color: #334155;
+  background: #ffffff;
+  font: inherit;
+  font-size: 0.9rem;
+}
+
+.grupo-campo input:focus,
+.grupo-campo select:focus {
+  border-color: var(--ventas-accent);
+  box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.14);
+}
+
+.acciones-filtros {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.btn-buscar,
+.btn-limpiar {
+  display: inline-flex;
+  min-height: 40px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 9px 14px;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 650;
+  cursor: pointer;
+  transition: background-color 150ms ease, border-color 150ms ease;
+}
+
+.btn-buscar {
+  color: #ffffff;
+  background: var(--ventas-accent);
+}
+
+.btn-buscar:hover {
+  background: var(--ventas-accent-hover);
+}
+
+.btn-buscar:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+.btn-buscar svg,
+.controles-paginacion svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
+.btn-limpiar {
+  border-color: var(--ventas-border);
+  color: #475569;
+  background: #ffffff;
+}
+
+.btn-limpiar:hover {
+  border-color: #cbd5e1;
+  background: #f8fafc;
+}
+
+.panel-resultados {
+  padding-bottom: 0;
+}
+
+.encabezado-resultados {
+  margin-bottom: 14px;
+}
+
+.estado-ventas {
+  min-height: 20px;
+  margin: 0 0 12px;
+  color: var(--ventas-muted);
+  font-size: 0.85rem;
+}
+
+.estado-ventas.error {
+  color: var(--ventas-danger);
+}
+
+.envoltura-tabla {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--ventas-border);
+  border-radius: 6px;
+}
+
+.tabla-ventas {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.tabla-ventas th,
+.tabla-ventas td {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--ventas-border);
+  font-size: 0.86rem;
+}
+
+.tabla-ventas th {
+  color: #475569;
+  background: #f1f5f9;
+  font-size: 0.76rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.tabla-ventas tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.tabla-ventas tbody tr:hover {
+  background: #fffbeb;
+}
+
+.celda-monto {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.fila-vacia {
+  padding: 32px 14px !important;
+  color: var(--ventas-muted);
+  text-align: center;
+  white-space: normal;
+}
+
+.paginacion-ventas {
+  display: flex;
+  min-height: 62px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  color: var(--ventas-muted);
+  font-size: 0.85rem;
+}
+
+.controles-paginacion {
+  display: flex;
+  gap: 6px;
+}
+
+.controles-paginacion button {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border: 1px solid var(--ventas-border);
+  border-radius: 5px;
+  color: var(--ventas-text);
+  background: #ffffff;
+  cursor: pointer;
+}
+
+.controles-paginacion button:hover:not(:disabled) {
+  border-color: var(--ventas-accent);
+  color: var(--ventas-accent-hover);
+}
+
+.controles-paginacion button:disabled {
+  color: #94a3b8;
+  background: #f8fafc;
+  cursor: not-allowed;
+}
+
+@media (max-width: 1050px) {
+  .rejilla-filtros {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 700px) {
+  .contenedor-sitio {
+    flex-direction: column;
+  }
+
+  .barra-lateral {
+    position: static;
+    width: 100%;
+    height: auto;
+    flex: 0 0 auto;
+  }
+
+  .logo-sistema {
+    padding: 10px 14px;
+  }
+
+  .logo-sistema img {
+    width: 132px;
+  }
+
+  .menu-navegacion {
+    flex-direction: row;
+    gap: 2px;
+    overflow-x: auto;
+    padding: 8px 10px;
+  }
+
+  .opcion-menu {
+    flex: 0 0 auto;
+    padding: 10px 12px;
+    border-bottom: 3px solid transparent;
+    border-left: 0;
+    border-radius: 5px 5px 0 0;
+    font-size: 0.83rem;
+    white-space: nowrap;
+  }
+
+  .opcion-menu:hover,
+  .opcion-menu.activa {
+    border-bottom-color: var(--ventas-accent);
+    border-left-color: transparent;
+  }
+
+  .contenido-principal {
+    gap: 16px;
+    padding: 20px 14px;
+  }
+
+  .encabezado-seccion {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .encabezado-seccion h1 {
+    font-size: 1.55rem;
+  }
+
+  .panel-filtros,
+  .panel-resultados {
+    padding: 16px;
+  }
+
+  .panel-resultados {
+    padding-bottom: 0;
+  }
+
+  .envoltura-tabla {
+    overflow: visible;
+    border: 0;
+  }
+
+  .tabla-ventas,
+  .tabla-ventas tbody {
+    display: block;
+    width: 100%;
+  }
+
+  .tabla-ventas thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .tabla-ventas tbody {
+    display: grid;
+    gap: 10px;
+  }
+
+  .tabla-ventas tbody tr.fila-venta {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    padding: 12px;
+    border: 1px solid var(--ventas-border);
+    border-radius: 6px;
+    background: var(--ventas-surface);
+  }
+
+  .tabla-ventas tbody tr.fila-venta td {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 4px;
+    padding: 0;
+    border: 0;
+    overflow-wrap: anywhere;
+    white-space: normal;
+  }
+
+  .tabla-ventas tbody tr.fila-venta td::before {
+    color: var(--ventas-muted);
+    content: attr(data-label);
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  .tabla-ventas tbody tr:not(.fila-venta) td {
+    display: block;
+  }
+
+  .titulo-panel,
+  .encabezado-resultados {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .rejilla-filtros {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .acciones-filtros {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .btn-buscar,
+  .btn-limpiar {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+  }
+}

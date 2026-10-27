@@ -10,6 +10,7 @@ const API_CERRAR = '/api/caja/cerrar';
 
 let cajaAbierta = false;
 let acumuladoPagos = 0;
+let mensajeCaja = 'Cargando estado de caja...';
 
 
 // ============================================================
@@ -36,7 +37,8 @@ function obtenerElementosCaja() {
     return {
         btnAbrir: document.getElementById('btn-abrir-caja'),
         btnCerrar: document.getElementById('btn-cerrar-caja'),
-        visorTotal: document.getElementById('total-pagos')
+        visorTotal: document.getElementById('total-pagos'),
+        estado: document.getElementById('estado-api')
     };
 
 }
@@ -64,6 +66,7 @@ function cargarEstadoCaja() {
 
             cajaAbierta = datos.abierta;
             acumuladoPagos = parseFloat(datos.monto_actual || 0);
+            mensajeCaja = datos.mensaje || (cajaAbierta ? 'Caja abierta.' : 'La caja está cerrada.');
 
             actualizarInterfazCaja();
 
@@ -72,6 +75,9 @@ function cargarEstadoCaja() {
         .catch(error => {
 
             console.error('Error al obtener estado de caja:', error);
+            mensajeCaja = 'No se pudo consultar el estado de la caja.';
+            actualizarInterfazCaja();
+            document.getElementById('estado-api')?.classList.add('estado-error');
 
         });
 
@@ -141,6 +147,7 @@ function abrirCaja() {
 
         cajaAbierta = datos.abierta;
         acumuladoPagos = parseFloat(datos.monto_actual || 0);
+        mensajeCaja = datos.mensaje || 'Caja abierta.';
 
         actualizarInterfazCaja();
 
@@ -209,6 +216,7 @@ function cerrarCaja() {
 
         cajaAbierta = false;
         acumuladoPagos = 0;
+        mensajeCaja = 'La caja está cerrada.';
 
         actualizarInterfazCaja();
 
@@ -306,7 +314,8 @@ window.registrarNuevoPago = function(monto) {
 function actualizarInterfazCaja() {
 
     const {
-        visorTotal
+        visorTotal,
+        estado
     } = obtenerElementosCaja();
 
 
@@ -316,6 +325,11 @@ function actualizarInterfazCaja() {
 
     }
 
+    if (estado) {
+        estado.textContent = mensajeCaja;
+        estado.hidden = false;
+        estado.classList.remove('estado-error');
+    }
 
 }
 
@@ -379,15 +393,6 @@ function solicitarDatosServidor() {
         .then(listaDeRegistros => {
 
             construirFilasTabla(listaDeRegistros);
-
-
-            if (etiquetaEstado) {
-
-                etiquetaEstado.textContent = '';
-                etiquetaEstado.hidden = true;
-                etiquetaEstado.classList.remove('estado-error');
-
-            }
 
         })
 
@@ -474,31 +479,25 @@ function construirFilasTabla(registrosCaja) {
             });
 
 
-        const nombreUsuario =
-            registro.usuario_nombre ||
-            registro.usuario?.nombre ||
-            'Sin usuario';
+        const datosFila = [
+            fechaFormateada,
+            horaFormateada,
+            `$${montoFormateado}`,
+            registro.usuario?.nombre || 'No disponible'
+        ];
 
+        datosFila.forEach((valor, indice) => {
+            const celda = document.createElement('td');
+            celda.textContent = valor;
 
-        nuevaFila.innerHTML = `
+            if (indice === 0 || indice === 2) {
+                const destacado = document.createElement('strong');
+                destacado.textContent = valor;
+                celda.replaceChildren(destacado);
+            }
 
-            <td>
-                <strong>${fechaFormateada}</strong>
-            </td>
-
-            <td>
-                ${horaFormateada}
-            </td>
-
-            <td>
-                <strong>$${montoFormateado}</strong>
-            </td>
-
-            <td>
-                ${nombreUsuario}
-            </td>
-
-        `;
+            nuevaFila.appendChild(celda);
+        });
 
 
         cuerpoTabla.appendChild(nuevaFila);

@@ -9,7 +9,9 @@ class Usuarios extends Model
 {
     protected $table = 'usuarios';
 
-    protected $fillable = ["nombre", "gmail"];
+    protected $fillable = ["nombre", "gmail", "contrasenia"];
+
+    protected $hidden = ["contrasenia"];
 
     public $timestamps = false;
 

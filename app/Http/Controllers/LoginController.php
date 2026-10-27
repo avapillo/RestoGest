@@ -4,8 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Hash;
 use App\Models\Login;
+use App\Support\AdminAccess;
 
 class LoginController extends Controller
 {
@@ -16,47 +17,56 @@ class LoginController extends Controller
     }
 
     // Valida y procesa el formulario enviado
-    public function validarUsuario(Request $request)
+    public function validarUsuario(Request $request, AdminAccess $adminAccess)
     {
-        // 1. Validaciones
+        $request->merge(['gmail' => strtolower(trim((string) $request->input('gmail')))]);
+
         $request->validate([
-            'nombre'      => 'required|string',
-            'gmail'       => 'nullable|required_without:contrasenia|email',
-            'contrasenia' => 'nullable|required_without:gmail',
+            'gmail'       => 'required|email|ends_with:@gmail.com',
+            'contrasenia' => 'required|string',
         ], [
-            'nombre.required'      => 'El usuario es obligatorio.',
-            'gmail.required_without' => 'Ingresa el correo electrónico o la contraseña.',
-            'gmail.email'          => 'Ingresa un correo electrónico válido.',
+            'gmail.email' => 'Ingresa un correo electrónico válido.',
+            'gmail.ends_with' => 'Debes ingresar una dirección @gmail.com.',
         ]);
 
-        // 2. Consulta al usuario y valida el dato disponible en el esquema.
         $usuario = DB::table('usuarios')
-            ->where('nombre', $request->nombre)
+            ->where('gmail', $request->gmail)
             ->first();
 
-        $credencialesValidas = false;
+        $storedPassword = (string) ($usuario->contrasenia ?? '');
+        $isHashed = str_starts_with($storedPassword, '$2y$') || str_starts_with($storedPassword, '$argon2');
+        $credentialsValid = $usuario && ($isHashed
+            ? Hash::check($request->contrasenia, $storedPassword)
+            : hash_equals($storedPassword, (string) $request->contrasenia));
 
-        if ($usuario && $request->filled('gmail') && Schema::hasColumn('usuarios', 'gmail')) {
-            $credencialesValidas = hash_equals((string) $usuario->gmail, (string) $request->gmail);
-        } elseif ($usuario && $request->filled('contrasenia') && Schema::hasColumn('usuarios', 'contrasenia')) {
-            $credencialesValidas = hash_equals((string) $usuario->contrasenia, (string) $request->contrasenia);
-        }
+        if ($credentialsValid) {
+            if (!$adminAccess->isAdmin((int) $usuario->id)) {
+                return back()
+                    ->with('error', 'Solo los usuarios con rol Admin pueden ingresar al sistema.')
+                    ->withInput($request->only('gmail'));
+            }
 
-        // 3. Si existe el usuario: Guardamos sesión y REDIRECCIONAMOS a la vista deseada
-        if ($credencialesValidas) {
+            if (!$isHashed) {
+                DB::table('usuarios')->where('id', $usuario->id)->update([
+                    'contrasenia' => Hash::make($request->contrasenia),
+                ]);
+            }
+
+            $request->session()->regenerate();
+
             session([
                 'usuario_id'  => $usuario->id,
                 'usuario_nom' => $usuario->nombre
             ]);
 
-            // Redirige a la ruta nombrada 'producto.index' (o 'home')
+            $adminAccess->record((int) $usuario->id, 'ingreso_sistema');
+
             return redirect()->route('home');
         }
 
-        // 4. Si las credenciales fallan: Volvemos atrás con mensaje de error
         return back()
             ->with('error', 'Usuario o contraseña incorrectos.')
-            ->withInput($request->only('nombre'));
+            ->withInput($request->only('gmail'));
     }
 
     // Cerrar Sesión

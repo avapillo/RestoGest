@@ -9,6 +9,9 @@ use Illuminate\Validation\Rule;
 
 class ComboController extends Controller
 {
+
+    // EL combo se registrar como otro producto y no como un registro independiente
+
     public function mostrarCombos()
     {
         $combos = Combo::orderBy('combo')->get();

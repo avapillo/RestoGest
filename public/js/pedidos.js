@@ -7,8 +7,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnCerrarModalMesa = document.getElementById('btnCerrarModalMesa');
   const modalMesa = document.getElementById('modalMesa');
   const formPedido = document.getElementById('formProducto');
-  const selectSeccion = document.getElementById('fk_id_seccion');
-  const selectMesa = document.getElementById('fk_id_mesa');
+  const inputSeccion = document.getElementById('fk_id_seccion');
+  const inputMesa = document.getElementById('fk_id_mesa');
+  const nombreSeccionPedido = document.getElementById('nombreSeccionPedido');
+  const numeroMesaPedido = document.getElementById('numeroMesaPedido');
   const listaProductosPedido = document.getElementById('listaProductosPedido');
   let actualizarFilas = () => {};
 
@@ -146,8 +148,10 @@ document.addEventListener('DOMContentLoaded', () => {
   if (modalProducto) {
     botonesAbrirModalPedido.forEach(boton => boton.addEventListener('click', () => {
       prepararNuevoPedido();
-      selectSeccion.value = boton.dataset.seccionId;
-      selectMesa.value = boton.dataset.mesaId;
+      inputSeccion.value = boton.dataset.seccionId;
+      inputMesa.value = boton.dataset.mesaId;
+      nombreSeccionPedido.textContent = boton.dataset.seccionNombre;
+      numeroMesaPedido.textContent = `Mesa N° ${boton.dataset.mesaNumero}`;
       modalProducto.classList.remove('hidden');
     }));
   }
@@ -166,35 +170,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (btnCerrarModalMesa && modalMesa) {
     btnCerrarModalMesa.addEventListener('click', () => modalMesa.classList.add('hidden'));
-  }
-
-  if (selectSeccion && selectMesa) {
-    selectSeccion.addEventListener('change', async () => {
-      const seccionId = selectSeccion.value;
-      selectMesa.replaceChildren(new Option('Seleccionar Mesa', ''));
-      selectMesa.disabled = !seccionId;
-
-      if (!seccionId) return;
-
-      const token = document.querySelector('#formProducto input[name="_token"]').value;
-      const response = await fetch('/Mesas/Pedido', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'X-CSRF-TOKEN': token,
-        },
-        body: JSON.stringify({ fk_id_seccion: seccionId }),
-      });
-
-      if (!response.ok) return;
-
-      const mesas = await response.json();
-      mesas.forEach(mesa => {
-        selectMesa.add(new Option(`Mesa N° ${mesa.numero_mesa}`, mesa.id_mesa));
-      });
-      selectMesa.disabled = mesas.length === 0;
-    });
   }
 
   if (listaProductosPedido) {

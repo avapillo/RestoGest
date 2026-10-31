@@ -182,6 +182,8 @@
             type="button"
             class="btn-agregar btn-tomar-pedido"
             data-seccion-id="{{ $mesa->fk_id_seccion }}"
+            data-seccion-nombre="{{ $mesa->seccion->seccion ?? 'Sin Sección' }}"
+            data-mesa-numero="{{ $mesa->numero_mesa }}"
             data-mesa-id="{{ $mesa->id_mesa }}">
             ➕ Tomar Pedido
           </button>
@@ -246,30 +248,16 @@
         @csrf
 
         <div class="fila-horizontal contenedor-mesas-area">
+          <input id="fk_id_seccion" type="hidden" name="fk_id_seccion" required>
+          <input id="fk_id_mesa" type="hidden" name="fk_id_mesa" required>
           <div class="grupo-campo">
-            <label for="fk_id_seccion">Sección:</label>
-            <select id="fk_id_seccion" name="fk_id_seccion" required class="select-categoria">
-              <option value="">Seleccionar sección</option>
-              @foreach ($secciones as $sec)
-                <option value="{{ $sec->id_seccion }}" {{ old('fk_id_seccion', $seccionSeleccionada ?? '') == $sec->id_seccion ? 'selected' : '' }}>
-                  {{ $sec->seccion }}
-                </option>
-              @endforeach
-            </select>
-            @error('fk_id_seccion') <span class="error-texto">{{ $message }}</span> @enderror
+            <label>Sección:</label>
+            <p id="nombreSeccionPedido"></p>
           </div>
 
           <div class="grupo-campo">
-            <label for="fk_id_mesa">Mesa:</label>
-            <select id="fk_id_mesa" name="fk_id_mesa" required class="select-categoria" {{ empty($seccionSeleccionada) ? 'disabled' : '' }}>
-              <option value="">Seleccionar mesa</option>
-              @foreach ($mesas as $mesa)
-                <option value="{{ $mesa->id_mesa }}" {{ old('fk_id_mesa') == $mesa->id_mesa ? 'selected' : '' }}>
-                  Mesa N° {{ $mesa->numero_mesa }}
-                </option>
-              @endforeach
-            </select>
-            @error('fk_id_mesa') <span class="error-texto">{{ $message }}</span> @enderror
+            <label>Mesa:</label>
+            <p id="numeroMesaPedido"></p>
           </div>
 
           <div class="grupo-campo">

@@ -22,7 +22,7 @@
         <a href="{{ route('usuario.index') }}" class="opcion-menu activa">Control de Usuario</a>
         <a href="{{ route('ventas.index') }}" class="opcion-menu">Administración de Ventas</a>
       </nav>
-      
+
       <div class="cerrar-sesion-contenedor">
         <a href="{{ route('logout') }}" class="cerrar-sesion">
           <svg xmlns="http://www.w3.org/2000/svg"
@@ -78,7 +78,7 @@
           {{-- Muestra todos los roles concatenados con comas --}}
           Rol: <strong>{{ $usuario->roles->pluck('rol_nombre')->implode(', ') ?: 'Sin Rol' }}</strong>
         </p>
-        <p class="precio-usuario"><strong>Gmail: {{ $usuario->gmail }}</strong></p>
+        <p class="precio-usuario"><strong>Usuario: {{ $usuario->gmail }}</strong></p>
       </div>
 
       <div class="acciones-tarjeta">

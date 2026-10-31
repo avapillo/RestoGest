@@ -119,6 +119,42 @@
         <p class="categoria-etiqueta">
           Sección: <strong>{{ $mesa->seccion->seccion ?? 'Sin Sección' }}</strong>
         </p>
+        
+@if ($ultimoPedido)
+    @php
+        $estadoNombre = trim($ultimoPedido->estado->nombre ?? 'Recibido');
+        $estadoNormalizado = mb_strtolower($estadoNombre);
+
+        if ($estadoNormalizado === 'listo') {
+            $colorEstado = '#22A565';
+        } elseif (
+            $estadoNormalizado === 'en preparación' ||
+            $estadoNormalizado === 'en preparacion'
+        ) {
+            $colorEstado = '#F28C28';
+        } else {
+            $colorEstado = '#2585D8';
+        }
+    @endphp
+
+    <div style="display: flex; justify-content: flex-end; align-items: center; margin: 8px 4px;">
+        <span
+            title="{{ $estadoNombre }}"
+            aria-label="Estado: {{ $estadoNombre }}"
+            style="
+                display: inline-block;
+                width: 16px;
+                height: 16px;
+                border-radius: 50%;
+                background-color: {{ $colorEstado }};
+                border: 3px solid white;
+                box-shadow: 0 0 0 1px rgba(0,0,0,0.12),
+                            0 0 9px {{ $colorEstado }};
+            ">
+        </span>
+    </div>
+@endif
+
 
         <!-- Bloque con el detalle de Productos/Combos -->
         @if ($ultimoPedido && $ultimoPedido->detalles->isNotEmpty())

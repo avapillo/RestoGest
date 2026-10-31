@@ -31,6 +31,7 @@ public function mostrarMesas(Request $request)
     $query = Mesas::with([
         'seccion',
         'pedidos' => $pedidosPendientes,
+        'pedidos.estado',
         'pedidos.detalles.producto',
         'pedidos.detalles.combo'
     ]);
@@ -78,6 +79,7 @@ public function mostrarOrdenesPedidos(Request $request){
     $query = Mesas::whereHas('pedidos', $pedidosPendientes)->with([
         'seccion',
         'pedidos' => $pedidosPendientes,
+        'pedidos.estado',
         'pedidos.detalles.producto',
         'pedidos.detalles.combo',
     ]);
@@ -192,9 +194,10 @@ public function mostrarOrdenesPedidos(Request $request){
 
         DB::transaction(function () use ($datos, $productos) {
             $pedido = Pedido::create([
-                'fk_id_mesa' => $datos['fk_id_mesa'],
-                'es_para_llevar' => $datos['es_para_llevar'],
-            ]);
+    'fk_id_mesa' => $datos['fk_id_mesa'],
+    'es_para_llevar' => $datos['es_para_llevar'],
+    'fk_id_estado' => 1,
+]);
 
             foreach ($datos['items'] as $item) {
                 $producto = $productos->get($item['fk_id_producto']);
@@ -275,5 +278,25 @@ public function mostrarOrdenesPedidos(Request $request){
             ->route('mesas.index', ['fk_id_seccion' => $pedido->mesa->fk_id_seccion])
             ->with('status', 'Pedido modificado correctamente.');
     }
+public function listarApi()
+{
+    $mesas = \App\Models\Mesas::with('seccion')
+        ->orderBy('numero_mesa')
+        ->get()
+        ->map(function ($mesa) {
+            return [
+                'id_mesa' => $mesa->id_mesa,
+                'numero_mesa' => (int) $mesa->numero_mesa,
+                'fk_id_seccion' => $mesa->fk_id_seccion,
+                'seccion' => $mesa->seccion
+                    ? $mesa->seccion->seccion
+                    : null,
+            ];
+        });
 
+    return response()->json([
+        'exito' => true,
+        'data' => $mesas,
+    ]);
+}
 }

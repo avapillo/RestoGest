@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HistorialCajaController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ApiProductoController;
+use App\Http\Controllers\MesasController;
 
 // La caja requiere una sesión web válida de administrador.
 Route::middleware('web')->group(function () {
@@ -60,3 +61,8 @@ Route::get('/v1/productos/categoria/{id}', [ApiProductoController::class, 'obten
 // Pedidos para la aplicación de cocina
 Route::get('/cocina/pedidos', [ApiCocinaController::class, 'pedidos']);
 Route::post('/cocina/pedidos', [ApiCocinaController::class, 'guardar']);
+Route::patch('/cocina/pedidos/{id}/estado', [
+    ApiCocinaController::class,
+    'actualizarEstado'
+]);
+Route::get('/mesas', [MesasController::class, 'listarApi']);

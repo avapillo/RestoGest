@@ -2,7 +2,6 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductoController;
-use App\Http\Controllers\PedidoController;
 use App\Http\Controllers\MesasController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\LoginController;
@@ -74,7 +73,6 @@ Route::post('/Mesas/Pedido', [MesasController::class, 'realizarPedido'])->name('
 
 Route::post('/Mesas/Pedido/{id_pedido}/modificar', [MesasController::class, 'modificarPedido'])->name('pedido.update');
 
-Route::get('/pedidos/crear/{mesa}', [PedidoController::class, 'create'])->name('pedidos.create');
 
 
 // Ruta de ventas

@@ -60,6 +60,12 @@ return new class extends Migration
             $table->string('tipo_pago', 45)->nullable();
         });
 
+        // --- NUEVA TABLA: estados (Creada antes de pedidos) ---
+        Schema::create('estados', function (Blueprint $table) {
+            $table->integer('id')->autoIncrement()->primary();
+            $table->string('estado', 50)->nullable();
+        });
+
         Schema::create('seccion', function (Blueprint $table) {
             $table->integer('id_seccion')->autoIncrement()->primary();
             $table->string('seccion', 60)->nullable();
@@ -93,6 +99,7 @@ return new class extends Migration
             $table->time('hora_pedido')->default(DB::raw('(curtime())'));
             $table->integer('fk_id_mesa')->nullable();
             $table->integer('fk_id_tipo_pago')->nullable();
+            $table->integer('fk_id_estado')->nullable(); // <-- Columna para el estado agregada
             $table->boolean('es_para_llevar')->default(false);
 
             $table->foreign('fk_id_mesa', 'fk_pedidos_mesa')
@@ -101,6 +108,11 @@ return new class extends Migration
             $table->foreign('fk_id_tipo_pago', 'fk_pedidos_pago')
                 ->references('id')
                 ->on('tipo_pago');
+
+            // --- Llave foránea hacia la tabla estados ---
+            $table->foreign('fk_id_estado', 'fk_pedidos_estado')
+                ->references('id')
+                ->on('estados');
         });
 
         Schema::create('detalle_pedido', function (Blueprint $table) {
@@ -163,6 +175,7 @@ return new class extends Migration
         Schema::dropIfExists('productos');
         Schema::dropIfExists('mesas');
         Schema::dropIfExists('seccion');
+        Schema::dropIfExists('estados'); // <-- Eliminado en orden inverso
         Schema::dropIfExists('tipo_pago');
         Schema::dropIfExists('combos');
         Schema::dropIfExists('categoria');

@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Login;
 use App\Support\AdminAccess;
+use Illuminate\Support\Facades\Schema;
 
 class LoginController extends Controller
 {
@@ -76,5 +77,91 @@ class LoginController extends Controller
         return redirect()->route('login');
     }
 
+
+    // Inicio de sesión para la aplicación Flutter
+    public function loginApp(Request $request)
+    {
+        $datos = $request->validate([
+            'gmail' => 'required|email',
+            'contrasenia' => 'required|string',
+        ]);
+
+        $gmail = strtolower(trim($datos['gmail']));
+
+        $usuario = \App\Models\Usuarios::with('roles')
+            ->where('gmail', $gmail)
+            ->first();
+
+        if (!$usuario) {
+            return response()->json([
+                'exito' => false,
+                'mensaje' => 'Correo o contraseña incorrectos.',
+            ], 401);
+        }
+
+        $storedPassword = (string) $usuario->contrasenia;
+
+        $isHashed = str_starts_with($storedPassword, '$2y$')
+            || str_starts_with($storedPassword, '$argon2');
+
+        $credentialsValid = $isHashed
+            ? Hash::check($datos['contrasenia'], $storedPassword)
+            : hash_equals($storedPassword, $datos['contrasenia']);
+
+        if (!$credentialsValid) {
+            return response()->json([
+                'exito' => false,
+                'mensaje' => 'Correo o contraseña incorrectos.',
+            ], 401);
+        }
+
+        if (!$isHashed) {
+            DB::table('usuarios')
+                ->where('id', $usuario->id)
+                ->update([
+                    'contrasenia' => Hash::make($datos['contrasenia']),
+                ]);
+        }
+
+        $roles = $usuario->roles->pluck('rol_nombre')
+            ->map(fn($rol) => strtolower(trim($rol)));
+
+        if (Schema::hasColumn('usuarios', 'id_rol_usuario')) {
+            $rolDirecto = DB::table('usuarios')
+                ->join('rol_usuario', 'usuarios.id_rol_usuario', '=', 'rol_usuario.id_rol')
+                ->where('usuarios.id', $usuario->id)
+                ->value('rol_usuario.rol_nombre');
+
+            if ($rolDirecto) {
+                $roles->push(strtolower(trim($rolDirecto)));
+            }
+        }
+
+        $tienePermiso = $roles->contains(
+            fn($rol) => in_array(
+                $rol,
+                ['admin', 'administrador', 'mozo'],
+                true
+            )
+        );
+
+        if (!$tienePermiso) {
+            return response()->json([
+                'exito' => false,
+                'mensaje' => 'No tenés permiso para ingresar a esta aplicación.',
+            ], 403);
+        }
+
+        return response()->json([
+            'exito' => true,
+            'mensaje' => 'Inicio de sesión correcto.',
+            'usuario' => [
+                'id' => $usuario->id,
+                'nombre' => $usuario->nombre,
+                'gmail' => $usuario->gmail,
+                'roles' => $roles->unique()->values(),
+            ],
+        ]);
+    }
 
 }

@@ -7,6 +7,7 @@ use App\Http\Controllers\HistorialCajaController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ApiProductoController;
 use App\Http\Controllers\MesasController;
+use App\Http\Controllers\LoginController;
 
 // La caja requiere una sesión web válida de administrador.
 Route::middleware('web')->group(function () {
@@ -66,3 +67,4 @@ Route::patch('/cocina/pedidos/{id}/estado', [
     'actualizarEstado'
 ]);
 Route::get('/mesas', [MesasController::class, 'listarApi']);
+Route::post('/login-app', [LoginController::class, 'loginApp']);

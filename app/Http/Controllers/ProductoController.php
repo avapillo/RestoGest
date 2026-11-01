@@ -82,11 +82,6 @@ class ProductoController extends Controller
     public function eliminarProducto($id)
     {
         $producto = Producto::findOrFail($id);
-
-        if ($producto->imagen) {
-            Storage::disk('public')->delete($producto->imagen);
-        }
-
         $producto->delete();
 
         return redirect()->route('producto.index')->with('status', '¡Producto eliminado con éxito!');

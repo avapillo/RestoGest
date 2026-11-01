@@ -20,11 +20,13 @@ beforeEach(function () {
         $table->string('gmail')->unique();
         $table->string('contrasenia');
         $table->integer('id_rol_usuario')->nullable();
+        $table->softDeletes();
     });
 
     Schema::create('rol_usuario', function (Blueprint $table) {
         $table->integer('id_rol')->primary();
         $table->string('rol_nombre');
+        $table->softDeletes();
     });
 
     Schema::create('usuario_roles', function (Blueprint $table) {
@@ -87,6 +89,7 @@ beforeEach(function () {
     Schema::create('categoria', function (Blueprint $table) {
         $table->id();
         $table->string('categoria');
+        $table->softDeletes();
     });
 
     Schema::create('productos', function (Blueprint $table) {
@@ -95,6 +98,7 @@ beforeEach(function () {
         $table->integer('precio');
         $table->string('imagen')->nullable();
         $table->unsignedBigInteger('fk_id_categoria');
+        $table->softDeletes();
         $table->foreign('fk_id_categoria')->references('id')->on('categoria');
     });
 

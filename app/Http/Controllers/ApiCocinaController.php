@@ -47,6 +47,7 @@ class ApiCocinaController extends Controller
                         'fk_id_combo' => $detalle->fk_id_combo,
                         'nombre' => $nombre,
                         'producto' => $nombre,
+                        'imagen' => $detalle->producto->imagen ?? null,
                         'cantidad' => $detalle->cantidad,
                         'subtotal' => $detalle->subtotal,
                         'descripcion' => $detalle->descripcion,

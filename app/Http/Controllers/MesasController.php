@@ -278,18 +278,63 @@ public function mostrarOrdenesPedidos(Request $request){
             ->route('mesas.index', ['fk_id_seccion' => $pedido->mesa->fk_id_seccion])
             ->with('status', 'Pedido modificado correctamente.');
     }
+
 public function listarApi()
 {
-    $mesas = \App\Models\Mesas::with('seccion')
+    $mesas = \App\Models\Mesas::with([
+        'seccion',
+        'pedidos' => function ($query) {
+            $query->sinCobrar()
+                ->with([
+                    'estado',
+                    'detalles.producto',
+                    'detalles.combo'
+                ])
+                ->orderBy('id_pedido');
+        }
+    ])
         ->orderBy('numero_mesa')
         ->get()
         ->map(function ($mesa) {
+
+            $pedidosPendientes = $mesa->pedidos;
+
+            $ultimoPedido = $pedidosPendientes->last();
+
+            // Calcular el consumo real usando los detalles
+            $montoPendiente = $pedidosPendientes->sum(function ($pedido) {
+
+                return $pedido->detalles->sum(function ($detalle) {
+
+                    $cantidad = (int) $detalle->cantidad;
+
+                    if ($detalle->precio_unitario !== null) {
+                        $precioUnitario = (float) $detalle->precio_unitario;
+                    } elseif ($detalle->producto) {
+                        $precioUnitario = (float) $detalle->producto->precio;
+                    } else {
+                        $precioUnitario = $cantidad > 0
+                            ? (float) $detalle->subtotal / $cantidad
+                            : 0;
+                    }
+
+                    return $precioUnitario * $cantidad;
+                });
+            });
+
             return [
                 'id_mesa' => $mesa->id_mesa,
                 'numero_mesa' => (int) $mesa->numero_mesa,
                 'fk_id_seccion' => $mesa->fk_id_seccion,
+
                 'seccion' => $mesa->seccion
                     ? $mesa->seccion->seccion
+                    : null,
+
+                'monto_pendiente' => $montoPendiente,
+
+                'estado' => $ultimoPedido && $ultimoPedido->estado
+                    ? $ultimoPedido->estado->nombre
                     : null,
             ];
         });
@@ -297,6 +342,70 @@ public function listarApi()
     return response()->json([
         'exito' => true,
         'data' => $mesas,
+    ]);
+}
+
+public function pedidosPendientesApi($idMesa)
+{
+    $pedidos = Pedido::with([
+        'estado',
+        'detalles.producto',
+        'detalles.combo',
+    ])
+        ->where('fk_id_mesa', $idMesa)
+        ->sinCobrar()
+        ->orderBy('id_pedido')
+        ->get();
+
+    $datos = $pedidos->map(function ($pedido) {
+        return [
+            'id_pedido' => $pedido->id_pedido,
+            'fk_id_mesa' => $pedido->fk_id_mesa,
+            'hora_pedido' => $pedido->hora_pedido,
+            'monto_total' => $pedido->monto_total,
+            'fk_id_estado' => $pedido->fk_id_estado,
+            'estado' => $pedido->estado
+                ? $pedido->estado->nombre
+                : 'Recibido',
+
+            'detalles' => $pedido->detalles->map(function ($detalle) {
+
+                $cantidad = (int) $detalle->cantidad;
+
+                if ($detalle->precio_unitario !== null) {
+                    $precioUnitario = (float) $detalle->precio_unitario;
+                } elseif ($detalle->producto) {
+                    $precioUnitario = (float) $detalle->producto->precio;
+                } else {
+                    $precioUnitario = $cantidad > 0
+                        ? (float) $detalle->subtotal / $cantidad
+                        : 0;
+                }
+
+                $subtotal = $precioUnitario * $cantidad;
+
+                $nombre = 'Producto';
+
+                if ($detalle->producto) {
+                    $nombre = $detalle->producto->nombre;
+                } elseif ($detalle->combo) {
+                    $nombre = $detalle->combo->combo;
+                }
+
+                return [
+                    'nombre' => $nombre,
+                    'cantidad' => $cantidad,
+                    'precio_unitario' => $precioUnitario,
+                    'subtotal' => $subtotal,
+                    'descripcion' => $detalle->descripcion,
+                ];
+            }),
+        ];
+    });
+
+    return response()->json([
+        'exito' => true,
+        'data' => $datos,
     ]);
 }
 }

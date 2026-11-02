@@ -3,12 +3,12 @@ use App\Http\Controllers\ApiCocinaController;
 use App\Http\Controllers\VentasController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\HistorialCajaController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ApiProductoController;
 use App\Http\Controllers\MesasController;
 use App\Http\Controllers\LoginController;
-
 // La caja requiere una sesión web válida de administrador.
 Route::middleware('web')->group(function () {
     Route::get('/historial-caja', [HistorialCajaController::class, 'index']);
@@ -68,3 +68,37 @@ Route::patch('/cocina/pedidos/{id}/estado', [
 ]);
 Route::get('/mesas', [MesasController::class, 'listarApi']);
 Route::post('/login-app', [LoginController::class, 'loginApp']);
+Route::get('/mesas/{idMesa}/pedidos-pendientes', [
+    MesasController::class,
+    'pedidosPendientesApi'
+]);
+// =============================================
+// IMÁGENES DE PRODUCTOS PARA LAS APPS FLUTTER
+// =============================================
+
+Route::get('/imagen-producto/{ruta}', function (string $ruta) {
+
+    $ruta = str_replace('\\', '/', $ruta);
+    $nombreArchivo = basename($ruta);
+
+    // Solo permite imágenes guardadas en productos
+    if (
+        !str_starts_with($ruta, 'productos/') ||
+        $nombreArchivo === '' ||
+        $nombreArchivo === '.' ||
+        $nombreArchivo === '..'
+    ) {
+        abort(404);
+    }
+
+    $archivo = 'productos/' . $nombreArchivo;
+
+    $disco = Storage::disk('public');
+
+    if (!$disco->exists($archivo)) {
+        abort(404);
+    }
+
+    return response()->file($disco->path($archivo));
+
+})->where('ruta', '.*');

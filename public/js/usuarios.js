@@ -34,6 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
     btnAbrirModalUsuario.addEventListener('click', () => {
       ocultarCamposContrasenia(modalUsuario);
       modalUsuario.classList.remove('hidden');
+      actualizarRolesNuevo();
     });
   }
 
@@ -49,6 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const primerCombo = contenedorNuevo.querySelector('.combo-rol-item');
         contenedorNuevo.innerHTML = '';
         if (primerCombo) contenedorNuevo.appendChild(primerCombo);
+        actualizarRolesNuevo();
       }
     });
   }
@@ -131,6 +133,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (selectBase) {
       select.innerHTML = selectBase.innerHTML;
+      select.querySelectorAll('option').forEach(option => {
+        option.hidden = false;
+      });
     }
 
     if (valorSeleccionado) {
@@ -151,13 +156,55 @@ document.addEventListener('DOMContentLoaded', () => {
     return div;
   }
 
+  function configurarRolesExclusivos(contenedor, btnAgregar) {
+    const actualizar = () => {
+      const selects = [...contenedor.querySelectorAll('select[name="roles[]"]')];
+      const selectAdmin = selects.find(select => {
+        const rol = select.selectedOptions[0]?.textContent.trim().toLowerCase();
+        return rol?.startsWith('admin');
+      });
+
+      if (selectAdmin) {
+        const opcionAdmin = selectAdmin.selectedOptions[0];
+        selects.forEach(select => {
+          if (select !== selectAdmin) {
+            select.closest('.combo-rol-item')?.remove();
+            return;
+          }
+
+          [...select.options].forEach(option => {
+            option.hidden = option.value !== '' && option !== opcionAdmin;
+          });
+        });
+      } else {
+        contenedor.querySelectorAll('select[name="roles[]"] option').forEach(option => {
+          option.hidden = false;
+        });
+      }
+
+      if (btnAgregar) btnAgregar.hidden = Boolean(selectAdmin);
+    };
+
+    contenedor.addEventListener('change', actualizar);
+    contenedor.addEventListener('click', event => {
+      if (event.target.closest('.btn-eliminar')) actualizar();
+    });
+    actualizar();
+
+    return actualizar;
+  }
+
   // Botón "➕ Agregar otro rol" en el Modal de Nuevo Usuario
   const btnAgregarRolNuevo = document.getElementById('btnAgregarComboNuevo');
   const contenedorNuevo = document.getElementById('contenedorCombosNuevo');
+  const actualizarRolesNuevo = contenedorNuevo
+    ? configurarRolesExclusivos(contenedorNuevo, btnAgregarRolNuevo)
+    : () => {};
 
   if (btnAgregarRolNuevo && contenedorNuevo) {
     btnAgregarRolNuevo.addEventListener('click', () => {
       contenedorNuevo.appendChild(crearComboRol());
+      actualizarRolesNuevo();
     });
   }
 
@@ -171,11 +218,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const inputEditGmail = document.getElementById('edit_gmail');
   const contenedorEditar = document.getElementById('contenedorCombosEditar');
   const btnAgregarRolEditar = document.getElementById('btnAgregarComboEditar');
+  const actualizarRolesEditar = contenedorEditar
+    ? configurarRolesExclusivos(contenedorEditar, btnAgregarRolEditar)
+    : () => {};
 
   // Botón "➕ Agregar otro rol" en el Modal de Edición
   if (btnAgregarRolEditar && contenedorEditar) {
     btnAgregarRolEditar.addEventListener('click', () => {
       contenedorEditar.appendChild(crearComboRol());
+      actualizarRolesEditar();
     });
   }
 
@@ -216,6 +267,8 @@ document.addEventListener('DOMContentLoaded', () => {
           // Si no tiene roles, crea un combobox vacío
           contenedorEditar.appendChild(crearComboRol());
         }
+
+        actualizarRolesEditar();
       }
 
       if (modalEditar) modalEditar.classList.remove('hidden');

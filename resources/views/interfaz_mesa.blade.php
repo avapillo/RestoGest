@@ -119,6 +119,12 @@
         <p class="categoria-etiqueta">
           Sección: <strong>{{ $mesa->seccion->seccion ?? 'Sin Sección' }}</strong>
         </p>
+        @if ($ultimoPedido)
+          <p class="categoria-etiqueta">
+            {{ $ultimoPedido->rol_creador ?? 'Responsable' }}:
+            <strong>{{ $ultimoPedido->nombre_creador ?? 'No registrado' }}</strong>
+          </p>
+        @endif
 
 @if ($ultimoPedido)
     @php

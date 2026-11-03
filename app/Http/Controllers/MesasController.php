@@ -192,12 +192,24 @@ public function mostrarOrdenesPedidos(Request $request){
             }
         }
 
-        DB::transaction(function () use ($datos, $productos) {
+        $creatorId = session('usuario_id');
+        $creator = $creatorId
+            ? DB::table('usuarios')->where('id', $creatorId)->first(['nombre', 'id_rol_usuario'])
+            : null;
+        $creatorName = $creator?->nombre ?? session('usuario_nom');
+        $creatorRole = $creatorId
+            ? $this->pedidoCreatorRole((int) $creatorId, $creator?->id_rol_usuario)
+            : null;
+
+        DB::transaction(function () use ($datos, $productos, $creatorId, $creatorName, $creatorRole) {
             $pedido = Pedido::create([
-    'fk_id_mesa' => $datos['fk_id_mesa'],
-    'es_para_llevar' => $datos['es_para_llevar'],
-    'fk_id_estado' => 1,
-]);
+                'fk_id_mesa' => $datos['fk_id_mesa'],
+                'es_para_llevar' => $datos['es_para_llevar'],
+                'fk_id_estado' => 1,
+                'fk_id_usuario' => $creatorId,
+                'nombre_creador' => $creatorName,
+                'rol_creador' => $creatorRole,
+            ]);
 
             foreach ($datos['items'] as $item) {
                 $producto = $productos->get($item['fk_id_producto']);
@@ -281,6 +293,33 @@ public function mostrarOrdenesPedidos(Request $request){
             ->route('mesas.index', ['fk_id_seccion' => $pedido->mesa->fk_id_seccion])
             ->with('status', 'Pedido modificado correctamente.');
     }
+
+    private function pedidoCreatorRole(int $userId, ?int $legacyRoleId): ?string
+    {
+        $roleIds = collect([$legacyRoleId])
+            ->filter()
+            ->merge(DB::table('usuario_roles')->where('fk_id_usuario', $userId)->pluck('fk_id_rol'))
+            ->unique();
+
+        $roleNames = DB::table('rol_usuario')
+            ->whereIn('id_rol', $roleIds)
+            ->pluck('rol_nombre');
+
+        foreach ($roleNames as $roleName) {
+            $normalizedRole = mb_strtolower(trim((string) $roleName));
+
+            if (in_array($normalizedRole, ['admin', 'administrador'], true)) {
+                return 'Admin';
+            }
+
+            if ($normalizedRole === 'mozo') {
+                return 'Mozo';
+            }
+        }
+
+        return null;
+    }
+
 public function listarApi()
 {
     $mesas = \App\Models\Mesas::with('seccion')

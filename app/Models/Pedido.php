@@ -16,7 +16,10 @@ class Pedido extends Model
         'fk_id_mesa',
         'fk_id_tipo_pago',
         'es_para_llevar',
-        'fk_id_estado'
+        'fk_id_estado',
+        'fk_id_usuario',
+        'nombre_creador',
+        'rol_creador',
     ];
 
     public function mesa()

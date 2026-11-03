@@ -12,7 +12,9 @@ class CategoriaController extends Controller
     public function registroCategoria(Request $request)
     {
         $request->validate([
-            'categoria' => 'required|string|max:50'
+            'categoria' => ['required', 'string', 'max:50', 'regex:/^\p{L}[\p{L}\p{M}]*(?: \p{L}[\p{L}\p{M}]*)*$/u'],
+        ], [
+            'categoria.regex' => 'El nombre solo puede contener letras y espacios.',
         ]);
 
         Categoria::create([
@@ -33,7 +35,9 @@ class CategoriaController extends Controller
     {
         $request->validate([
             'id' => 'required|exists:categoria,id',
-            'categoria' => 'required|string|max:50',
+            'categoria' => ['required', 'string', 'max:50', 'regex:/^\p{L}[\p{L}\p{M}]*(?: \p{L}[\p{L}\p{M}]*)*$/u'],
+        ], [
+            'categoria.regex' => 'El nombre solo puede contener letras y espacios.',
         ]);
 
         $categoria = Categoria::findOrFail($request->id);

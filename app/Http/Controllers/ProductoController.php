@@ -31,10 +31,12 @@ class ProductoController extends Controller
     public function registroProducto(Request $request)
     {
         $request->validate([
-            'nombre'          => 'required|string|max:60',
+            'nombre'          => ['required', 'string', 'max:60', 'regex:/^\p{L}[\p{L}\p{M}]*(?: \p{L}[\p{L}\p{M}]*)*$/u'],
             'precio'          => 'required|integer|min:0',
             'fk_id_categoria' => 'required|exists:categoria,id',
             'imagen'          => 'nullable|image|max:20240',
+        ], [
+            'nombre.regex' => 'El nombre solo puede contener letras y espacios.',
         ]);
 
         $imagen = null;
@@ -56,10 +58,12 @@ class ProductoController extends Controller
     {
         $request->validate([
             'id'              => 'required|exists:productos,id',
-            'nombre'          => 'required|string|max:60',
+            'nombre'          => ['required', 'string', 'max:60', 'regex:/^\p{L}[\p{L}\p{M}]*(?: \p{L}[\p{L}\p{M}]*)*$/u'],
             'precio'          => 'required|integer|min:0',
             'fk_id_categoria' => 'required|exists:categoria,id',
             'imagen'          => 'nullable|image|max:20240',
+        ], [
+            'nombre.regex' => 'El nombre solo puede contener letras y espacios.',
         ]);
 
         $producto = Producto::findOrFail($request->id);

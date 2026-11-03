@@ -223,6 +223,7 @@ public function mostrarOrdenesPedidos(Request $request){
         $pedido = Pedido::with('detalles')->findOrFail($id_pedido);
 
         $datos = $request->validate([
+            'es_para_llevar' => ['required', 'boolean'],
             'items' => ['required', 'array', 'min:1'],
             'items.*.fk_id_categoria' => ['required', 'exists:categoria,id'],
             'items.*.fk_id_producto' => ['required', 'exists:productos,id'],
@@ -255,6 +256,8 @@ public function mostrarOrdenesPedidos(Request $request){
                     'id_pedido' => 'No se puede modificar un pedido que ya fue cobrado.',
                 ]);
             }
+
+            $pedido->update(['es_para_llevar' => $datos['es_para_llevar']]);
 
             // Eliminar los detalles existentes
             $pedido->detalles()->delete();

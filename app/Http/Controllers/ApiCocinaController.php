@@ -61,7 +61,7 @@ class ApiCocinaController extends Controller
                 'monto_total' => $pedido->monto_total,
                 'es_para_llevar' => $pedido->es_para_llevar,
                 'fk_id_estado' => $pedido->fk_id_estado,
-                'estado' => $pedido->estado->nombre ?? 'Recibido',
+                'estado' => $pedido->estado->estado ?? 'Recibido',
                 'detalles' => $detalles,
             ];
         })
@@ -106,7 +106,7 @@ class ApiCocinaController extends Controller
             'mensaje' => 'Estado del pedido actualizado correctamente.',
             'id_pedido' => $pedido->id_pedido,
             'fk_id_estado' => $pedido->fk_id_estado,
-            'estado' => $pedido->estado->nombre,
+            'estado' => $pedido->estado->estado,
         ]);
     }
 

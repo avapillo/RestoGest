@@ -11,7 +11,7 @@ class Estado extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'nombre'
+        'estado'
     ];
 
     public function pedidos()

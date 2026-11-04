@@ -61,6 +61,7 @@
     <!-- TÍTULO -->
     <div class="titulo-caja">
       <h2>Historial de Caja</h2>
+      <p class="nombre-usuario">{{ session('usuario_nom') }}</p>
     </div>
 
     <!-- BOTONES DE CAJA -->

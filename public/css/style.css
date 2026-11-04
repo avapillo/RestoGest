@@ -325,6 +325,12 @@ tr:hover {
     font-weight: 700;
 }
 
+.nombre-usuario {
+  margin: 0 3px;
+  color: #475569;
+  font-weight: 600;
+}
+
 
 /*
    Los botones quedan debajo del título.

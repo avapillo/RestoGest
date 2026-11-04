@@ -23,7 +23,7 @@
         <a href="{{ route('usuario.index') }}" class="opcion-menu">Control de Usuario</a>
         <a href="{{ route('ventas.index') }}" class="opcion-menu">Administración de Ventas</a>
       </nav>
-      
+
       <div class="cerrar-sesion-contenedor">
         <a href="{{ route('logout') }}" class="cerrar-sesion">
           <svg xmlns="http://www.w3.org/2000/svg"
@@ -146,7 +146,7 @@
 
         <div class="grupo-campo">
           <label for="nombre">Nombre del Producto:</label>
-          <input type="text" id="nombre" name="nombre" required placeholder="Ej: Lomito Completo" value="{{ old('nombre') }}">
+          <input type="text" id="nombre" name="nombre" pattern="\p{L}[\p{L}\p{M}]*(?: \p{L}[\p{L}\p{M}]*)*" title="El nombre solo puede contener letras y espacios." required placeholder="Ej: Lomito Completo" value="{{ old('nombre') }}">
           @error('nombre') <span class="error-texto">{{ $message }}</span> @enderror
         </div>
 
@@ -197,7 +197,7 @@
 
         <div class="grupo-campo">
           <label for="edit_nombre">Nombre del Producto:</label>
-          <input type="text" id="edit_nombre" name="nombre" required>
+          <input type="text" id="edit_nombre" name="nombre" pattern="\p{L}[\p{L}\p{M}]*(?: \p{L}[\p{L}\p{M}]*)*" title="El nombre solo puede contener letras y espacios." required>
         </div>
 
         <div class="grupo-campo">
@@ -242,7 +242,7 @@
         <div class="grupo-campo">
           <label for="input_categoria">Nombre de la Categoría:</label>
           <!-- ✅ Corregido name a 'categoria' para el CategoriaController -->
-          <input type="text" id="input_categoria" name="categoria" required placeholder="Ej: Desayunos" value="{{ old('categoria') }}">
+          <input type="text" id="input_categoria" name="categoria" pattern="\p{L}[\p{L}\p{M}]*(?: \p{L}[\p{L}\p{M}]*)*" title="El nombre solo puede contener letras y espacios." required placeholder="Ej: Desayunos" value="{{ old('categoria') }}">
           @error('categoria') <span class="error-texto">{{ $message }}</span> @enderror
         </div>
 
@@ -269,7 +269,7 @@
         <input type="hidden" id="edit_categoria_id" name="id">
         <div class="grupo-campo">
           <label for="edit_categoria_nombre">Nombre de la Categoría:</label>
-          <input type="text" id="edit_categoria_nombre" name="categoria" required maxlength="50">
+          <input type="text" id="edit_categoria_nombre" name="categoria" pattern="\p{L}[\p{L}\p{M}]*(?: \p{L}[\p{L}\p{M}]*)*" title="El nombre solo puede contener letras y espacios." required maxlength="50">
           @error('categoria') <span class="error-texto">{{ $message }}</span> @enderror
         </div>
         <div class="modal-botones">

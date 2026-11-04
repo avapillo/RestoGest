@@ -19,8 +19,16 @@ class SeccionController extends Controller
     public function registrarSeccion(Request $request)
     {
         $datos = $request->validate([
-            'seccion' => 'required|string|max:60|unique:seccion,seccion',
+            'seccion' => [
+                'required',
+                'string',
+                'max:60',
+                'regex:/^\p{L}[\p{L}\p{M}]*(?: \p{L}[\p{L}\p{M}]*)*$/u',
+                'unique:seccion,seccion',
+            ],
             '_seccion_form' => 'required|in:crear',
+        ], [
+            'seccion.regex' => 'El nombre solo puede contener letras y espacios.',
         ]);
 
         Seccion::create(['seccion' => $datos['seccion']]);
@@ -40,8 +48,11 @@ class SeccionController extends Controller
                 'required',
                 'string',
                 'max:60',
+                'regex:/^\p{L}[\p{L}\p{M}]*(?: \p{L}[\p{L}\p{M}]*)*$/u',
                 Rule::unique('seccion', 'seccion')->ignore($request->id_seccion, 'id_seccion'),
             ],
+        ], [
+            'seccion.regex' => 'El nombre solo puede contener letras y espacios.',
         ]);
 
         $seccion = Seccion::findOrFail($request->id_seccion);

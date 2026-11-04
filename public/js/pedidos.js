@@ -237,8 +237,8 @@ document.addEventListener('DOMContentLoaded', () => {
     boton.addEventListener('click', () => {
       prepararNuevoPedido();
       formPedido.action = boton.dataset.updateUrl;
-      selectSeccion.value = boton.dataset.seccionId;
-      selectMesa.value = boton.dataset.mesaId;
+      inputSeccion.value = boton.dataset.seccionId;
+      inputMesa.value = boton.dataset.mesaId;
       document.getElementById('es_para_llevar').value = boton.dataset.paraLlevar;
 
       const items = JSON.parse(boton.dataset.items);

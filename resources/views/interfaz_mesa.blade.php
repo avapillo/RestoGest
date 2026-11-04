@@ -119,7 +119,13 @@
         <p class="categoria-etiqueta">
           Sección: <strong>{{ $mesa->seccion->seccion ?? 'Sin Sección' }}</strong>
         </p>
-        
+        @if ($ultimoPedido)
+          <p class="categoria-etiqueta">
+            {{ $ultimoPedido->rol_creador ?? 'Responsable' }}:
+            <strong>{{ $ultimoPedido->nombre_creador ?? 'No registrado' }}</strong>
+          </p>
+        @endif
+
 @if ($ultimoPedido)
     @php
         $estadoNombre = trim($ultimoPedido->estado->nombre ?? 'Recibido');
@@ -388,7 +394,7 @@
         <input type="hidden" name="_seccion_form" value="crear">
         <div class="grupo-campo">
           <label for="seccion_nombre">Nombre de la sección:</label>
-          <input type="text" id="seccion_nombre" name="seccion" maxlength="60" required placeholder="Ej: Terraza" value="{{ old('seccion') }}">
+          <input type="text" id="seccion_nombre" name="seccion" maxlength="60" pattern="\p{L}[\p{L}\p{M}]*(?: \p{L}[\p{L}\p{M}]*)*" title="El nombre solo puede contener letras y espacios." required placeholder="Ej: Terraza" value="{{ old('seccion') }}">
           @if (old('_seccion_form') === 'crear')
             @error('seccion') <span class="error-texto">{{ $message }}</span> @enderror
             @error('_seccion_form') <span class="error-texto">{{ $message }}</span> @enderror
@@ -417,7 +423,7 @@
         <input type="hidden" id="edit_seccion_id" name="id_seccion" value="{{ old('id_seccion') }}">
         <div class="grupo-campo">
           <label for="edit_seccion_nombre">Nombre de la sección:</label>
-          <input type="text" id="edit_seccion_nombre" name="seccion" maxlength="60" required value="{{ old('_seccion_form') === 'modificar' ? old('seccion') : '' }}">
+          <input type="text" id="edit_seccion_nombre" name="seccion" maxlength="60" pattern="\p{L}[\p{L}\p{M}]*(?: \p{L}[\p{L}\p{M}]*)*" title="El nombre solo puede contener letras y espacios." required value="{{ old('_seccion_form') === 'modificar' ? old('seccion') : '' }}">
           @if (old('_seccion_form') === 'modificar')
             @error('seccion') <span class="error-texto">{{ $message }}</span> @enderror
             @error('id_seccion') <span class="error-texto">{{ $message }}</span> @enderror

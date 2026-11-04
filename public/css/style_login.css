@@ -206,7 +206,16 @@ body.login-body::before {
     margin-bottom: 20px;
     text-align: center;
 }
-
+.alerta-exito {
+    background-color: #d1fae5;
+    color: #065f46;
+    border: 1px solid #10b981;
+    padding: 12px 15px;
+    border-radius: 8px;
+    margin-bottom: 18px;
+    font-size: 14px;
+    text-align: center;
+}
 .error-texto {
     color: var(--danger-color);
     font-size: 12px;

@@ -9,6 +9,8 @@ use App\Http\Controllers\UsuariosController;
 use App\Http\Controllers\VentasController;
 use App\Http\Controllers\SeccionController;
 use App\Http\Controllers\ComboController;
+use App\Http\Controllers\RecuperarContraseniaController;
+
 // Login
 
 // Mostrar formulario
@@ -82,3 +84,15 @@ use App\Http\Controllers\CatalogoController;
 Route::get('/catalogo', [CatalogoController::class, 'index'])
     ->name('catalogo');
 Route::get('/Ventas', [VentasController::class, 'index'])->name('ventas.index');
+// Recuperación de contraseña
+Route::get('/recuperar-contrasenia', [RecuperarContraseniaController::class, 'mostrarFormulario'])
+    ->name('contrasenia.recuperar');
+
+Route::post('/recuperar-contrasenia', [RecuperarContraseniaController::class, 'enviarEnlace'])
+    ->name('contrasenia.enviar');
+
+Route::get('/nueva-contrasenia', [RecuperarContraseniaController::class, 'mostrarNuevaContrasenia'])
+    ->name('contrasenia.formulario');
+
+Route::post('/nueva-contrasenia', [RecuperarContraseniaController::class, 'actualizarContrasenia'])
+    ->name('contrasenia.actualizar');

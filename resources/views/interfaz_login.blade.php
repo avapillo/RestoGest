@@ -61,6 +61,14 @@
                     <span class="error-texto">{{ $message }}</span>
                 @enderror
             </div>
+            
+<div style="text-align: right; margin: -8px 0 18px;">
+    <a href="{{ route('contrasenia.recuperar') }}"
+       style="color: #d97706; font-size: 13px; font-weight: 600; text-decoration: none;">
+        ¿Olvidaste tu contraseña?
+    </a>
+</div>
+
 
             <!-- Botón de Envío -->
             <button type="submit" class="btn-login">

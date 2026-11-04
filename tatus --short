@@ -1,0 +1,7 @@
+ .../Controllers/RecuperarContraseniaController.php | 148 [32m+++++++++++++++++++++[m
+ public/css/style_login.css                         |  11 [32m+[m[31m-[m
+ resources/views/interfaz_login.blade.php           |   8 [32m++[m
+ resources/views/nueva_contrasenia.blade.php        |  71 [32m++++++++++[m
+ resources/views/recuperar_contrasenia.blade.php    |  63 [32m+++++++++[m
+ routes/web.php                                     |  14 [32m++[m
+ 6 files changed, 314 insertions(+), 1 deletion(-)

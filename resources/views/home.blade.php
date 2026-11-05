@@ -92,7 +92,7 @@
     <!-- TOTAL RECAUDADO -->
     <div class="total-caja">
 
-      <span>Total del día</span>
+      <span>Monto total de Dia</span>
 
       <strong>
         $ <span id="total-pagos">0,00</span>
@@ -102,7 +102,7 @@
 
     <section class="resumen-gastos" aria-labelledby="titulo-total-gastos">
       <div>
-        <span id="titulo-total-gastos">Total de gastos</span>
+        <span id="titulo-total-gastos">Total de Gasto del Dia</span>
         <strong>$ <span id="total-gastos">0,00</span></strong>
       </div>
       <button id="btn-abrir-gastos" class="btn-abrir-gastos" type="button" aria-haspopup="dialog" aria-controls="modal-gastos">

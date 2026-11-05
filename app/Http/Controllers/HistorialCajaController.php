@@ -105,7 +105,14 @@ class HistorialCajaController extends Controller
     // Cerrar caja
     public function store(Request $request, AdminAccess $adminAccess)
     {
-        $resultado = DB::transaction(function () use ($adminAccess) {
+        $validated = $request->validate([
+            'gastos' => ['sometimes', 'array'],
+            'gastos.*.producto' => ['required', 'string', 'max:120'],
+            'gastos.*.monto' => ['required', 'numeric', 'gt:0'],
+        ]);
+        $gastos = $validated['gastos'] ?? [];
+
+        $resultado = DB::transaction(function () use ($adminAccess, $gastos) {
             $caja = CajaEstado::query()->lockForUpdate()->first();
 
             if (!$caja || !$caja->abierta) {
@@ -119,6 +126,17 @@ class HistorialCajaController extends Controller
                 'momento_cierre' => now(),
                 'id_usuario' => session('usuario_id'),
             ]);
+
+            if ($gastos !== []) {
+                DB::table('registro_gasto')->insert(array_map(
+                    static fn (array $gasto): array => [
+                        'producto' => $gasto['producto'],
+                        'monto' => $gasto['monto'],
+                        'fk_id_historial' => $cierre->id_historial,
+                    ],
+                    $gastos
+                ));
+            }
 
             if ($caja->id_registro_inicio !== null) {
                 DB::table('registro_pago')

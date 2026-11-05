@@ -11,6 +11,7 @@ const API_CERRAR = '/api/caja/cerrar';
 let cajaAbierta = false;
 let acumuladoPagos = 0;
 let mensajeCaja = 'Cargando estado de caja...';
+let gastosPendientesCierre = [];
 
 
 // ============================================================
@@ -200,7 +201,13 @@ function cerrarCaja() {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
             'X-CSRF-TOKEN': obtenerTokenCSRF()
-        }
+        },
+        body: JSON.stringify({
+            gastos: gastosPendientesCierre.map(gasto => ({
+                producto: gasto.product.trim(),
+                monto: Number(gasto.amount)
+            }))
+        })
 
     })
 
@@ -219,6 +226,7 @@ function cerrarCaja() {
         cajaAbierta = false;
         acumuladoPagos = 0;
         mensajeCaja = 'La caja está cerrada.';
+        window.dispatchEvent(new Event('caja:gastos-guardados'));
 
         actualizarInterfazCaja();
 
@@ -394,6 +402,7 @@ function inicializarRegistroGastos() {
     }
 
     let gastos = cargarGastos();
+    gastosPendientesCierre = gastos;
 
     function cargarGastos() {
         try {
@@ -414,6 +423,7 @@ function inicializarRegistroGastos() {
     function guardarGastos() {
         try {
             localStorage.setItem(claveAlmacenamiento, JSON.stringify(gastos));
+            gastosPendientesCierre = gastos;
             return true;
         } catch {
             estado.textContent = 'No se pudieron guardar los gastos en este navegador.';
@@ -516,6 +526,12 @@ function inicializarRegistroGastos() {
 
         estado.textContent = '';
         estado.classList.remove('error');
+        renderizarGastos();
+    });
+
+    window.addEventListener('caja:gastos-guardados', () => {
+        gastos = [];
+        guardarGastos();
         renderizarGastos();
     });
 

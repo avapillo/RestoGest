@@ -165,16 +165,17 @@ return new class extends Migration
                 ->cascadeOnUpdate();
         });
 
-            # Tabla de registro de gastos
-        Schema::create('registro_gasto'), function (Blueprint $table) {
+        // Tabla de registro de gastos
+        Schema::create('registro_gasto', function (Blueprint $table) {
             $table->integer('id_gasto')->autoincrement()->primary();
             $table->string('producto')->nullable();
-            $table->decimal('monto')->nullble();
-        }
+            $table->decimal('monto')->nullable();
+        });
     }
 
     public function down(): void
     {
+        Schema::dropIfExists('registro_gasto');
         Schema::dropIfExists('registro_pago');
         Schema::dropIfExists('historial_caja');
         Schema::dropIfExists('detalle_pedido');

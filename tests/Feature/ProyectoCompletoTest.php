@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 beforeEach(function () {
+    Schema::dropIfExists('registro_gasto');
     Schema::dropIfExists('admin_activity_logs');
     Schema::dropIfExists('historial_caja');
     Schema::dropIfExists('caja_estado');
@@ -52,6 +53,16 @@ beforeEach(function () {
         $table->decimal('monto_total', 10, 2)->nullable();
         $table->dateTime('momento_cierre')->nullable();
         $table->integer('id_usuario')->nullable();
+    });
+
+    Schema::create('registro_gasto', function (Blueprint $table) {
+        $table->increments('id_gasto');
+        $table->string('producto')->nullable();
+        $table->decimal('monto', 10, 2)->nullable();
+        $table->integer('fk_id_historial')->nullable();
+        $table->foreign('fk_id_historial', 'fk_registro_gasto_historial')
+            ->references('id_historial')
+            ->on('historial_caja');
     });
 
     Schema::create('tipo_pago', function (Blueprint $table) {
@@ -328,6 +339,43 @@ test('el cierre guarda el total y muestra quien cerró solo a administradores', 
     $this->withSession(['usuario_id' => $cajeroId])
         ->getJson('/api/historial-caja')
         ->assertForbidden();
+});
+
+test('el cierre guarda los gastos asociados al historial creado', function () {
+    $adminId = DB::table('usuarios')->insertGetId([
+        'nombre' => 'Admin',
+        'gmail' => 'admin-gastos@gmail.com',
+        'contrasenia' => Hash::make('clave-segura'),
+        'id_rol_usuario' => 1,
+    ]);
+    DB::table('caja_estado')->insert([
+        'abierta' => true,
+        'monto_actual' => 5000,
+        'id_usuario' => $adminId,
+    ]);
+
+    $this->withSession(['usuario_id' => $adminId])
+        ->postJson('/api/caja/cerrar', [
+            'gastos' => [
+                ['producto' => 'Aceite', 'monto' => 1200],
+                ['producto' => 'Verduras', 'monto' => 800.50],
+            ],
+        ])
+        ->assertCreated();
+
+    $historialId = DB::table('historial_caja')->value('id_historial');
+
+    $this->assertDatabaseCount('registro_gasto', 2);
+    $this->assertDatabaseHas('registro_gasto', [
+        'producto' => 'Aceite',
+        'monto' => 1200,
+        'fk_id_historial' => $historialId,
+    ]);
+    $this->assertDatabaseHas('registro_gasto', [
+        'producto' => 'Verduras',
+        'monto' => 800.50,
+        'fk_id_historial' => $historialId,
+    ]);
 });
 
 test('solo administradores pueden iniciar sesión y acceder a las rutas del sistema', function () {

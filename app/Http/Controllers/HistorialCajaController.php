@@ -160,9 +160,9 @@ class HistorialCajaController extends Controller
             return response()->json([
                 'mensaje' => 'La caja ya está cerrada'
             ], 422);
-        }
+        } else {
 
-        [$cierre, $montoTotal] = $resultado;
+         [$cierre, $montoTotal] = $resultado;
 
         return response()->json([
             'mensaje' => 'Caja cerrada exitosamente',
@@ -170,6 +170,10 @@ class HistorialCajaController extends Controller
             'abierta' => false,
             'monto_actual' => 0,
         ], 201);
+
+        }
+
+
     }
 
 }

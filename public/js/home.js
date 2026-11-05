@@ -197,6 +197,7 @@ function cerrarCaja() {
 
         method: 'POST',
 
+// Envia los gastos pendientes registrados
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',

@@ -341,9 +341,9 @@ tr:hover {
 }
 .panel-caja {
     width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
 }
 
 .controles-caja {
@@ -393,10 +393,11 @@ tr:hover {
 
 .total-caja {
   width: 100%;
+  min-width: 0;
   box-sizing: border-box;
   background-color: var(--bg-card);
   border-radius: var(--radius-card);
-  padding: 15px 20px;
+  padding: 12px 14px;
   text-align: left;
   border: 1px solid var(--border-color);
   box-shadow: var(--shadow-sm);
@@ -405,7 +406,7 @@ tr:hover {
 
 .total-caja span {
     display: block;
-    font-size: 14px;
+  font-size: 12px;
     color: #64748b;
 }
 
@@ -413,20 +414,21 @@ tr:hover {
 .total-caja strong {
     display: block;
     margin-top: 3px;
-    font-size: 28px;
+  font-size: 22px;
     color: var(--text-primary);
 }
 
 .total-caja strong #total-pagos {
   display: inline;
-  font-size: 32px;
+  font-size: 24px;
 }
 
 .resumen-gastos {
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  padding: 16px 20px;
+  min-width: 0;
+  gap: 10px;
+  padding: 12px 14px;
   border: 1px solid #fed7aa;
   border-left: 4px solid var(--accent-orange);
   border-radius: var(--radius-card);
@@ -437,14 +439,14 @@ tr:hover {
 .resumen-gastos > div > span {
   display: block;
   color: var(--text-muted);
-  font-size: 14px;
+  font-size: 12px;
 }
 
 .resumen-gastos strong {
   display: block;
   margin-top: 3px;
   color: var(--text-primary);
-  font-size: 28px;
+  font-size: 22px;
   font-variant-numeric: tabular-nums;
 }
 
@@ -465,6 +467,12 @@ tr:hover {
 .btn-agregar-fila-gasto {
   color: #854d0e;
   background: #fef3c7;
+}
+
+.btn-abrir-gastos {
+  min-height: 36px;
+  padding: 8px 11px;
+  font-size: 0.88rem;
 }
 
 .btn-abrir-gastos:hover,
@@ -706,6 +714,7 @@ tr:hover {
    ============================================================ */
 
 .panel-caja .mensaje-estado {
+  grid-column: 1 / -1;
     width: 100%;
     box-sizing: border-box;
     margin: 0;
@@ -771,6 +780,10 @@ tr:hover {
 }
 
 @media (max-width: 640px) {
+  .panel-caja {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
   .modal-gastos {
     align-items: start;
     padding: 10px;

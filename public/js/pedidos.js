@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const botonesAbrirModalPedido = document.querySelectorAll('.btn-tomar-pedido');
   const btnCerrarModalPedido = document.getElementById('btnCerrarModal');
   const modalProducto = document.getElementById('modalProducto');
+  const avisoCajaPedidos = document.getElementById('avisoCajaPedidos');
   const btnAbrirModalMesa = document.getElementById('btnAbrirModalMesa');
   const btnCerrarModalMesa = document.getElementById('btnCerrarModalMesa');
   const modalMesa = document.getElementById('modalMesa');
@@ -13,6 +14,53 @@ document.addEventListener('DOMContentLoaded', () => {
   const numeroMesaPedido = document.getElementById('numeroMesaPedido');
   const listaProductosPedido = document.getElementById('listaProductosPedido');
   let actualizarFilas = () => {};
+  let cajaAbierta = false;
+  let esPedidoNuevo = true;
+
+  const botonesCobrar = [...document.querySelectorAll('.btn-pedido-cobrar')];
+
+  const actualizarEstadoCaja = async () => {
+    const botonesDePedido = [...botonesAbrirModalPedido, ...botonesCobrar];
+    botonesDePedido.forEach(boton => {
+      boton.disabled = true;
+    });
+
+    if (avisoCajaPedidos) {
+      avisoCajaPedidos.hidden = false;
+      avisoCajaPedidos.textContent = 'Verificando el estado de caja...';
+    }
+
+    try {
+      const response = await fetch(avisoCajaPedidos.dataset.url, {
+        headers: { Accept: 'application/json' },
+        credentials: 'same-origin',
+      });
+      if (!response.ok) throw new Error('No se pudo consultar la caja.');
+
+      const estadoCaja = await response.json();
+      cajaAbierta = estadoCaja.abierta === true;
+      botonesDePedido.forEach(boton => {
+        boton.disabled = !cajaAbierta;
+      });
+
+      if (avisoCajaPedidos) {
+        avisoCajaPedidos.hidden = cajaAbierta;
+        avisoCajaPedidos.textContent = cajaAbierta
+          ? ''
+          : 'La caja está cerrada. Ábrela para tomar pedidos o registrar cobros.';
+      }
+    } catch (error) {
+      cajaAbierta = false;
+      if (avisoCajaPedidos) {
+        avisoCajaPedidos.hidden = false;
+        avisoCajaPedidos.textContent = 'No se pudo verificar la caja. No se pueden tomar pedidos ni registrar cobros.';
+      }
+    }
+
+    return cajaAbierta;
+  };
+
+  actualizarEstadoCaja();
 
   const btnAbrirModalSecciones = document.getElementById('btnAbrirModalSecciones');
   const btnCerrarModalSecciones = document.getElementById('btnCerrarModalSecciones');
@@ -138,6 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const prepararNuevoPedido = () => {
     if (!formPedido) return;
 
+    esPedidoNuevo = true;
     formPedido.reset();
     limpiarFilasPedido();
     formPedido.action = formPedido.dataset.createUrl;
@@ -146,7 +195,9 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   if (modalProducto) {
-    botonesAbrirModalPedido.forEach(boton => boton.addEventListener('click', () => {
+    botonesAbrirModalPedido.forEach(boton => boton.addEventListener('click', async () => {
+      if (!await actualizarEstadoCaja()) return;
+
       prepararNuevoPedido();
       inputSeccion.value = boton.dataset.seccionId;
       inputMesa.value = boton.dataset.mesaId;
@@ -233,9 +284,22 @@ document.addEventListener('DOMContentLoaded', () => {
     actualizarFilas();
   }
 
+  if (formPedido) {
+    formPedido.addEventListener('submit', event => {
+      if (esPedidoNuevo && !cajaAbierta) {
+        event.preventDefault();
+        if (avisoCajaPedidos) {
+          avisoCajaPedidos.hidden = false;
+          avisoCajaPedidos.textContent = 'La caja está cerrada. Ábrela antes de tomar un pedido.';
+        }
+      }
+    });
+  }
+
   document.querySelectorAll('.btn-pedido-modificar:not(:disabled)').forEach(boton => {
     boton.addEventListener('click', () => {
       prepararNuevoPedido();
+      esPedidoNuevo = false;
       formPedido.action = boton.dataset.updateUrl;
       inputSeccion.value = boton.dataset.seccionId;
       inputMesa.value = boton.dataset.mesaId;
@@ -268,8 +332,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const formCobrar = document.getElementById('formCobrar');
   const cerrarModalCobro = document.getElementById('btnCerrarModalCobro');
 
-  document.querySelectorAll('.btn-pedido-cobrar').forEach(boton => {
-    boton.addEventListener('click', () => {
+  botonesCobrar.forEach(boton => {
+    boton.addEventListener('click', async () => {
+      if (!await actualizarEstadoCaja()) return;
+
       formCobrar.reset();
       document.getElementById('pagoIdPedido').value = boton.dataset.orderId;
       document.getElementById('totalCobroPedido').textContent = `$${Number(boton.dataset.total).toLocaleString('es-CL')}`;
@@ -279,6 +345,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (cerrarModalCobro && modalCobrar) {
     cerrarModalCobro.addEventListener('click', () => modalCobrar.classList.add('hidden'));
+  }
+
+  if (formCobrar) {
+    formCobrar.addEventListener('submit', event => {
+      if (!cajaAbierta) {
+        event.preventDefault();
+        if (avisoCajaPedidos) {
+          avisoCajaPedidos.hidden = false;
+          avisoCajaPedidos.textContent = 'La caja está cerrada. Ábrela antes de registrar un cobro.';
+        }
+      }
+    });
   }
 
   // Filtro por secciones

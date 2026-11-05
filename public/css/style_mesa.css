@@ -712,6 +712,25 @@ body {
   font-size: 0.95rem;
 }
 
+.aviso-caja-cerrada {
+  padding: 12px;
+  border: 1px solid #fecaca;
+  border-radius: var(--radius-btn);
+  color: #991b1b;
+  background: #fef2f2;
+  font-size: 0.92rem;
+}
+
+.aviso-caja-cerrada[hidden] {
+  display: none;
+}
+
+.btn-tomar-pedido:disabled,
+.btn-pedido-cobrar:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
 .error-texto {
   color: #ef4444;
   font-size: 0.8rem;

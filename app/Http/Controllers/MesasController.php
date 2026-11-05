@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use App\Models\Categoria;
@@ -202,6 +203,14 @@ public function mostrarOrdenesPedidos(Request $request){
             : null;
 
         DB::transaction(function () use ($datos, $productos, $creatorId, $creatorName, $creatorRole) {
+            $caja = CajaEstado::query()->lockForUpdate()->first();
+
+            if (!$caja || !$caja->abierta) {
+                throw ValidationException::withMessages([
+                    'fk_id_mesa' => 'Debe abrir la caja antes de tomar un pedido.',
+                ]);
+            }
+
             $pedido = Pedido::create([
                 'fk_id_mesa' => $datos['fk_id_mesa'],
                 'es_para_llevar' => $datos['es_para_llevar'],
@@ -421,5 +430,28 @@ public function pedidosPendientesApi($idMesa)
         'exito' => true,
         'data' => $datos,
     ]);
+}
+
+private function pedidoCreatorRole(int $creatorId, ?int $directRoleId): ?string
+{
+    if ($directRoleId) {
+        $roleName = DB::table('rol_usuario')
+            ->where('id_rol', $directRoleId)
+            ->value('rol_nombre');
+
+        if ($roleName) {
+            return $roleName;
+        }
+    }
+
+    if (!Schema::hasTable('usuario_roles')) {
+        return null;
+    }
+
+    return DB::table('usuario_roles')
+        ->join('rol_usuario', 'usuario_roles.fk_id_rol', '=', 'rol_usuario.id_rol')
+        ->where('usuario_roles.fk_id_usuario', $creatorId)
+        ->orderBy('rol_usuario.rol_nombre')
+        ->value('rol_usuario.rol_nombre');
 }
 }

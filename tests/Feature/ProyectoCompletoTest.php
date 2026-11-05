@@ -8,6 +8,8 @@ beforeEach(function () {
     Schema::dropIfExists('admin_activity_logs');
     Schema::dropIfExists('historial_caja');
     Schema::dropIfExists('caja_estado');
+    Schema::dropIfExists('mesas');
+    Schema::dropIfExists('seccion');
     Schema::dropIfExists('productos');
     Schema::dropIfExists('categoria');
     Schema::dropIfExists('usuario_roles');
@@ -60,12 +62,22 @@ beforeEach(function () {
     Schema::create('pedidos', function (Blueprint $table) {
         $table->increments('id_pedido');
         $table->decimal('monto_total', 10, 2)->nullable();
+        $table->integer('fk_id_mesa')->nullable();
+        $table->boolean('es_para_llevar')->nullable();
+        $table->integer('fk_id_estado')->nullable();
+        $table->integer('fk_id_usuario')->nullable();
+        $table->string('nombre_creador')->nullable();
+        $table->string('rol_creador')->nullable();
     });
 
     Schema::create('detalle_pedido', function (Blueprint $table) {
         $table->increments('id_detalle');
         $table->integer('fk_id_pedido');
         $table->decimal('subtotal', 10, 2)->nullable();
+        $table->integer('fk_id_producto')->nullable();
+        $table->integer('cantidad')->nullable();
+        $table->decimal('precio_unitario', 10, 2)->nullable();
+        $table->string('descripcion')->nullable();
     });
 
     Schema::create('registro_pago', function (Blueprint $table) {
@@ -100,6 +112,17 @@ beforeEach(function () {
         $table->unsignedBigInteger('fk_id_categoria');
         $table->softDeletes();
         $table->foreign('fk_id_categoria')->references('id')->on('categoria');
+    });
+
+    Schema::create('seccion', function (Blueprint $table) {
+        $table->increments('id_seccion');
+        $table->string('seccion')->nullable();
+    });
+
+    Schema::create('mesas', function (Blueprint $table) {
+        $table->increments('id_mesa');
+        $table->unsignedInteger('fk_id_seccion');
+        $table->unsignedInteger('numero_mesa')->nullable();
     });
 
     DB::table('rol_usuario')->insert(['id_rol' => 1, 'rol_nombre' => 'Administrador']);
@@ -441,6 +464,64 @@ test('el cobro no se registra cuando la caja está cerrada', function () {
     ])->assertSessionHasErrors('id_pedido');
 
     $this->assertDatabaseCount('registro_pago', 0);
+});
+
+test('no se puede registrar un pedido cuando la caja está cerrada', function () {
+    $seccionId = DB::table('seccion')->insertGetId([]);
+    $mesaId = DB::table('mesas')->insertGetId(['fk_id_seccion' => $seccionId]);
+    $categoriaId = DB::table('categoria')->insertGetId(['categoria' => 'Bebidas']);
+    $productoId = DB::table('productos')->insertGetId([
+        'nombre' => 'Agua',
+        'precio' => 100,
+        'fk_id_categoria' => $categoriaId,
+    ]);
+    DB::table('caja_estado')->insert(['abierta' => false, 'monto_actual' => 0]);
+
+    $this->from('/Mesas')->post('/Mesas/Pedido', [
+        'fk_id_seccion' => $seccionId,
+        'fk_id_mesa' => $mesaId,
+        'es_para_llevar' => 0,
+        'items' => [[
+            'fk_id_categoria' => $categoriaId,
+            'fk_id_producto' => $productoId,
+            'cantidad' => 1,
+        ]],
+    ])->assertSessionHasErrors('fk_id_mesa');
+
+    $this->assertDatabaseCount('pedidos', 0);
+});
+
+test('se puede registrar un pedido cuando la caja está abierta', function () {
+    $seccionId = DB::table('seccion')->insertGetId(['seccion' => 'Salón']);
+    $mesaId = DB::table('mesas')->insertGetId([
+        'fk_id_seccion' => $seccionId,
+        'numero_mesa' => 1,
+    ]);
+    $categoriaId = DB::table('categoria')->insertGetId(['categoria' => 'Bebidas']);
+    $productoId = DB::table('productos')->insertGetId([
+        'nombre' => 'Agua',
+        'precio' => 100,
+        'fk_id_categoria' => $categoriaId,
+    ]);
+    DB::table('caja_estado')->insert(['abierta' => true, 'monto_actual' => 0]);
+
+    $this->post('/Mesas/Pedido', [
+        'fk_id_seccion' => $seccionId,
+        'fk_id_mesa' => $mesaId,
+        'es_para_llevar' => 0,
+        'items' => [[
+            'fk_id_categoria' => $categoriaId,
+            'fk_id_producto' => $productoId,
+            'cantidad' => 1,
+        ]],
+    ])->assertRedirect(route('mesas.index', ['fk_id_seccion' => $seccionId]));
+
+    $this->assertDatabaseHas('pedidos', [
+        'fk_id_mesa' => $mesaId,
+        'nombre_creador' => 'Admin de prueba',
+        'rol_creador' => 'Administrador',
+    ]);
+    $this->assertDatabaseCount('detalle_pedido', 1);
 });
 
 test('la búsqueda de ventas filtra por parámetros y pagina los resultados', function () {

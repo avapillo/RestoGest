@@ -59,6 +59,17 @@
             {{ session('error') }}
           </div>
         @endif
+        @if ($errors->has('fk_id_mesa') || $errors->has('id_pedido'))
+          <div class="aviso-caja-cerrada" role="alert">
+            {{ $errors->first('fk_id_mesa') ?: $errors->first('id_pedido') }}
+          </div>
+        @endif
+        <div
+          id="avisoCajaPedidos"
+          class="aviso-caja-cerrada"
+          data-url="{{ url('/api/caja/estado') }}"
+          role="status"
+          hidden></div>
 
         <div class="contenedor-botones-header">
           <button id="btnAbrirModalMesa" class="btn-agregar">➕ Nueva Mesa</button>
@@ -211,6 +222,7 @@
               <button
                 type="button"
                 class="btn-accion btn-pedido-cobrar"
+                disabled
                 data-order-id="{{ $ultimoPedido->id_pedido }}"
                 data-total="{{ $totalPedidoCalculado }}">
                 Cobrar
@@ -223,6 +235,7 @@
           <button
             type="button"
             class="btn-agregar btn-tomar-pedido"
+            disabled
             data-seccion-id="{{ $mesa->fk_id_seccion }}"
             data-seccion-nombre="{{ $mesa->seccion->seccion ?? 'Sin Sección' }}"
             data-mesa-numero="{{ $mesa->numero_mesa }}"

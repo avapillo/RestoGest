@@ -25,6 +25,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     inicializarControlesCaja();
 
+    inicializarRegistroGastos();
+
 });
 
 
@@ -360,6 +362,202 @@ function obtenerTokenCSRF() {
     const meta = document.querySelector('meta[name="csrf-token"]');
 
     return meta ? meta.getAttribute('content') : '';
+
+}
+
+
+// ============================================================
+// REGISTRO DE GASTOS
+// ============================================================
+
+function inicializarRegistroGastos() {
+
+    const botonAbrir = document.getElementById('btn-abrir-gastos');
+    const modal = document.getElementById('modal-gastos');
+    const formulario = document.getElementById('formulario-gastos');
+    const filas = document.getElementById('filas-formulario-gastos');
+    const plantilla = document.getElementById('plantilla-fila-gasto');
+    const botonAgregar = document.getElementById('btn-agregar-fila-gasto');
+    const botonCerrar = document.getElementById('btn-cerrar-gastos');
+    const botonCancelar = document.getElementById('btn-cancelar-gastos');
+    const total = document.getElementById('total-gastos');
+    const lista = document.getElementById('lista-gastos');
+    const estado = document.getElementById('estado-registro-gastos');
+    const claveAlmacenamiento = 'restogest.gastos';
+    const formatoMoneda = new Intl.NumberFormat('es-AR', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
+
+    if (!botonAbrir || !modal || !formulario || !filas || !plantilla || !total || !lista || !estado) {
+        return;
+    }
+
+    let gastos = cargarGastos();
+
+    function cargarGastos() {
+        try {
+            const guardados = JSON.parse(localStorage.getItem(claveAlmacenamiento) || '[]');
+            return Array.isArray(guardados)
+                ? guardados.filter(gasto => (
+                    gasto
+                    && typeof gasto.product === 'string'
+                    && Number.isFinite(Number(gasto.amount))
+                    && Number(gasto.amount) > 0
+                ))
+                : [];
+        } catch {
+            return [];
+        }
+    }
+
+    function guardarGastos() {
+        try {
+            localStorage.setItem(claveAlmacenamiento, JSON.stringify(gastos));
+            return true;
+        } catch {
+            estado.textContent = 'No se pudieron guardar los gastos en este navegador.';
+            estado.classList.add('error');
+            return false;
+        }
+    }
+
+    function actualizarFilas() {
+        const filasActuales = [...filas.querySelectorAll('.fila-form-gasto')];
+        filasActuales.forEach(fila => {
+            fila.querySelector('.btn-quitar-fila-gasto').disabled = filasActuales.length === 1;
+        });
+    }
+
+    function renderizarGastos() {
+        const suma = gastos.reduce((acumulado, gasto) => acumulado + Number(gasto.amount), 0);
+        total.textContent = formatoMoneda.format(suma);
+        lista.replaceChildren();
+
+        if (!gastos.length) {
+            const vacio = document.createElement('li');
+            vacio.className = 'lista-gastos-vacia';
+            vacio.textContent = 'Todavía no hay gastos registrados.';
+            lista.append(vacio);
+            return;
+        }
+
+        gastos.forEach(gasto => {
+            const elemento = document.createElement('li');
+            const detalle = document.createElement('div');
+            const nombre = document.createElement('strong');
+            const fecha = document.createElement('span');
+            const monto = document.createElement('strong');
+            const botonQuitar = document.createElement('button');
+
+            nombre.textContent = gasto.product;
+            fecha.textContent = gasto.date || '';
+            monto.textContent = `$ ${formatoMoneda.format(Number(gasto.amount))}`;
+            botonQuitar.type = 'button';
+            botonQuitar.className = 'btn-eliminar-gasto';
+            botonQuitar.dataset.id = gasto.id;
+            botonQuitar.setAttribute('aria-label', `Eliminar gasto de ${gasto.product}`);
+            botonQuitar.title = 'Eliminar gasto';
+            botonQuitar.textContent = '\u00d7';
+
+            detalle.append(nombre, fecha);
+            elemento.append(detalle, monto, botonQuitar);
+            lista.append(elemento);
+        });
+    }
+
+    function abrirModal() {
+        modal.hidden = false;
+        filas.querySelector('input[name="producto[]"]')?.focus();
+    }
+
+    function cerrarModal() {
+        modal.hidden = true;
+        botonAbrir.focus();
+    }
+
+    botonAbrir.addEventListener('click', abrirModal);
+    botonCerrar?.addEventListener('click', cerrarModal);
+    botonCancelar?.addEventListener('click', cerrarModal);
+
+    modal.addEventListener('click', evento => {
+        if (evento.target === modal) cerrarModal();
+    });
+
+    document.addEventListener('keydown', evento => {
+        if (evento.key === 'Escape' && !modal.hidden) cerrarModal();
+    });
+
+    botonAgregar?.addEventListener('click', () => {
+        filas.append(plantilla.content.cloneNode(true));
+        actualizarFilas();
+        filas.querySelector('.fila-form-gasto:last-child input[name="producto[]"]')?.focus();
+    });
+
+    filas.addEventListener('click', evento => {
+        const botonQuitar = evento.target.closest('.btn-quitar-fila-gasto');
+        if (!botonQuitar || filas.querySelectorAll('.fila-form-gasto').length === 1) return;
+
+        botonQuitar.closest('.fila-form-gasto').remove();
+        actualizarFilas();
+    });
+
+    lista.addEventListener('click', evento => {
+        const botonQuitar = evento.target.closest('.btn-eliminar-gasto');
+        if (!botonQuitar) return;
+
+        const nuevosGastos = gastos.filter(gasto => String(gasto.id) !== botonQuitar.dataset.id);
+        const gastosAnteriores = gastos;
+        gastos = nuevosGastos;
+        if (!guardarGastos()) {
+            gastos = gastosAnteriores;
+            return;
+        }
+
+        estado.textContent = '';
+        estado.classList.remove('error');
+        renderizarGastos();
+    });
+
+    formulario.addEventListener('submit', evento => {
+        evento.preventDefault();
+        const nuevasFilas = [...filas.querySelectorAll('.fila-form-gasto')];
+        const registros = nuevasFilas.map(fila => ({
+            product: fila.querySelector('input[name="producto[]"]').value.trim(),
+            amount: Number(fila.querySelector('input[name="monto[]"]').value)
+        }));
+
+        if (registros.some(gasto => !gasto.product || !Number.isFinite(gasto.amount) || gasto.amount <= 0)) {
+            estado.textContent = 'Completa el nombre y un monto mayor que cero en cada fila.';
+            estado.classList.add('error');
+            return;
+        }
+
+        const fecha = new Intl.DateTimeFormat('es-AR').format(new Date());
+        const nuevosGastos = registros.map((gasto, indice) => ({
+            id: `${Date.now()}-${indice}-${Math.random().toString(36).slice(2)}`,
+            ...gasto,
+            date: fecha
+        }));
+        const gastosAnteriores = gastos;
+        gastos = [...nuevosGastos, ...gastos];
+
+        if (!guardarGastos()) {
+            gastos = gastosAnteriores;
+            return;
+        }
+
+        renderizarGastos();
+        estado.textContent = '';
+        estado.classList.remove('error');
+        formulario.reset();
+        filas.querySelectorAll('.fila-form-gasto:not(:first-child)').forEach(fila => fila.remove());
+        actualizarFilas();
+        cerrarModal();
+    });
+
+    actualizarFilas();
+    renderizarGastos();
 
 }
 

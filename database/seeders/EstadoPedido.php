@@ -13,7 +13,7 @@ class EstadoPedido extends Seeder
      */
     public function run(): void
     {
-        foreach (['Pendiente', 'En proceso', 'Completado'] as $estado) {
+        foreach (['Recibido', 'Preparando', 'Listo'] as $estado) {
             DB::table('estados')->updateOrInsert(
                 ['estado' => $estado],
                 ['estado' => $estado]

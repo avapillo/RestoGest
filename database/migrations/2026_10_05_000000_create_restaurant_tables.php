@@ -164,6 +164,13 @@ return new class extends Migration
                 ->restrictOnDelete()
                 ->cascadeOnUpdate();
         });
+
+            # Tabla de registro de gastos
+        Schema::create('registro_gasto'), function (Blueprint $table) {
+            $table->integer('id_gasto')->autoincrement()->primary();
+            $table->string('producto')->nullable();
+            $table->decimal('monto')->nullble();
+        }
     }
 
     public function down(): void

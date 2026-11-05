@@ -422,6 +422,284 @@ tr:hover {
   font-size: 32px;
 }
 
+.resumen-gastos {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 16px 20px;
+  border: 1px solid #fed7aa;
+  border-left: 4px solid var(--accent-orange);
+  border-radius: var(--radius-card);
+  background: #fffaf4;
+  box-shadow: var(--shadow-sm);
+}
+
+.resumen-gastos > div > span {
+  display: block;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.resumen-gastos strong {
+  display: block;
+  margin-top: 3px;
+  color: var(--text-primary);
+  font-size: 28px;
+  font-variant-numeric: tabular-nums;
+}
+
+.btn-abrir-gastos,
+.btn-agregar-fila-gasto,
+.btn-guardar-gastos,
+.btn-cancelar-gastos {
+  min-height: 42px;
+  padding: 10px 14px;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  font: inherit;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.btn-abrir-gastos,
+.btn-agregar-fila-gasto {
+  color: #854d0e;
+  background: #fef3c7;
+}
+
+.btn-abrir-gastos:hover,
+.btn-agregar-fila-gasto:hover {
+  background: #fde68a;
+}
+
+.modal-gastos {
+  position: fixed;
+  z-index: 20;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  overflow-y: auto;
+  padding: 20px;
+  background: rgba(15, 23, 42, 0.58);
+}
+
+.modal-gastos[hidden] {
+  display: none;
+}
+
+.contenido-modal-gastos {
+  width: min(760px, 100%);
+  max-height: min(88vh, 900px);
+  overflow-y: auto;
+  box-sizing: border-box;
+  padding: 24px;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  background: var(--bg-card);
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.24);
+}
+
+.encabezado-modal-gastos,
+.acciones-modal-gastos {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.encabezado-modal-gastos {
+  margin-bottom: 20px;
+}
+
+.encabezado-modal-gastos p {
+  margin: 0 0 4px;
+  color: var(--accent-orange-hover);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.encabezado-modal-gastos h2,
+.registros-gastos h3 {
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.btn-cerrar-gastos,
+.btn-quitar-fila-gasto,
+.btn-eliminar-gasto {
+  display: inline-grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border: 1px solid var(--border-color);
+  border-radius: 7px;
+  color: var(--text-muted);
+  background: #ffffff;
+  font-size: 1.35rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.btn-cerrar-gastos:hover,
+.btn-quitar-fila-gasto:hover:not(:disabled),
+.btn-eliminar-gasto:hover {
+  border-color: #fecaca;
+  color: #b91c1c;
+  background: #fef2f2;
+}
+
+.filas-formulario-gastos {
+  display: grid;
+  gap: 10px;
+}
+
+.fila-form-gasto {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(140px, 0.42fr) 38px;
+  align-items: end;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: #fafafa;
+}
+
+.campo-gasto {
+  display: grid;
+  min-width: 0;
+  gap: 6px;
+  color: var(--text-primary);
+  font-size: 0.86rem;
+  font-weight: 600;
+}
+
+.campo-gasto input {
+  width: 100%;
+  min-width: 0;
+  height: 42px;
+  box-sizing: border-box;
+  padding: 9px 11px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  color: var(--text-primary);
+  background: #ffffff;
+  font: inherit;
+  font-weight: 400;
+}
+
+.campo-gasto input:focus-visible,
+.btn-abrir-gastos:focus-visible,
+.btn-agregar-fila-gasto:focus-visible,
+.btn-guardar-gastos:focus-visible,
+.btn-cancelar-gastos:focus-visible,
+.btn-cerrar-gastos:focus-visible,
+.btn-quitar-fila-gasto:focus-visible,
+.btn-eliminar-gasto:focus-visible {
+  outline: 3px solid rgba(217, 119, 6, 0.3);
+  outline-offset: 2px;
+}
+
+.btn-quitar-fila-gasto:disabled {
+  color: #94a3b8;
+  background: #f1f5f9;
+  cursor: not-allowed;
+}
+
+.estado-registro-gastos {
+  min-height: 20px;
+  margin: 10px 0 0;
+  color: var(--text-muted);
+  font-size: 0.86rem;
+}
+
+.estado-registro-gastos.error {
+  color: #b91c1c;
+}
+
+.acciones-modal-gastos {
+  margin-top: 8px;
+}
+
+.acciones-modal-gastos > div {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.btn-guardar-gastos {
+  color: #ffffff;
+  background: var(--accent-orange);
+}
+
+.btn-guardar-gastos:hover {
+  background: var(--accent-orange-hover);
+}
+
+.btn-cancelar-gastos {
+  border-color: var(--border-color);
+  color: var(--text-primary);
+  background: #ffffff;
+}
+
+.btn-cancelar-gastos:hover {
+  background: #f1f5f9;
+}
+
+.registros-gastos {
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border-color);
+}
+
+.registros-gastos h3 {
+  margin-bottom: 10px;
+  font-size: 1rem;
+}
+
+.lista-gastos {
+  display: grid;
+  max-height: 220px;
+  overflow-y: auto;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lista-gastos li:not(.lista-gastos-vacia) {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto 38px;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 7px;
+}
+
+.lista-gastos li > div {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+}
+
+.lista-gastos li > div strong {
+  overflow-wrap: anywhere;
+}
+
+.lista-gastos li > div span,
+.lista-gastos-vacia {
+  color: var(--text-muted);
+  font-size: 0.82rem;
+}
+
+.lista-gastos li > strong {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
 
 /* ============================================================
    SINCRONIZACIÓN - DERECHA
@@ -491,6 +769,73 @@ tr:hover {
     }
 
 }
+
+@media (max-width: 640px) {
+  .modal-gastos {
+    align-items: start;
+    padding: 10px;
+  }
+
+  .contenido-modal-gastos {
+    max-height: calc(100vh - 20px);
+    padding: 18px 14px;
+  }
+
+  .fila-form-gasto {
+    grid-template-columns: minmax(0, 1fr) 38px;
+    gap: 10px;
+  }
+
+  .fila-form-gasto .campo-gasto:first-child,
+  .fila-form-gasto .campo-gasto:nth-child(2) {
+    grid-column: 1;
+  }
+
+  .fila-form-gasto .campo-gasto:first-child {
+    grid-row: 1;
+  }
+
+  .fila-form-gasto .campo-gasto:nth-child(2) {
+    grid-row: 2;
+  }
+
+  .fila-form-gasto .btn-quitar-fila-gasto {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    align-self: center;
+  }
+
+  .acciones-modal-gastos {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .acciones-modal-gastos > div {
+    width: 100%;
+  }
+
+  .acciones-modal-gastos > div button {
+    flex: 1;
+  }
+
+  .lista-gastos li:not(.lista-gastos-vacia) {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .lista-gastos li > div {
+    grid-column: 1;
+  }
+
+  .lista-gastos li > strong {
+    grid-column: 1;
+  }
+
+  .lista-gastos li > .btn-eliminar-gasto {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+  }
+}
+
 /* Botón Cerrar sesión */
 .barra-lateral {
     display: flex;

@@ -26,7 +26,7 @@
         <a href="{{ route('usuario.index') }}" class="opcion-menu">Control de Usuario</a>
         <a href="{{ route('ventas.index') }}" class="opcion-menu activa">Administración de Ventas</a>
       </nav>
-      
+
       <div class="cerrar-sesion-contenedor">
         <a href="{{ route('logout') }}" class="cerrar-sesion">
           <svg xmlns="http://www.w3.org/2000/svg"

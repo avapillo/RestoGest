@@ -100,6 +100,15 @@
 
     </div>
 
+    <section class="resumen-gastos" aria-labelledby="titulo-total-gastos">
+      <div>
+        <span id="titulo-total-gastos">Total de gastos</span>
+        <strong>$ <span id="total-gastos">0,00</span></strong>
+      </div>
+      <button id="btn-abrir-gastos" class="btn-abrir-gastos" type="button" aria-haspopup="dialog" aria-controls="modal-gastos">
+        Registrar gastos
+      </button>
+    </section>
 
     <!-- MENSAJE DE SINCRONIZACIÓN -->
     <div
@@ -131,6 +140,62 @@
       </section>
     </main>
 
+  </div>
+
+  <div id="modal-gastos" class="modal-gastos" hidden>
+    <section class="contenido-modal-gastos" role="dialog" aria-modal="true" aria-labelledby="titulo-modal-gastos">
+      <header class="encabezado-modal-gastos">
+        <div>
+          <p>Control de egresos</p>
+          <h2 id="titulo-modal-gastos">Registrar gastos</h2>
+        </div>
+        <button id="btn-cerrar-gastos" class="btn-cerrar-gastos" type="button" aria-label="Cerrar">&times;</button>
+      </header>
+
+      <form id="formulario-gastos">
+        <div id="filas-formulario-gastos" class="filas-formulario-gastos">
+          <div class="fila-form-gasto">
+            <label class="campo-gasto">
+              <span>Nombre</span>
+              <input name="producto[]" type="text" maxlength="120" placeholder="Ej. Aceite" required>
+            </label>
+            <label class="campo-gasto">
+              <span>Monto</span>
+              <input name="monto[]" type="number" min="0.01" step="0.01" placeholder="0,00" required>
+            </label>
+            <button class="btn-quitar-fila-gasto" type="button" aria-label="Quitar gasto" title="Quitar gasto" disabled>&times;</button>
+          </div>
+        </div>
+
+        <template id="plantilla-fila-gasto">
+          <div class="fila-form-gasto">
+            <label class="campo-gasto">
+              <span>Nombre</span>
+              <input name="producto[]" type="text" maxlength="120" placeholder="Ej. Aceite" required>
+            </label>
+            <label class="campo-gasto">
+              <span>Monto</span>
+              <input name="monto[]" type="number" min="0.01" step="0.01" placeholder="0,00" required>
+            </label>
+            <button class="btn-quitar-fila-gasto" type="button" aria-label="Quitar gasto" title="Quitar gasto">&times;</button>
+          </div>
+        </template>
+
+        <p id="estado-registro-gastos" class="estado-registro-gastos" role="status" aria-live="polite"></p>
+        <div class="acciones-modal-gastos">
+          <button id="btn-agregar-fila-gasto" class="btn-agregar-fila-gasto" type="button">+ Agregar otro</button>
+          <div>
+            <button id="btn-cancelar-gastos" class="btn-cancelar-gastos" type="button">Cancelar</button>
+            <button class="btn-guardar-gastos" type="submit">Guardar gastos</button>
+          </div>
+        </div>
+      </form>
+
+      <section class="registros-gastos" aria-labelledby="titulo-registros-gastos">
+        <h3 id="titulo-registros-gastos">Gastos registrados</h3>
+        <ul id="lista-gastos" class="lista-gastos"></ul>
+      </section>
+    </section>
   </div>
 
   <!-- Enlace al archivo JavaScript en la carpeta public/js -->

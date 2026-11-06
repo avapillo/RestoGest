@@ -119,6 +119,21 @@ class HistorialCajaController extends Controller
                 return null;
             }
 
+            $hayPedidosPendientes = DB::table('pedidos')
+                ->leftJoin('estados', 'estados.id', '=', 'pedidos.fk_id_estado')
+                ->where(function ($query) {
+                    $query->whereNotExists(function ($subquery) {
+                        $subquery->selectRaw('1')
+                            ->from('registro_pago')
+                            ->whereColumn('registro_pago.fk_id_pedido', 'pedidos.id_pedido');
+                    })->orWhereRaw("LOWER(TRIM(COALESCE(estados.estado, ''))) <> ?", ['listo']);
+                })
+                ->exists();
+
+            if ($hayPedidosPendientes) {
+                return 'pedidos_pendientes';
+            }
+
             $montoTotal = (float) $caja->monto_actual;
 
             $cierre = HistorialCaja::create([
@@ -160,9 +175,15 @@ class HistorialCajaController extends Controller
             return response()->json([
                 'mensaje' => 'La caja ya está cerrada'
             ], 422);
-        } else {
+        }
 
-         [$cierre, $montoTotal] = $resultado;
+        if ($resultado === 'pedidos_pendientes') {
+            return response()->json([
+                'mensaje' => 'No se puede cerrar caja, hay pedidos sin cobrar o sin terminar',
+            ], 422);
+        }
+
+        [$cierre, $montoTotal] = $resultado;
 
         return response()->json([
             'mensaje' => 'Caja cerrada exitosamente',
@@ -170,10 +191,6 @@ class HistorialCajaController extends Controller
             'abierta' => false,
             'monto_actual' => 0,
         ], 201);
-
-        }
-
-
     }
 
 }

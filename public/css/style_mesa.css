@@ -439,6 +439,17 @@ body {
   margin-bottom: 20px;
 }
 
+.modal-error-pedido {
+  max-width: 440px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.modal-error-pedido p {
+  margin: 0 0 20px;
+  color: var(--text-muted);
+}
+
 .modal-secciones {
   max-width: 760px;
 }

@@ -94,6 +94,8 @@ function cargarEstadoCaja() {
 function inicializarControlesCaja() {
 
     const { btnAbrir, btnCerrar } = obtenerElementosCaja();
+    const modalMensajeCierre = document.getElementById('modal-mensaje-cierre');
+    const btnCerrarMensaje = document.getElementById('btn-cerrar-mensaje-cierre');
 
     if (!btnAbrir || !btnCerrar) {
 
@@ -110,6 +112,16 @@ function inicializarControlesCaja() {
 
     // CERRAR CAJA
     btnCerrar.addEventListener('click', cerrarCaja);
+
+    btnCerrarMensaje?.addEventListener('click', () => {
+        modalMensajeCierre.hidden = true;
+    });
+
+    modalMensajeCierre?.addEventListener('click', evento => {
+        if (evento.target === modalMensajeCierre) {
+            modalMensajeCierre.hidden = true;
+        }
+    });
 
 }
 
@@ -212,13 +224,14 @@ function cerrarCaja() {
 
     })
 
-    .then(respuesta => {
+    .then(async respuesta => {
+        const datos = await respuesta.json();
 
         if (!respuesta.ok) {
-            throw new Error('No se pudo cerrar la caja');
+            throw new Error(datos.mensaje || 'No se pudo cerrar la caja.');
         }
 
-        return respuesta.json();
+        return datos;
 
     })
 
@@ -241,7 +254,16 @@ function cerrarCaja() {
 
         console.error(error);
 
-        alert('No se pudo cerrar la caja.');
+        const modal = document.getElementById('modal-mensaje-cierre');
+        const texto = document.getElementById('texto-mensaje-cierre');
+
+        if (modal && texto) {
+            texto.textContent = error.message;
+            modal.hidden = false;
+            document.getElementById('btn-cerrar-mensaje-cierre')?.focus();
+        } else {
+            alert(error.message);
+        }
 
     });
 

@@ -384,6 +384,39 @@ test('el cierre guarda los gastos asociados al historial creado', function () {
     ]);
 });
 
+test('no se puede cerrar la caja si hay pedidos sin cobrar', function () {
+    $estadoListoId = DB::table('estados')->insertGetId(['estado' => 'Listo']);
+    $pedidoId = DB::table('pedidos')->insertGetId(['fk_id_estado' => $estadoListoId]);
+    DB::table('caja_estado')->insert(['abierta' => true, 'monto_actual' => 500]);
+
+    $this->postJson('/api/caja/cerrar')
+        ->assertUnprocessable()
+        ->assertJsonPath('mensaje', 'No se puede cerrar caja, hay pedidos sin cobrar o sin terminar');
+
+    $this->assertDatabaseCount('historial_caja', 0);
+    $this->assertDatabaseHas('caja_estado', ['abierta' => true, 'monto_actual' => 500]);
+    $this->assertDatabaseMissing('registro_pago', ['fk_id_pedido' => $pedidoId]);
+});
+
+test('no se puede cerrar la caja si hay pedidos sin terminar aunque estén pagados', function () {
+    $tipoPagoId = DB::table('tipo_pago')->insertGetId(['tipo_pago' => 'Efectivo']);
+    $estadoPreparandoId = DB::table('estados')->insertGetId(['estado' => 'Preparando']);
+    $pedidoId = DB::table('pedidos')->insertGetId(['fk_id_estado' => $estadoPreparandoId]);
+    DB::table('registro_pago')->insert([
+        'fk_id_pedido' => $pedidoId,
+        'fk_tipo_pago' => $tipoPagoId,
+        'monto' => 500,
+    ]);
+    DB::table('caja_estado')->insert(['abierta' => true, 'monto_actual' => 500]);
+
+    $this->postJson('/api/caja/cerrar')
+        ->assertUnprocessable()
+        ->assertJsonPath('mensaje', 'No se puede cerrar caja, hay pedidos sin cobrar o sin terminar');
+
+    $this->assertDatabaseCount('historial_caja', 0);
+    $this->assertDatabaseHas('caja_estado', ['abierta' => true, 'monto_actual' => 500]);
+});
+
 test('solo administradores pueden iniciar sesión y acceder a las rutas del sistema', function () {
     DB::table('rol_usuario')->insert(['id_rol' => 2, 'rol_nombre' => 'Cajero']);
     $cajeroId = DB::table('usuarios')->insertGetId([

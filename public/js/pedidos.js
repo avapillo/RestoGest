@@ -331,6 +331,16 @@ document.addEventListener('DOMContentLoaded', () => {
   const modalCobrar = document.getElementById('modalCobrar');
   const formCobrar = document.getElementById('formCobrar');
   const cerrarModalCobro = document.getElementById('btnCerrarModalCobro');
+  const modalMensajePedidoIncompleto = document.getElementById('modalMensajePedidoIncompleto');
+  const btnCerrarErrorPedido = document.getElementById('btnCerrarErrorPedido');
+
+  btnCerrarErrorPedido?.addEventListener('click', () => modalMensajePedidoIncompleto.remove());
+
+  modalMensajePedidoIncompleto?.addEventListener('click', evento => {
+    if (evento.target === modalMensajePedidoIncompleto) {
+      modalMensajePedidoIncompleto.remove();
+    }
+  });
 
   botonesCobrar.forEach(boton => {
     boton.addEventListener('click', async () => {

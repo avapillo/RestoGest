@@ -59,7 +59,7 @@
             {{ session('error') }}
           </div>
         @endif
-        @if ($errors->has('fk_id_mesa') || $errors->has('id_pedido'))
+        @if ($errors->has('fk_id_mesa') || ($errors->has('id_pedido') && $errors->first('id_pedido') !== 'No se puede cobrar un pedido que aún no está listo.'))
           <div class="aviso-caja-cerrada" role="alert">
             {{ $errors->first('fk_id_mesa') ?: $errors->first('id_pedido') }}
           </div>
@@ -398,6 +398,16 @@
       </form>
     </div>
   </div>
+
+  @if ($errors->first('id_pedido') === 'No se puede cobrar un pedido que aún no está listo.')
+    <div id="modalMensajePedidoIncompleto" class="modal-overlay">
+      <section class="modal-content modal-error-pedido" role="alertdialog" aria-modal="true" aria-labelledby="tituloErrorPedido">
+        <h3 id="tituloErrorPedido">No se puede cobrar el pedido</h3>
+        <p>{{ $errors->first('id_pedido') }}</p>
+        <button id="btnCerrarErrorPedido" class="btn-guardar" type="button">Entendido</button>
+      </section>
+    </div>
+  @endif
 
   <div id="modalSecciones" class="modal-overlay {{ old('_seccion_form') === 'crear' ? '' : 'hidden' }}">
     <div class="modal-content modal-secciones">

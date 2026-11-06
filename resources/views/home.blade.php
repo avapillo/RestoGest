@@ -198,6 +198,14 @@
     </section>
   </div>
 
+  <div id="modal-mensaje-cierre" class="modal-mensaje-cierre" hidden>
+    <section class="contenido-modal-mensaje-cierre" role="alertdialog" aria-modal="true" aria-labelledby="titulo-mensaje-cierre">
+      <h2 id="titulo-mensaje-cierre">No se puede cerrar caja</h2>
+      <p id="texto-mensaje-cierre"></p>
+      <button id="btn-cerrar-mensaje-cierre" type="button">Entendido</button>
+    </section>
+  </div>
+
   <!-- Enlace al archivo JavaScript en la carpeta public/js -->
   <script src="{{ asset('js/home.js') }}"></script>
 </body>

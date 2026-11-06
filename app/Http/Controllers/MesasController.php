@@ -123,6 +123,16 @@ public function mostrarOrdenesPedidos(Request $request){
                 ->lockForUpdate()
                 ->firstOrFail();
 
+            $estadoPedido = DB::table('estados')
+                ->where('id', $pedido->fk_id_estado)
+                ->value('estado');
+
+            if (mb_strtolower(trim((string) $estadoPedido)) !== 'listo') {
+                throw ValidationException::withMessages([
+                    'id_pedido' => 'No se puede cobrar un pedido que aún no está listo.',
+                ]);
+            }
+
             if (DB::table('registro_pago')->where('fk_id_pedido', $pedido->id_pedido)->exists()) {
                 throw ValidationException::withMessages([
                     'id_pedido' => 'Este pedido ya fue cobrado.',

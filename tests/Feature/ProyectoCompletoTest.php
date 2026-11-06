@@ -11,6 +11,7 @@ beforeEach(function () {
     Schema::dropIfExists('caja_estado');
     Schema::dropIfExists('mesas');
     Schema::dropIfExists('seccion');
+    Schema::dropIfExists('estados');
     Schema::dropIfExists('productos');
     Schema::dropIfExists('categoria');
     Schema::dropIfExists('usuario_roles');
@@ -68,6 +69,11 @@ beforeEach(function () {
     Schema::create('tipo_pago', function (Blueprint $table) {
         $table->increments('id');
         $table->string('tipo_pago');
+    });
+
+    Schema::create('estados', function (Blueprint $table) {
+        $table->increments('id');
+        $table->string('estado');
     });
 
     Schema::create('pedidos', function (Blueprint $table) {
@@ -442,7 +448,11 @@ test('el estado informa cuando la caja está cerrada', function () {
 
 test('el cobro suma su importe al total actual de la caja', function () {
     $tipoPagoId = DB::table('tipo_pago')->insertGetId(['tipo_pago' => 'Efectivo']);
-    $pedidoId = DB::table('pedidos')->insertGetId(['monto_total' => 0]);
+    $estadoListoId = DB::table('estados')->insertGetId(['estado' => 'Listo']);
+    $pedidoId = DB::table('pedidos')->insertGetId([
+        'monto_total' => 0,
+        'fk_id_estado' => $estadoListoId,
+    ]);
     DB::table('detalle_pedido')->insert([
         ['fk_id_pedido' => $pedidoId, 'subtotal' => 1250.50],
         ['fk_id_pedido' => $pedidoId, 'subtotal' => 799.50],
@@ -457,7 +467,10 @@ test('el cobro suma su importe al total actual de la caja', function () {
         'fk_tipo_pago' => $tipoPagoId,
     ])->assertRedirect();
 
-    $segundoPedidoId = DB::table('pedidos')->insertGetId(['monto_total' => 0]);
+    $segundoPedidoId = DB::table('pedidos')->insertGetId([
+        'monto_total' => 0,
+        'fk_id_estado' => $estadoListoId,
+    ]);
     DB::table('detalle_pedido')->insert([
         'fk_id_pedido' => $segundoPedidoId,
         'subtotal' => 450,
@@ -500,7 +513,11 @@ test('el cobro suma su importe al total actual de la caja', function () {
 
 test('el cobro no se registra cuando la caja está cerrada', function () {
     $tipoPagoId = DB::table('tipo_pago')->insertGetId(['tipo_pago' => 'Efectivo']);
-    $pedidoId = DB::table('pedidos')->insertGetId(['monto_total' => 1000]);
+    $estadoListoId = DB::table('estados')->insertGetId(['estado' => 'Listo']);
+    $pedidoId = DB::table('pedidos')->insertGetId([
+        'monto_total' => 1000,
+        'fk_id_estado' => $estadoListoId,
+    ]);
     DB::table('detalle_pedido')->insert([
         'fk_id_pedido' => $pedidoId,
         'subtotal' => 1000,
@@ -512,6 +529,34 @@ test('el cobro no se registra cuando la caja está cerrada', function () {
     ])->assertSessionHasErrors('id_pedido');
 
     $this->assertDatabaseCount('registro_pago', 0);
+});
+
+test('el cobro no se registra si el pedido aún no está listo', function () {
+    $tipoPagoId = DB::table('tipo_pago')->insertGetId(['tipo_pago' => 'Efectivo']);
+    $estadoPreparandoId = DB::table('estados')->insertGetId(['estado' => 'Preparando']);
+    $pedidoId = DB::table('pedidos')->insertGetId([
+        'monto_total' => 1000,
+        'fk_id_estado' => $estadoPreparandoId,
+    ]);
+    DB::table('detalle_pedido')->insert([
+        'fk_id_pedido' => $pedidoId,
+        'subtotal' => 1000,
+    ]);
+    DB::table('caja_estado')->insert([
+        'abierta' => true,
+        'monto_actual' => 500,
+    ]);
+
+    $this->from('/Mesas')->post('/Mesas/pagar', [
+        'id_pedido' => $pedidoId,
+        'fk_tipo_pago' => $tipoPagoId,
+    ])->assertSessionHasErrors('id_pedido');
+
+    $this->assertDatabaseCount('registro_pago', 0);
+    $this->assertDatabaseHas('caja_estado', [
+        'abierta' => true,
+        'monto_actual' => 500,
+    ]);
 });
 
 test('no se puede registrar un pedido cuando la caja está cerrada', function () {

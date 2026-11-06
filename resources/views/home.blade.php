@@ -61,7 +61,6 @@
     <!-- TÍTULO -->
     <div class="titulo-caja">
       <h2>Historial de Caja</h2>
-      <p class="nombre-usuario">{{ session('usuario_nom') }}</p>
     </div>
 
     <!-- BOTONES DE CAJA -->
@@ -89,20 +88,20 @@
   <!-- COLUMNA DERECHA -->
   <div class="panel-caja">
 
-    <!-- TOTAL RECAUDADO -->
+    <!-- MONTOS DE CAJA -->
+    <div class="total-caja total-caja-manual">
+      <label for="monto-manual">Monto manual</label>
+      <textarea id="monto-manual" rows="1" maxlength="20" inputmode="numeric" aria-label="Monto manual, solo números"></textarea>
+    </div>
+
     <div class="total-caja">
-
-      <span>Monto total de Dia</span>
-
-      <strong>
-        $ <span id="total-pagos">0,00</span>
-      </strong>
-
+      <span>Monto total del día</span>
+      <strong>$ <span id="total-pagos">0,00</span></strong>
     </div>
 
     <section class="resumen-gastos" aria-labelledby="titulo-total-gastos">
       <div>
-        <span id="titulo-total-gastos">Total de Gasto del Dia</span>
+        <span id="titulo-total-gastos">Total de gasto del día</span>
         <strong>$ <span id="total-gastos">0,00</span></strong>
       </div>
       <button id="btn-abrir-gastos" class="btn-abrir-gastos" type="button" aria-haspopup="dialog" aria-controls="modal-gastos">

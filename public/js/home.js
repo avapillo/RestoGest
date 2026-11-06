@@ -28,6 +28,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     inicializarRegistroGastos();
 
+    inicializarMontoManual();
+
 });
 
 
@@ -273,6 +275,14 @@ function cerrarCaja() {
 // ============================================================
 // REGISTRAR PAGO
 // ============================================================
+
+function inicializarMontoManual() {
+    const campoMontoManual = document.getElementById('monto-manual');
+
+    campoMontoManual?.addEventListener('input', () => {
+        campoMontoManual.value = campoMontoManual.value.replace(/\D/g, '');
+    });
+}
 
 window.registrarNuevoPago = function(monto) {
 

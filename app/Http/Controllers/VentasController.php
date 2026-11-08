@@ -14,7 +14,17 @@ class VentasController extends Controller
             ->orderBy('tipo_pago')
             ->get();
 
-        return view('interfaz_ventas', compact('tiposPago'));
+        $categorias = DB::table('categoria')
+            ->select('id', 'categoria')
+            ->orderBy('categoria')
+            ->get();
+
+        $productos = DB::table('productos')
+            ->select('id', 'nombre', 'fk_id_categoria')
+            ->orderBy('nombre')
+            ->get();
+
+        return view('interfaz_ventas', compact('tiposPago', 'categorias', 'productos'));
     }
 
     public function buscar(Request $request)
@@ -59,5 +69,47 @@ class VentasController extends Controller
             ->withQueryString();
 
         return response()->json($resultados);
+    }
+
+    public function productosMasVendidos(Request $request)
+    {
+        $reglas = [
+            'categoria_id' => 'sometimes|nullable|integer|exists:categoria,id',
+            'producto_id' => 'sometimes|nullable|integer|exists:productos,id',
+            'fecha_desde' => 'sometimes|nullable|date',
+            'fecha_hasta' => 'sometimes|nullable|date',
+        ];
+
+        if ($request->filled('fecha_desde') && $request->filled('fecha_hasta')) {
+            $reglas['fecha_hasta'] .= '|after_or_equal:fecha_desde';
+        }
+
+        $filtros = $request->validate($reglas);
+
+        $productos = DB::table('detalle_pedido as detalle')
+            ->join('productos as producto', 'producto.id', '=', 'detalle.fk_id_producto')
+            ->join('registro_pago as pago', 'pago.fk_id_pedido', '=', 'detalle.fk_id_pedido')
+            ->select('producto.id', 'producto.nombre')
+            ->selectRaw('SUM(detalle.cantidad) as unidades_vendidas')
+            ->whereNotNull('detalle.fk_id_producto')
+            ->when(!empty($filtros['categoria_id']), function ($query) use ($filtros) {
+                $query->where('producto.fk_id_categoria', $filtros['categoria_id']);
+            })
+            ->when(!empty($filtros['producto_id']), function ($query) use ($filtros) {
+                $query->where('producto.id', $filtros['producto_id']);
+            })
+            ->when(!empty($filtros['fecha_desde']), function ($query) use ($filtros) {
+                $query->whereDate('pago.fecha_pago', '>=', $filtros['fecha_desde']);
+            })
+            ->when(!empty($filtros['fecha_hasta']), function ($query) use ($filtros) {
+                $query->whereDate('pago.fecha_pago', '<=', $filtros['fecha_hasta']);
+            })
+            ->groupBy('producto.id', 'producto.nombre')
+            ->orderByDesc('unidades_vendidas')
+            ->orderBy('producto.nombre')
+            ->limit(10)
+            ->get();
+
+        return response()->json($productos);
     }
 }

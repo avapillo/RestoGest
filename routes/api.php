@@ -14,6 +14,7 @@ Route::middleware('web')->group(function () {
     Route::get('/historial-caja', [HistorialCajaController::class, 'index']);
     Route::get('/caja/estado', [HistorialCajaController::class, 'estado']);
     Route::get('/ventas', [VentasController::class, 'buscar']);
+    Route::get('/productos-mas-vendidos', [VentasController::class, 'productosMasVendidos']);
 
     Route::post('/caja/abrir', [HistorialCajaController::class, 'abrir']);
 

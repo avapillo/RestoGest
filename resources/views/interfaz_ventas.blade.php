@@ -135,6 +135,72 @@
         </footer>
       </section>
 
+      <section class="panel-resultados" aria-labelledby="tituloProductosMasVendidos">
+        <div class="encabezado-resultados">
+          <div>
+            <p class="sobre-titulo">Productos</p>
+            <h2 id="tituloProductosMasVendidos">Más vendidos</h2>
+          </div>
+          <p id="resumenProductos" class="resumen-resultados" aria-live="polite">Cargando productos...</p>
+        </div>
+
+        <form id="filtrosProductos" class="formulario-filtros" data-api-url="{{ url('/api/productos-mas-vendidos') }}">
+          <div class="rejilla-filtros">
+            <div class="grupo-campo">
+              <label for="categoria_producto">Categoría</label>
+              <select id="categoria_producto" name="categoria_id">
+                <option value="">Todas las categorías</option>
+                @foreach ($categorias as $categoria)
+                  <option value="{{ $categoria->id }}">{{ $categoria->categoria }}</option>
+                @endforeach
+              </select>
+            </div>
+            <div class="grupo-campo">
+              <label for="producto_categoria">Producto</label>
+              <select id="producto_categoria" name="producto_id" disabled>
+                <option value="">Selecciona primero una categoría</option>
+                @foreach ($productos as $producto)
+                  <option value="{{ $producto->id }}" data-categoria-id="{{ $producto->fk_id_categoria }}">
+                    {{ $producto->nombre }}
+                  </option>
+                @endforeach
+              </select>
+            </div>
+            <div class="grupo-campo">
+              <label for="productos_fecha_desde">Desde</label>
+              <input id="productos_fecha_desde" name="fecha_desde" type="date">
+            </div>
+            <div class="grupo-campo">
+              <label for="productos_fecha_hasta">Hasta</label>
+              <input id="productos_fecha_hasta" name="fecha_hasta" type="date">
+            </div>
+          </div>
+
+          <div class="acciones-filtros">
+            <button class="btn-buscar" type="submit">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"></circle><path d="m16 16 5 5"></path></svg>
+              Buscar productos
+            </button>
+            <button class="btn-limpiar" type="reset">Limpiar búsqueda</button>
+          </div>
+        </form>
+
+        <p id="estadoProductos" class="estado-ventas" role="status" aria-live="polite">Cargando productos...</p>
+        <div class="envoltura-tabla">
+          <table class="tabla-ventas">
+            <thead>
+              <tr>
+                <th scope="col">Producto</th>
+                <th scope="col">Unidades vendidas</th>
+              </tr>
+            </thead>
+            <tbody id="filasProductos">
+              <tr><td class="fila-vacia" colspan="2">Cargando productos...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
     </main>
   </div>
 

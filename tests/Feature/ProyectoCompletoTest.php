@@ -734,3 +734,52 @@ test('la página de ventas carga los tipos de pago y los controles de búsqueda'
         ->assertDontSee('data-historial-api-url=', false)
         ->assertSee('js/ventas.js');
 });
+
+test('la búsqueda ordena productos pagados y filtra por nombre y fecha', function () {
+    $categoriaId = DB::table('categoria')->insertGetId(['categoria' => 'Bebidas']);
+    $cafeId = DB::table('productos')->insertGetId([
+        'nombre' => 'Café latte',
+        'precio' => 2500,
+        'fk_id_categoria' => $categoriaId,
+    ]);
+    $teId = DB::table('productos')->insertGetId([
+        'nombre' => 'Té',
+        'precio' => 1800,
+        'fk_id_categoria' => $categoriaId,
+    ]);
+
+    DB::table('registro_pago')->insert([
+        ['fk_id_pedido' => 101, 'fecha_pago' => '2026-10-20'],
+        ['fk_id_pedido' => 102, 'fecha_pago' => '2026-10-22'],
+        ['fk_id_pedido' => 103, 'fecha_pago' => '2026-10-20'],
+    ]);
+    DB::table('detalle_pedido')->insert([
+        ['fk_id_pedido' => 101, 'fk_id_producto' => $cafeId, 'cantidad' => 4],
+        ['fk_id_pedido' => 102, 'fk_id_producto' => $cafeId, 'cantidad' => 2],
+        ['fk_id_pedido' => 103, 'fk_id_producto' => $teId, 'cantidad' => 3],
+        ['fk_id_pedido' => 104, 'fk_id_producto' => $cafeId, 'cantidad' => 8],
+    ]);
+
+    $this->getJson('/api/productos-mas-vendidos?fecha_hasta=2026-10-20')
+        ->assertOk()
+        ->assertJsonCount(2)
+        ->assertJsonPath('0.nombre', 'Café latte')
+        ->assertJsonPath('0.unidades_vendidas', 4)
+        ->assertJsonPath('1.nombre', 'Té')
+        ->assertJsonPath('1.unidades_vendidas', 3);
+
+    $this->getJson('/api/productos-mas-vendidos?categoria_id='.$categoriaId.'&producto_id='.$cafeId.'&fecha_desde=2026-10-21&fecha_hasta=2026-10-22')
+        ->assertOk()
+        ->assertJsonCount(1)
+        ->assertJsonPath('0.nombre', 'Café latte')
+        ->assertJsonPath('0.unidades_vendidas', 2);
+
+    $this->getJson('/api/productos-mas-vendidos?categoria_id='.$categoriaId)
+        ->assertOk()
+        ->assertJsonCount(2)
+        ->assertJsonPath('0.nombre', 'Café latte')
+        ->assertJsonPath('0.unidades_vendidas', 6);
+
+    $this->getJson('/api/productos-mas-vendidos?fecha_desde=2026-10-23&fecha_hasta=2026-10-20')
+        ->assertUnprocessable();
+});

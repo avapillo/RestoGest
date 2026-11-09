@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Producto;
 use Illuminate\Http\Request;
+use App\Models\Categoria;
 
 class ApiProductoController extends Controller
 {
@@ -33,6 +34,18 @@ class ApiProductoController extends Controller
         'id_categoria' => $id_categoria,
         'total'        => $productos->count(),
         'data'         => $productos
+    ], 200);
+}
+// Obtener todas las categorías para la aplicación Flutter
+public function obtenerCategorias()
+{
+    $categorias = Categoria::orderBy('categoria')
+        ->get(['id', 'categoria']);
+
+    return response()->json([
+        'exito' => true,
+        'total' => $categorias->count(),
+        'data' => $categorias
     ], 200);
 }
 }

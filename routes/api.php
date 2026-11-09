@@ -9,6 +9,7 @@ use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ApiProductoController;
 use App\Http\Controllers\MesasController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\SeccionController;
 // La caja requiere una sesión web válida de administrador.
 Route::middleware('web')->group(function () {
     Route::get('/historial-caja', [HistorialCajaController::class, 'index']);
@@ -56,6 +57,11 @@ Route::get('/v1/productos', [
     ApiProductoController::class,
     'obtenerTodoLosProductos'
 ]);
+// Obtener todas las categorías para Flutter
+Route::get('/v1/categorias', [
+    ApiProductoController::class,
+    'obtenerCategorias'
+]);
 
 // URL 2: Obtener productos filtrados por una categoría específica
 Route::get('/v1/productos/categoria/{id}', [ApiProductoController::class, 'obtenerProductoPorCategoria']);
@@ -102,3 +108,13 @@ Route::get('/imagen-producto/{ruta}', function (string $ruta) {
     return response()->file($disco->path($archivo));
 
 })->where('ruta', '.*');
+// Obtener secciones para la aplicación Flutter
+Route::get('/secciones', function () {
+    $secciones = \App\Models\Seccion::orderBy('seccion')
+        ->get(['id_seccion', 'seccion']);
+
+    return response()->json([
+        'exito' => true,
+        'data' => $secciones
+    ]);
+});

@@ -139,12 +139,13 @@
 
 @if ($ultimoPedido)
     @php
-        $estadoNombre = trim($ultimoPedido->estado->nombre ?? 'Recibido');
+        $estadoNombre = trim($ultimoPedido->estado->estado ?? 'Recibido');
         $estadoNormalizado = mb_strtolower($estadoNombre);
 
         if ($estadoNormalizado === 'listo') {
             $colorEstado = '#22A565';
         } elseif (
+           $estadoNormalizado === 'preparando' ||
             $estadoNormalizado === 'en preparación' ||
             $estadoNormalizado === 'en preparacion'
         ) {

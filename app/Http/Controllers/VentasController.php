@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Categoria;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -14,7 +15,7 @@ class VentasController extends Controller
             ->orderBy('tipo_pago')
             ->get();
 
-        $categorias = DB::table('categoria')
+        $categorias = Categoria::query()
             ->select('id', 'categoria')
             ->orderBy('categoria')
             ->get();

@@ -373,6 +373,10 @@ public function listarApi()
                 'nombre_creador' => $ultimoPedido
                     ? $ultimoPedido->nombre_creador
                     : null,
+
+                'rol_creador' => $ultimoPedido
+    ? $ultimoPedido->rol_creador
+    : null,
             ];
         });
 

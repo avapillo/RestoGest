@@ -369,6 +369,10 @@ public function listarApi()
                 'estado' => $ultimoPedido && $ultimoPedido->estado
                     ? $ultimoPedido->estado->estado
                     : null,
+
+                'nombre_creador' => $ultimoPedido
+                    ? $ultimoPedido->nombre_creador
+                    : null,
             ];
         });
 

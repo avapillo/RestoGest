@@ -57,6 +57,7 @@ class ApiCocinaController extends Controller
             return [
                 'id_pedido' => $pedido->id_pedido,
                 'mesa' => $pedido->fk_id_mesa,
+                 'numero_mesa' => $pedido->mesa->numero_mesa ?? null,
                 'fecha_pedido' => $pedido->fecha_pedido ?? null,
                 'hora_pedido' => $pedido->hora_pedido,
                 'monto_total' => $pedido->monto_total,

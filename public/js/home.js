@@ -203,12 +203,6 @@ function abrirCaja() {
 // ============================================================
 
 function cerrarCaja() {
-
-    if (!cajaAbierta) {
-        return;
-    }
-
-
     const monto = acumuladoPagos.toFixed(2);
 
 
@@ -242,10 +236,23 @@ function cerrarCaja() {
     })
 
     .then(async respuesta => {
-        const datos = await respuesta.json();
+        const contenido = await respuesta.text();
+        let datos;
+
+        try {
+            datos = contenido ? JSON.parse(contenido) : {};
+        } catch {
+            throw new Error(`El servidor devolvió una respuesta inválida al cerrar la caja (HTTP ${respuesta.status}).`);
+        }
 
         if (!respuesta.ok) {
-            throw new Error(datos.mensaje || 'No se pudo cerrar la caja.');
+            const erroresValidacion = Object.values(datos.errors || {}).flat();
+            throw new Error(
+                datos.mensaje
+                || datos.message
+                || erroresValidacion.join(' ')
+                || `No se pudo cerrar la caja (HTTP ${respuesta.status}).`
+            );
         }
 
         return datos;

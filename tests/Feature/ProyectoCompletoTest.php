@@ -47,6 +47,7 @@ beforeEach(function () {
         $table->dateTime('momento_apertura')->nullable();
         $table->integer('id_usuario')->nullable();
         $table->integer('id_registro_inicio')->nullable();
+        $table->integer('id_pedido_inicio')->nullable();
         $table->timestamps();
     });
 
@@ -427,6 +428,56 @@ test('no se puede cerrar la caja si hay pedidos sin terminar aunque estén pagad
     $this->assertDatabaseHas('caja_estado', ['abierta' => true, 'monto_actual' => 500]);
 });
 
+test('el cierre ignora pedidos anteriores a la apertura de caja', function () {
+    $estadoListoId = DB::table('estados')->insertGetId(['estado' => 'Listo']);
+    $pedidoAntiguoId = DB::table('pedidos')->insertGetId([
+        'fk_id_estado' => $estadoListoId,
+    ]);
+
+    $this->postJson('/api/caja/abrir')
+        ->assertOk();
+
+    $this->postJson('/api/caja/cerrar')
+        ->assertCreated();
+
+    $this->assertDatabaseMissing('registro_pago', [
+        'fk_id_pedido' => $pedidoAntiguoId,
+    ]);
+    $this->assertDatabaseHas('caja_estado', [
+        'abierta' => false,
+        'id_pedido_inicio' => null,
+    ]);
+});
+
+test('el cierre permite pedidos pendientes compuestos solo por bebidas', function () {
+    $estadoPreparandoId = DB::table('estados')->insertGetId(['estado' => 'Preparando']);
+    $categoriaBebidasId = DB::table('categoria')->insertGetId(['categoria' => 'Bebidas frías']);
+    $productoId = DB::table('productos')->insertGetId([
+        'nombre' => 'Agua',
+        'precio' => 1000,
+        'fk_id_categoria' => $categoriaBebidasId,
+    ]);
+
+    $this->postJson('/api/caja/abrir')
+        ->assertOk();
+
+    $pedidoId = DB::table('pedidos')->insertGetId([
+        'fk_id_estado' => $estadoPreparandoId,
+    ]);
+    DB::table('detalle_pedido')->insert([
+        'fk_id_pedido' => $pedidoId,
+        'fk_id_producto' => $productoId,
+        'cantidad' => 1,
+        'subtotal' => 1000,
+    ]);
+
+    $this->postJson('/api/caja/cerrar')
+        ->assertCreated();
+
+    $this->assertDatabaseCount('registro_pago', 0);
+    $this->assertDatabaseHas('caja_estado', ['abierta' => false]);
+});
+
 test('solo administradores pueden iniciar sesión y acceder a las rutas del sistema', function () {
     DB::table('rol_usuario')->insert(['id_rol' => 2, 'rol_nombre' => 'Cajero']);
     $cajeroId = DB::table('usuarios')->insertGetId([
@@ -611,6 +662,47 @@ test('el cobro no se registra si el pedido aún no está listo', function () {
         'abierta' => true,
         'monto_actual' => 500,
     ]);
+});
+
+test('se puede cobrar sin estado listo cuando el pedido solo contiene bebidas', function () {
+    $tipoPagoId = DB::table('tipo_pago')->insertGetId(['tipo_pago' => 'Efectivo']);
+    $estadoPreparandoId = DB::table('estados')->insertGetId(['estado' => 'Preparando']);
+    $categoriaBebidasId = DB::table('categoria')->insertGetId(['categoria' => 'Bebidas sin alcohol']);
+    $productoId = DB::table('productos')->insertGetId([
+        'nombre' => 'Agua',
+        'precio' => 1000,
+        'fk_id_categoria' => $categoriaBebidasId,
+    ]);
+    $pedidoId = DB::table('pedidos')->insertGetId([
+        'monto_total' => 1000,
+        'fk_id_estado' => $estadoPreparandoId,
+    ]);
+    DB::table('detalle_pedido')->insert([
+        'fk_id_pedido' => $pedidoId,
+        'fk_id_producto' => $productoId,
+        'cantidad' => 1,
+        'subtotal' => 1000,
+    ]);
+    DB::table('caja_estado')->insert([
+        'abierta' => true,
+        'monto_actual' => 0,
+    ]);
+
+    $this->from('/Mesas')->post('/Mesas/pagar', [
+        'id_pedido' => $pedidoId,
+        'fk_tipo_pago' => $tipoPagoId,
+    ])->assertRedirect();
+
+    $this->assertDatabaseHas('registro_pago', [
+        'fk_id_pedido' => $pedidoId,
+        'monto' => 1000,
+    ]);
+    $this->assertDatabaseHas('caja_estado', [
+        'abierta' => true,
+        'monto_actual' => 1000,
+    ]);
+
+    $this->postJson('/api/caja/cerrar')->assertCreated();
 });
 
 test('no se puede registrar un pedido cuando la caja está cerrada', function () {

@@ -206,6 +206,6 @@
   </div>
 
   <!-- Enlace al archivo JavaScript en la carpeta public/js -->
-  <script src="{{ asset('js/home.js') }}"></script>
+  <script src="{{ asset('js/home.js') }}?v={{ filemtime(public_path('js/home.js')) }}"></script>
 </body>
 </html>

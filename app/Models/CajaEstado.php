@@ -15,6 +15,7 @@ class CajaEstado extends Model
         'momento_apertura',
         'id_usuario',
         'id_registro_inicio',
+        'id_pedido_inicio',
     ];
 
     protected $casts = [

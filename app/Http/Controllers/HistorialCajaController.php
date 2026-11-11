@@ -59,6 +59,7 @@ class HistorialCajaController extends Controller
                     'momento_apertura' => now(),
                     'id_usuario' => session('usuario_id'),
                     'id_registro_inicio' => DB::table('registro_pago')->max('id_registro') ?? 0,
+                    'id_pedido_inicio' => DB::table('pedidos')->max('id_pedido') ?? 0,
                 ]);
             } else {
                 $caja->update([
@@ -68,6 +69,7 @@ class HistorialCajaController extends Controller
                     'momento_apertura' => now(),
                     'id_usuario' => session('usuario_id'),
                     'id_registro_inicio' => DB::table('registro_pago')->max('id_registro') ?? 0,
+                    'id_pedido_inicio' => DB::table('pedidos')->max('id_pedido') ?? 0,
                 ]);
             }
 
@@ -130,12 +132,33 @@ class HistorialCajaController extends Controller
 
             $hayPedidosPendientes = DB::table('pedidos')
                 ->leftJoin('estados', 'estados.id', '=', 'pedidos.fk_id_estado')
+                ->where('pedidos.id_pedido', '>', $caja->id_pedido_inicio ?? 0)
                 ->where(function ($query) {
                     $query->whereNotExists(function ($subquery) {
                         $subquery->selectRaw('1')
                             ->from('registro_pago')
                             ->whereColumn('registro_pago.fk_id_pedido', 'pedidos.id_pedido');
                     })->orWhereRaw("LOWER(TRIM(COALESCE(estados.estado, ''))) <> ?", ['listo']);
+                })
+                ->where(function ($query) {
+                    $query->whereNotExists(function ($subquery) {
+                        $subquery->selectRaw('1')
+                            ->from('detalle_pedido')
+                            ->whereColumn('detalle_pedido.fk_id_pedido', 'pedidos.id_pedido');
+                    })->orWhereExists(function ($subquery) {
+                        $subquery->selectRaw('1')
+                            ->from('detalle_pedido')
+                            ->leftJoin('productos', 'productos.id', '=', 'detalle_pedido.fk_id_producto')
+                            ->leftJoin('categoria', 'categoria.id', '=', 'productos.fk_id_categoria')
+                            ->whereColumn('detalle_pedido.fk_id_pedido', 'pedidos.id_pedido')
+                            ->where(function ($query) {
+                                $query->whereNull('detalle_pedido.fk_id_producto')
+                                        ->orWhereRaw(
+                                            "LOWER(TRIM(COALESCE(categoria.categoria, ''))) NOT LIKE ?",
+                                            ['%bebida%']
+                                        );
+                            });
+                    });
                 })
                 ->exists();
 
@@ -185,6 +208,7 @@ class HistorialCajaController extends Controller
                 'monto_actual' => 0,
                 'monto_inicial' => 0,
                 'id_registro_inicio' => null,
+                'id_pedido_inicio' => null,
             ]);
 
             $adminAccess->record((int) session('usuario_id'), 'cierre_caja');

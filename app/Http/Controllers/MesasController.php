@@ -127,7 +127,24 @@ public function mostrarOrdenesPedidos(Request $request){
                 ->where('id', $pedido->fk_id_estado)
                 ->value('estado');
 
-            if (mb_strtolower(trim((string) $estadoPedido)) !== 'listo') {
+            $hayDetallesNoBebida = DB::table('detalle_pedido')
+                ->leftJoin('productos', 'productos.id', '=', 'detalle_pedido.fk_id_producto')
+                ->leftJoin('categoria', 'categoria.id', '=', 'productos.fk_id_categoria')
+                ->where('detalle_pedido.fk_id_pedido', $pedido->id_pedido)
+                ->where(function ($query) {
+                    $query->whereNull('detalle_pedido.fk_id_producto')
+                        ->orWhereRaw(
+                            "LOWER(TRIM(COALESCE(categoria.categoria, ''))) NOT LIKE ?",
+                            ['%bebida%']
+                        );
+                })
+                ->exists();
+            $tieneDetalles = DB::table('detalle_pedido')
+                ->where('fk_id_pedido', $pedido->id_pedido)
+                ->exists();
+            $soloBebidas = $tieneDetalles && !$hayDetallesNoBebida;
+
+            if (mb_strtolower(trim((string) $estadoPedido)) !== 'listo' && !$soloBebidas) {
                 throw ValidationException::withMessages([
                     'id_pedido' => 'No se puede cobrar un pedido que aún no está listo.',
                 ]);

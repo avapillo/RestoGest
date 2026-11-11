@@ -43,6 +43,7 @@ beforeEach(function () {
         $table->id();
         $table->boolean('abierta')->default(false);
         $table->decimal('monto_actual', 12, 2)->default(0);
+        $table->decimal('monto_inicial', 12, 2)->default(0);
         $table->dateTime('momento_apertura')->nullable();
         $table->integer('id_usuario')->nullable();
         $table->integer('id_registro_inicio')->nullable();
@@ -52,6 +53,8 @@ beforeEach(function () {
     Schema::create('historial_caja', function (Blueprint $table) {
         $table->increments('id_historial');
         $table->decimal('monto_total', 10, 2)->nullable();
+        $table->decimal('monto_inicial', 12, 2)->default(0);
+        $table->decimal('monto_cierre', 12, 2)->default(0);
         $table->dateTime('momento_cierre')->nullable();
         $table->integer('id_usuario')->nullable();
     });
@@ -328,6 +331,7 @@ test('el cierre guarda el total y muestra quien cerró solo a administradores', 
 
     $this->assertDatabaseHas('historial_caja', [
         'monto_total' => 7250.50,
+        'monto_cierre' => 7250.50,
         'id_usuario' => $adminId,
     ]);
 
@@ -357,6 +361,7 @@ test('el cierre guarda los gastos asociados al historial creado', function () {
     DB::table('caja_estado')->insert([
         'abierta' => true,
         'monto_actual' => 5000,
+        'monto_inicial' => 2500.75,
         'id_usuario' => $adminId,
     ]);
 
@@ -372,6 +377,11 @@ test('el cierre guarda los gastos asociados al historial creado', function () {
     $historialId = DB::table('historial_caja')->value('id_historial');
 
     $this->assertDatabaseCount('registro_gasto', 2);
+    $this->assertDatabaseHas('historial_caja', [
+        'monto_total' => 5000,
+        'monto_inicial' => 2500.75,
+        'monto_cierre' => 5500.25,
+    ]);
     $this->assertDatabaseHas('registro_gasto', [
         'producto' => 'Aceite',
         'monto' => 1200,
@@ -463,8 +473,19 @@ test('el acceso Admin registra ingreso, apertura y cierre de caja', function () 
         'contrasenia' => 'clave-segura',
     ])->assertRedirect(route('home'));
 
-    $this->postJson('/api/caja/abrir')->assertOk();
+    $this->postJson('/api/caja/abrir', ['monto_inicial' => 2500.75])
+        ->assertOk()
+        ->assertJsonPath('monto_inicial', 2500.75);
+    $this->assertDatabaseHas('caja_estado', [
+        'abierta' => true,
+        'monto_inicial' => 2500.75,
+    ]);
+
     $this->postJson('/api/caja/cerrar')->assertCreated();
+
+    $this->assertDatabaseHas('historial_caja', [
+        'monto_inicial' => 2500.75,
+    ]);
 
     $this->assertDatabaseHas('admin_activity_logs', ['id_usuario' => $adminId, 'accion' => 'ingreso_sistema']);
     $this->assertDatabaseHas('admin_activity_logs', ['id_usuario' => $adminId, 'accion' => 'apertura_caja']);

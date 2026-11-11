@@ -403,11 +403,6 @@ tr:hover {
   box-shadow: var(--shadow-sm);
 }
 
-.total-caja-manual {
-  border-left: 4px solid var(--accent-orange);
-  background: #fffaf4;
-}
-
 .total-caja-dia {
   border: 1px solid #bbf7d0;
   border-left: 4px solid var(--accent-green);
@@ -434,32 +429,28 @@ tr:hover {
   font-size: 24px;
 }
 
-.total-caja-manual label {
+.total-caja-inicial label {
   display: block;
   color: #64748b;
   font-size: 12px;
 }
 
-.total-caja-manual textarea {
+.total-caja-inicial input {
   display: block;
   width: 100%;
-  height: 29px;
   margin-top: 3px;
-  padding: 0;
+  padding: 2px 0;
   box-sizing: border-box;
   border: 0;
-  border-radius: 4px;
   background: transparent;
   color: var(--text-primary);
   font-family: inherit;
   font-size: 22px;
   font-weight: 700;
-  line-height: 29px;
-  resize: none;
 }
 
-.total-caja-manual textarea:focus-visible {
-  outline: 2px solid var(--accent-orange);
+.total-caja-inicial input:focus-visible {
+  outline: 2px solid var(--accent-green);
   outline-offset: 2px;
 }
 

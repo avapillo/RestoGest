@@ -12,8 +12,15 @@ class HistorialCaja extends Model
 
     protected $fillable = [
         'monto_total',
+        'monto_inicial',
+        'monto_cierre',
         'momento_cierre',
         'id_usuario'
+    ];
+
+    protected $casts = [
+        'monto_inicial' => 'decimal:2',
+        'monto_cierre' => 'decimal:2',
     ];
 
     // Relación para traer la información del usuario

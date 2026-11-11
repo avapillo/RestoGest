@@ -11,6 +11,7 @@ class CajaEstado extends Model
     protected $fillable = [
         'abierta',
         'monto_actual',
+        'monto_inicial',
         'momento_apertura',
         'id_usuario',
         'id_registro_inicio',
@@ -19,6 +20,7 @@ class CajaEstado extends Model
     protected $casts = [
         'abierta' => 'boolean',
         'monto_actual' => 'decimal:2',
+        'monto_inicial' => 'decimal:2',
         'momento_apertura' => 'datetime',
     ];
 }

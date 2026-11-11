@@ -89,12 +89,12 @@
   <div class="panel-caja">
 
     <!-- MONTOS DE CAJA -->
-    <div class="total-caja total-caja-manual">
-      <label for="monto-manual">Monto manual</label>
-      <textarea id="monto-manual" rows="1" maxlength="20" inputmode="numeric" aria-label="Monto manual, solo números"></textarea>
+    <div class="total-caja total-caja-inicial">
+      <label for="monto-inicial">Monto inicial</label>
+      <input id="monto-inicial" type="number" min="0" max="9999999999.99" step="0.01" value="0.00" inputmode="decimal">
     </div>
 
-    <div class="total-caja">
+    <div class="total-caja total-caja-dia">
       <span>Monto total del día</span>
       <strong>$ <span id="total-pagos">0,00</span></strong>
     </div>
@@ -128,7 +128,7 @@
             <tr>
               <th>Fecha</th>
               <th>Hora de Cierre</th>
-              <th>Monto Total</th>
+              <th>Total del cierre</th>
               <th>Cerro Caja</th>
             </tr>
           </thead>

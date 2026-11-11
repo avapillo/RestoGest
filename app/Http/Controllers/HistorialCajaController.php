@@ -35,20 +35,27 @@ class HistorialCajaController extends Controller
         return response()->json([
             'abierta' => $caja->abierta,
             'monto_actual' => (float) $caja->monto_actual,
+            'monto_inicial' => (float) $caja->monto_inicial,
             'mensaje' => $caja->abierta ? 'Caja abierta.' : 'La caja está cerrada.',
         ]);
     }
 
     // Abrir caja
-    public function abrir(AdminAccess $adminAccess)
+    public function abrir(Request $request, AdminAccess $adminAccess)
     {
-        $caja = DB::transaction(function () use ($adminAccess) {
+        $validated = $request->validate([
+            'monto_inicial' => ['sometimes', 'numeric', 'min:0', 'max:9999999999.99'],
+        ]);
+        $montoInicial = (float) ($validated['monto_inicial'] ?? 0);
+
+        $caja = DB::transaction(function () use ($adminAccess, $montoInicial) {
             $caja = CajaEstado::query()->lockForUpdate()->first();
 
             if (!$caja) {
                 $caja = CajaEstado::create([
                     'abierta' => true,
                     'monto_actual' => 0,
+                    'monto_inicial' => $montoInicial,
                     'momento_apertura' => now(),
                     'id_usuario' => session('usuario_id'),
                     'id_registro_inicio' => DB::table('registro_pago')->max('id_registro') ?? 0,
@@ -57,6 +64,7 @@ class HistorialCajaController extends Controller
                 $caja->update([
                     'abierta' => true,
                     'monto_actual' => 0,
+                    'monto_inicial' => $montoInicial,
                     'momento_apertura' => now(),
                     'id_usuario' => session('usuario_id'),
                     'id_registro_inicio' => DB::table('registro_pago')->max('id_registro') ?? 0,
@@ -72,6 +80,7 @@ class HistorialCajaController extends Controller
             'mensaje' => 'Caja abierta correctamente',
             'abierta' => true,
             'monto_actual' => 0,
+            'monto_inicial' => $montoInicial,
         ]);
     }
 
@@ -135,9 +144,20 @@ class HistorialCajaController extends Controller
             }
 
             $montoTotal = (float) $caja->monto_actual;
+            $montoInicial = (float) $caja->monto_inicial;
+            $montoGastos = array_sum(array_map(
+                static fn (array $gasto): int => (int) round((float) $gasto['monto'] * 100),
+                $gastos
+            ));
+            $montoCierreCentavos = (int) round($montoTotal * 100)
+                + (int) round($montoInicial * 100)
+                - $montoGastos;
+            $montoCierre = $montoCierreCentavos / 100;
 
             $cierre = HistorialCaja::create([
                 'monto_total' => $montoTotal,
+                'monto_inicial' => $montoInicial,
+                'monto_cierre' => $montoCierre,
                 'momento_cierre' => now(),
                 'id_usuario' => session('usuario_id'),
             ]);
@@ -163,6 +183,7 @@ class HistorialCajaController extends Controller
             $caja->update([
                 'abierta' => false,
                 'monto_actual' => 0,
+                'monto_inicial' => 0,
                 'id_registro_inicio' => null,
             ]);
 

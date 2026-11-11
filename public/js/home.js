@@ -28,8 +28,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     inicializarRegistroGastos();
 
-    inicializarMontoManual();
-
 });
 
 
@@ -71,6 +69,10 @@ function cargarEstadoCaja() {
 
             cajaAbierta = datos.abierta;
             acumuladoPagos = parseFloat(datos.monto_actual || 0);
+            const campoMontoInicial = document.getElementById('monto-inicial');
+            if (campoMontoInicial) {
+                campoMontoInicial.value = Number(datos.monto_inicial || 0).toFixed(2);
+            }
             mensajeCaja = datos.mensaje || (cajaAbierta ? 'Caja abierta.' : 'La caja está cerrada.');
 
             actualizarInterfazCaja();
@@ -138,6 +140,12 @@ function abrirCaja() {
         return;
     }
 
+    const montoInicial = Number(document.getElementById('monto-inicial')?.value);
+    if (!Number.isFinite(montoInicial) || montoInicial < 0) {
+        alert('Ingrese un monto inicial válido.');
+        return;
+    }
+
     fetch(API_ABRIR, {
 
         method: 'POST',
@@ -146,7 +154,10 @@ function abrirCaja() {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
             'X-CSRF-TOKEN': obtenerTokenCSRF()
-        }
+        },
+        body: JSON.stringify({
+            monto_inicial: montoInicial
+        })
 
     })
 
@@ -164,6 +175,10 @@ function abrirCaja() {
 
         cajaAbierta = datos.abierta;
         acumuladoPagos = parseFloat(datos.monto_actual || 0);
+        const campoMontoInicial = document.getElementById('monto-inicial');
+        if (campoMontoInicial) {
+            campoMontoInicial.value = Number(datos.monto_inicial || 0).toFixed(2);
+        }
         mensajeCaja = datos.mensaje || 'Caja abierta.';
 
         actualizarInterfazCaja();
@@ -241,6 +256,10 @@ function cerrarCaja() {
 
         cajaAbierta = false;
         acumuladoPagos = 0;
+        const campoMontoInicial = document.getElementById('monto-inicial');
+        if (campoMontoInicial) {
+            campoMontoInicial.value = '0.00';
+        }
         mensajeCaja = 'La caja está cerrada.';
         window.dispatchEvent(new Event('caja:gastos-guardados'));
 
@@ -275,14 +294,6 @@ function cerrarCaja() {
 // ============================================================
 // REGISTRAR PAGO
 // ============================================================
-
-function inicializarMontoManual() {
-    const campoMontoManual = document.getElementById('monto-manual');
-
-    campoMontoManual?.addEventListener('input', () => {
-        campoMontoManual.value = campoMontoManual.value.replace(/\D/g, '');
-    });
-}
 
 window.registrarNuevoPago = function(monto) {
 
@@ -716,7 +727,7 @@ function construirFilasTabla(registrosCaja) {
 
         const montoFormateado =
             parseFloat(
-                registro.monto_total || 0
+                registro.monto_cierre ?? registro.monto_total ?? 0
             ).toLocaleString('es-AR', {
 
                 minimumFractionDigits: 2,

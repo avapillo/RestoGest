@@ -367,8 +367,16 @@ public function listarApi()
                 'monto_pendiente' => $montoPendiente,
 
                 'estado' => $ultimoPedido && $ultimoPedido->estado
-                    ? $ultimoPedido->estado->nombre
+                    ? $ultimoPedido->estado->estado
                     : null,
+
+                'nombre_creador' => $ultimoPedido
+                    ? $ultimoPedido->nombre_creador
+                    : null,
+
+                'rol_creador' => $ultimoPedido
+    ? $ultimoPedido->rol_creador
+    : null,
             ];
         });
 

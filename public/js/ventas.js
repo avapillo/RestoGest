@@ -142,4 +142,118 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   loadSales();
+
+  const productForm = document.querySelector('#filtrosProductos');
+  const productRows = document.querySelector('#filasProductos');
+  const productStatus = document.querySelector('#estadoProductos');
+  const productSummary = document.querySelector('#resumenProductos');
+  const productSearchButton = productForm.querySelector('button[type="submit"]');
+  const categorySelect = productForm.querySelector('#categoria_producto');
+  const productSelect = productForm.querySelector('#producto_categoria');
+  const availableProducts = Array.from(productSelect.options)
+    .filter(option => option.dataset.categoriaId)
+    .map(option => ({
+      id: option.value,
+      categoryId: option.dataset.categoriaId,
+      name: option.textContent.trim(),
+    }));
+  let productRequest;
+
+  function updateProductOptions() {
+    const categoryId = categorySelect.value;
+    productSelect.replaceChildren();
+
+    if (!categoryId) {
+      productSelect.add(new Option('Selecciona primero una categoría', ''));
+      productSelect.disabled = true;
+      return;
+    }
+
+    productSelect.add(new Option('Todos los productos de la categoría', ''));
+    availableProducts
+      .filter(product => product.categoryId === categoryId)
+      .forEach(product => productSelect.add(new Option(product.name, product.id)));
+    productSelect.disabled = false;
+  }
+
+  function renderProducts(products) {
+    productRows.replaceChildren();
+
+    if (!products.length) {
+      const row = document.createElement('tr');
+      const cell = document.createElement('td');
+      cell.className = 'fila-vacia';
+      cell.colSpan = 2;
+      cell.textContent = 'No se encontraron productos vendidos con esos parámetros.';
+      row.append(cell);
+      productRows.append(row);
+      return;
+    }
+
+    products.forEach(product => {
+      const row = document.createElement('tr');
+      row.className = 'fila-venta';
+      addCell(row, product.nombre ?? 'Producto sin nombre', '', 'Producto');
+      addCell(row, product.unidades_vendidas ?? 0, 'celda-monto', 'Unidades vendidas');
+      productRows.append(row);
+    });
+  }
+
+  async function loadProducts() {
+    productRequest?.abort();
+    const request = new AbortController();
+    productRequest = request;
+    const parameters = new URLSearchParams();
+
+    for (const [key, value] of new FormData(productForm).entries()) {
+      if (value) parameters.set(key, value);
+    }
+
+    productSearchButton.disabled = true;
+    productStatus.textContent = 'Buscando productos...';
+    productStatus.classList.remove('error');
+
+    try {
+      const response = await fetch(`${productForm.dataset.apiUrl}?${parameters.toString()}`, {
+        headers: { Accept: 'application/json' },
+        credentials: 'same-origin',
+        signal: request.signal,
+      });
+      const result = await response.json();
+
+      if (!response.ok) {
+        const validationMessage = Object.values(result.errors ?? {}).flat()[0];
+        throw new Error(validationMessage ?? result.message ?? 'No fue posible consultar los productos.');
+      }
+
+      renderProducts(result);
+      productSummary.textContent = `Top ${result.length} ${result.length === 1 ? 'producto' : 'productos'}`;
+      productStatus.textContent = result.length ? 'Resultados actualizados.' : 'No hay productos vendidos para mostrar.';
+    } catch (error) {
+      if (error.name === 'AbortError') return;
+
+      renderProducts([]);
+      productSummary.textContent = 'No se pudieron cargar los productos';
+      productStatus.textContent = error.message;
+      productStatus.classList.add('error');
+    } finally {
+      if (!request.signal.aborted) productSearchButton.disabled = false;
+    }
+  }
+
+  productForm.addEventListener('submit', event => {
+    event.preventDefault();
+    loadProducts();
+  });
+
+  productForm.addEventListener('reset', () => {
+    window.setTimeout(() => {
+      updateProductOptions();
+      loadProducts();
+    }, 0);
+  });
+
+  categorySelect.addEventListener('change', updateProductOptions);
+  updateProductOptions();
+  loadProducts();
 });

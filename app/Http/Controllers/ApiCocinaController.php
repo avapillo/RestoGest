@@ -57,6 +57,7 @@ class ApiCocinaController extends Controller
             return [
                 'id_pedido' => $pedido->id_pedido,
                 'mesa' => $pedido->fk_id_mesa,
+                 'numero_mesa' => $pedido->mesa->numero_mesa ?? null,
                 'fecha_pedido' => $pedido->fecha_pedido ?? null,
                 'hora_pedido' => $pedido->hora_pedido,
                 'monto_total' => $pedido->monto_total,
@@ -115,6 +116,9 @@ class ApiCocinaController extends Controller
     {
         $datos = $request->validate([
             'mesa' => ['required', 'string'],
+            'usuario_id' => ['nullable', 'integer'],
+    'nombre_creador' => ['nullable', 'string'],
+    'rol_creador' => ['nullable', 'string'],
             'items' => ['required', 'array', 'min:1'],
             'items.*.producto' => ['required', 'string'],
             'items.*.cantidad' => ['required', 'integer', 'min:1'],
@@ -153,12 +157,17 @@ class ApiCocinaController extends Controller
             ];
         }
 
-        $total = array_sum(array_column($detalles, 'subtotal'));
+        $total = 0;
+
+foreach ($detalles as $detalle) {
+    $total += (float) $detalle['subtotal'];
+}
 
         $idPedido = DB::transaction(function () use (
             $numeroMesa,
             $detalles,
-            $total
+            $total,
+            $datos
         ) {
             $mesa = DB::table('mesas')
                 ->where('numero_mesa', $numeroMesa)
@@ -172,14 +181,17 @@ class ApiCocinaController extends Controller
             } else {
                 $idMesa = $mesa->id_mesa;
             }
-
             $id = DB::table('pedidos')->insertGetId([
+
                 'monto_total' => $total,
                 'hora_pedido' => now()->format('H:i:s'),
                 'fk_id_mesa' => $idMesa,
                 'fk_id_tipo_pago' => null,
                 'es_para_llevar' => 0,
                 'fk_id_estado' => 1,
+                'fk_id_usuario' => $datos['usuario_id'] ?? null,
+'nombre_creador' => $datos['nombre_creador'] ?? null,
+'rol_creador' => $datos['rol_creador'] ?? null,
             ]);
 
             foreach ($detalles as $detalle) {

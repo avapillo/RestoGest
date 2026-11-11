@@ -94,7 +94,7 @@
       <textarea id="monto-manual" rows="1" maxlength="20" inputmode="numeric" aria-label="Monto manual, solo números"></textarea>
     </div>
 
-    <div class="total-caja">
+    <div class="total-caja total-caja-dia">
       <span>Monto total del día</span>
       <strong>$ <span id="total-pagos">0,00</span></strong>
     </div>

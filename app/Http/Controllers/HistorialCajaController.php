@@ -51,6 +51,10 @@ class HistorialCajaController extends Controller
         $caja = DB::transaction(function () use ($adminAccess, $montoInicial) {
             $caja = CajaEstado::query()->lockForUpdate()->first();
 
+            if ($caja?->abierta) {
+                return null;
+            }
+
             if (!$caja) {
                 $caja = CajaEstado::create([
                     'abierta' => true,
@@ -77,6 +81,12 @@ class HistorialCajaController extends Controller
 
             return $caja;
         });
+
+        if (!$caja) {
+            return response()->json([
+                'mensaje' => 'La caja ya está abierta.',
+            ], 422);
+        }
 
         return response()->json([
             'mensaje' => 'Caja abierta correctamente',

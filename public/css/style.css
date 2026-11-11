@@ -429,29 +429,44 @@ tr:hover {
   font-size: 24px;
 }
 
+.total-caja-inicial strong span {
+  display: inline;
+  color: inherit;
+  font-size: inherit;
+}
+
 .total-caja-inicial label {
   display: block;
   color: #64748b;
   font-size: 12px;
 }
 
-.total-caja-inicial input {
-  display: block;
-  width: 100%;
-  margin-top: 3px;
-  padding: 2px 0;
-  box-sizing: border-box;
-  border: 0;
-  background: transparent;
-  color: var(--text-primary);
-  font-family: inherit;
-  font-size: 22px;
-  font-weight: 700;
+.btn-configurar-monto {
+  margin-top: 8px;
+  padding: 7px 10px;
+  border: 1px solid #bbf7d0;
+  border-radius: 6px;
+  color: #166534;
+  background: #f0fdf4;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
 }
 
-.total-caja-inicial input:focus-visible {
+.btn-configurar-monto:hover {
+  background: #dcfce7;
+}
+
+.btn-configurar-monto:focus-visible,
+.campo-monto-inicial input:focus-visible {
   outline: 2px solid var(--accent-green);
   outline-offset: 2px;
+}
+
+.btn-configurar-monto:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .resumen-gastos {
@@ -511,7 +526,8 @@ tr:hover {
   background: #fde68a;
 }
 
-.modal-gastos {
+.modal-gastos,
+.modal-monto-inicial {
   position: fixed;
   z-index: 20;
   inset: 0;
@@ -522,11 +538,13 @@ tr:hover {
   background: rgba(15, 23, 42, 0.58);
 }
 
-.modal-gastos[hidden] {
+.modal-gastos[hidden],
+.modal-monto-inicial[hidden] {
   display: none;
 }
 
-.contenido-modal-gastos {
+.contenido-modal-gastos,
+.contenido-modal-monto-inicial {
   width: min(760px, 100%);
   max-height: min(88vh, 900px);
   overflow-y: auto;
@@ -536,6 +554,42 @@ tr:hover {
   border-radius: 12px;
   background: var(--bg-card);
   box-shadow: 0 20px 50px rgba(15, 23, 42, 0.24);
+}
+
+.contenido-modal-monto-inicial {
+  width: min(440px, 100%);
+}
+
+.campo-monto-inicial {
+  display: grid;
+  gap: 8px;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.campo-monto-inicial input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 11px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-primary);
+  background: var(--bg-card);
+  font: inherit;
+  font-size: 1.1rem;
+}
+
+.nota-monto-inicial {
+  margin: 8px 0 0;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.acciones-modal-monto-inicial {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 20px;
 }
 
 .modal-mensaje-cierre {
@@ -861,14 +915,20 @@ tr:hover {
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .modal-gastos {
+  .modal-gastos,
+  .modal-monto-inicial {
     align-items: start;
     padding: 10px;
   }
 
-  .contenido-modal-gastos {
+  .contenido-modal-gastos,
+  .contenido-modal-monto-inicial {
     max-height: calc(100vh - 20px);
     padding: 18px 14px;
+  }
+
+  .acciones-modal-monto-inicial button {
+    flex: 1;
   }
 
   .fila-form-gasto {

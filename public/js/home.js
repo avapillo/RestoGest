@@ -12,6 +12,7 @@ let cajaAbierta = false;
 let acumuladoPagos = 0;
 let mensajeCaja = 'Cargando estado de caja...';
 let gastosPendientesCierre = [];
+let montoInicialSeleccionado = 0;
 
 
 // ============================================================
@@ -25,6 +26,8 @@ document.addEventListener('DOMContentLoaded', () => {
     solicitarDatosServidor();
 
     inicializarControlesCaja();
+
+    inicializarMontoInicial();
 
     inicializarRegistroGastos();
 
@@ -72,6 +75,8 @@ function cargarEstadoCaja() {
             const campoMontoInicial = document.getElementById('monto-inicial');
             if (campoMontoInicial) {
                 campoMontoInicial.value = Number(datos.monto_inicial || 0).toFixed(2);
+                montoInicialSeleccionado = Number(datos.monto_inicial || 0);
+                campoMontoInicial.disabled = cajaAbierta;
             }
             mensajeCaja = datos.mensaje || (cajaAbierta ? 'Caja abierta.' : 'La caja está cerrada.');
 
@@ -88,6 +93,61 @@ function cargarEstadoCaja() {
 
         });
 
+}
+
+function inicializarMontoInicial() {
+    const modal = document.getElementById('modal-monto-inicial');
+    const formulario = document.getElementById('formulario-monto-inicial');
+    const campo = document.getElementById('monto-inicial');
+    const botonAbrir = document.getElementById('btn-configurar-monto');
+    const botonCerrar = document.getElementById('btn-cerrar-monto-inicial');
+    const botonCancelar = document.getElementById('btn-cancelar-monto-inicial');
+
+    if (!modal || !formulario || !campo || !botonAbrir) {
+        return;
+    }
+
+    const cerrarModal = () => {
+        campo.value = montoInicialSeleccionado.toFixed(2);
+        modal.hidden = true;
+        botonAbrir.focus();
+    };
+
+    botonAbrir.addEventListener('click', () => {
+        campo.value = montoInicialSeleccionado.toFixed(2);
+        modal.hidden = false;
+        campo.focus();
+    });
+
+    botonCerrar?.addEventListener('click', cerrarModal);
+    botonCancelar?.addEventListener('click', cerrarModal);
+
+    modal.addEventListener('click', evento => {
+        if (evento.target === modal) {
+            cerrarModal();
+        }
+    });
+
+    modal.addEventListener('keydown', evento => {
+        if (evento.key === 'Escape') {
+            cerrarModal();
+        }
+    });
+
+    formulario.addEventListener('submit', evento => {
+        evento.preventDefault();
+        const monto = Number(campo.value);
+
+        if (!Number.isFinite(monto) || monto < 0 || monto > 9999999999.99) {
+            campo.reportValidity();
+            return;
+        }
+
+        montoInicialSeleccionado = monto;
+        actualizarResumenMontoInicial();
+        modal.hidden = true;
+        botonAbrir.focus();
+    });
 }
 
 
@@ -178,6 +238,8 @@ function abrirCaja() {
         const campoMontoInicial = document.getElementById('monto-inicial');
         if (campoMontoInicial) {
             campoMontoInicial.value = Number(datos.monto_inicial || 0).toFixed(2);
+            montoInicialSeleccionado = Number(datos.monto_inicial || 0);
+            campoMontoInicial.disabled = cajaAbierta;
         }
         mensajeCaja = datos.mensaje || 'Caja abierta.';
 
@@ -266,6 +328,8 @@ function cerrarCaja() {
         const campoMontoInicial = document.getElementById('monto-inicial');
         if (campoMontoInicial) {
             campoMontoInicial.value = '0.00';
+            montoInicialSeleccionado = 0;
+            campoMontoInicial.disabled = false;
         }
         mensajeCaja = 'La caja está cerrada.';
         window.dispatchEvent(new Event('caja:gastos-guardados'));
@@ -378,7 +442,16 @@ function actualizarInterfazCaja() {
         visorTotal,
         estado
     } = obtenerElementosCaja();
+    const campoMontoInicial = document.getElementById('monto-inicial');
 
+    if (campoMontoInicial) {
+        campoMontoInicial.disabled = cajaAbierta;
+    }
+    const botonConfigurarMonto = document.getElementById('btn-configurar-monto');
+    if (botonConfigurarMonto) {
+        botonConfigurarMonto.disabled = cajaAbierta;
+    }
+    actualizarResumenMontoInicial();
 
     if (visorTotal) {
 
@@ -392,6 +465,14 @@ function actualizarInterfazCaja() {
         estado.classList.remove('estado-error');
     }
 
+}
+
+function actualizarResumenMontoInicial() {
+    const resumen = document.getElementById('monto-inicial-resumen');
+
+    if (resumen) {
+        resumen.textContent = formatearMonto(montoInicialSeleccionado);
+    }
 }
 
 

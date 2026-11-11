@@ -90,8 +90,11 @@
 
     <!-- MONTOS DE CAJA -->
     <div class="total-caja total-caja-inicial">
-      <label for="monto-inicial">Monto inicial</label>
-      <input id="monto-inicial" type="number" min="0" max="9999999999.99" step="0.01" value="0.00" inputmode="decimal">
+      <span>Monto inicial</span>
+      <strong>$ <span id="monto-inicial-resumen">0,00</span></strong>
+      <button id="btn-configurar-monto" class="btn-configurar-monto" type="button" aria-haspopup="dialog" aria-controls="modal-monto-inicial">
+        Cargar monto inicial
+      </button>
     </div>
 
     <div class="total-caja total-caja-dia">
@@ -139,6 +142,30 @@
       </section>
     </main>
 
+  </div>
+
+  <div id="modal-monto-inicial" class="modal-monto-inicial" hidden>
+    <section class="contenido-modal-monto-inicial" role="dialog" aria-modal="true" aria-labelledby="titulo-modal-monto-inicial">
+      <header class="encabezado-modal-gastos">
+        <div>
+          <p>Apertura de caja</p>
+          <h2 id="titulo-modal-monto-inicial">Cargar monto inicial</h2>
+        </div>
+        <button id="btn-cerrar-monto-inicial" class="btn-cerrar-gastos" type="button" aria-label="Cerrar">&times;</button>
+      </header>
+
+      <form id="formulario-monto-inicial">
+        <label class="campo-monto-inicial" for="monto-inicial">
+          <span>Monto con el que inicia la caja</span>
+          <input id="monto-inicial" type="number" min="0" max="9999999999.99" step="0.01" value="0.00" inputmode="decimal" required>
+        </label>
+        <p class="nota-monto-inicial">El monto se registrará al abrir la caja.</p>
+        <div class="acciones-modal-monto-inicial">
+          <button id="btn-cancelar-monto-inicial" class="btn-cancelar-gastos" type="button">Cancelar</button>
+          <button class="btn-guardar-gastos" type="submit">Confirmar monto</button>
+        </div>
+      </form>
+    </section>
   </div>
 
   <div id="modal-gastos" class="modal-gastos" hidden>

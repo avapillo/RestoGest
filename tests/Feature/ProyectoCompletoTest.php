@@ -543,6 +543,26 @@ test('el acceso Admin registra ingreso, apertura y cierre de caja', function () 
     $this->assertDatabaseHas('admin_activity_logs', ['id_usuario' => $adminId, 'accion' => 'cierre_caja']);
 });
 
+test('el monto inicial se guarda al abrir la caja y no se sobrescribe mientras está abierta', function () {
+    $this->postJson('/api/caja/abrir', ['monto_inicial' => 2500.75])
+        ->assertOk()
+        ->assertJsonPath('monto_inicial', 2500.75);
+
+    $this->getJson('/api/caja/estado')
+        ->assertOk()
+        ->assertJsonPath('abierta', true)
+        ->assertJsonPath('monto_inicial', 2500.75);
+
+    $this->postJson('/api/caja/abrir', ['monto_inicial' => 9000])
+        ->assertUnprocessable()
+        ->assertJsonPath('mensaje', 'La caja ya está abierta.');
+
+    $this->assertDatabaseHas('caja_estado', [
+        'abierta' => true,
+        'monto_inicial' => 2500.75,
+    ]);
+});
+
 test('el estado informa cuando la caja está cerrada', function () {
     $this->getJson('/api/caja/estado')
         ->assertOk()

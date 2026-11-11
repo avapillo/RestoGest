@@ -116,6 +116,7 @@ class ApiCocinaController extends Controller
     {
         $datos = $request->validate([
             'mesa' => ['required', 'string'],
+            'id_mesa' => ['required', 'integer', Rule::exists('mesas', 'id_mesa')],
             'usuario_id' => ['nullable', 'integer'],
     'nombre_creador' => ['nullable', 'string'],
     'rol_creador' => ['nullable', 'string'],
@@ -169,18 +170,7 @@ foreach ($detalles as $detalle) {
             $total,
             $datos
         ) {
-            $mesa = DB::table('mesas')
-                ->where('numero_mesa', $numeroMesa)
-                ->first();
-
-            if (!$mesa) {
-                $idMesa = DB::table('mesas')->insertGetId([
-                    'numero_mesa' => $numeroMesa,
-                    'fk_id_seccion' => null,
-                ]);
-            } else {
-                $idMesa = $mesa->id_mesa;
-            }
+            $idMesa = $datos['id_mesa'];
             $id = DB::table('pedidos')->insertGetId([
 
                 'monto_total' => $total,

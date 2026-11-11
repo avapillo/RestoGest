@@ -27,5 +27,10 @@ class UsuarioInicial extends Seeder
                 'id_rol_usuario' => 1,
             ]
         );
+
+        DB::table('usuario_roles')->updateOrInsert(
+            ['fk_id_usuario' => 1],
+            ['fk_id_rol' => 1]
+        );
     }
 }

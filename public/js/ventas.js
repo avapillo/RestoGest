@@ -8,6 +8,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const nextButton = document.querySelector('#paginaSiguiente');
   const searchButton = form.querySelector('button[type="submit"]');
   const searchUrl = form.dataset.apiUrl;
+  const detailDialog = document.querySelector('#dialogoDetalleVenta');
+  const detailLocation = document.querySelector('#ubicacionDetalleVenta');
+  const detailStatus = document.querySelector('#estadoDetalleVenta');
+  const detailRows = document.querySelector('#filasDetalleVenta');
+  const closeDetailButton = document.querySelector('#cerrarDetalleVenta');
   const currencyFormatter = new Intl.NumberFormat('es-CL', {
     maximumFractionDigits: 2,
   });
@@ -15,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentPage = 1;
   let lastPage = 1;
   let activeRequest;
+  let detailRequest;
 
   function setStatus(message, isError = false) {
     status.textContent = message;
@@ -67,6 +73,12 @@ document.addEventListener('DOMContentLoaded', () => {
         'celda-monto',
         'Monto',
       );
+      const amountCell = row.lastElementChild;
+      amountCell.dataset.ventaId = venta.id_registro;
+      amountCell.title = 'Haz doble clic para ver la mesa y los productos';
+      amountCell.setAttribute('role', 'button');
+      amountCell.tabIndex = 0;
+      amountCell.setAttribute('aria-label', `Ver detalle de la venta por ${amountCell.textContent}`);
 
       // 3. Método de pago
       addCell(row, venta.metodo_pago ?? '-', '', 'Tipo de pago');
@@ -74,6 +86,95 @@ document.addEventListener('DOMContentLoaded', () => {
       tbody.append(row);
     });
   }
+
+  function renderSaleDetails(details) {
+    detailLocation.textContent = details.para_llevar
+      ? 'Pedido para llevar'
+      : `Sección: ${details.seccion ?? 'Sin sección'} · Mesa: ${details.numero_mesa ?? 'Sin mesa'}`;
+    detailRows.replaceChildren();
+
+    if (!details.productos.length) {
+      const row = document.createElement('tr');
+      const cell = document.createElement('td');
+      cell.className = 'fila-vacia';
+      cell.colSpan = 3;
+      cell.textContent = 'Este pago no tiene productos asociados.';
+      row.append(cell);
+      detailRows.append(row);
+      return;
+    }
+
+    details.productos.forEach(product => {
+      const row = document.createElement('tr');
+      row.className = 'fila-venta';
+      addCell(row, product.nombre ?? 'Producto', '', 'Producto');
+      addCell(row, product.cantidad ?? 0, '', 'Cantidad');
+      addCell(
+        row,
+        product.precio === null ? '-' : `$ ${currencyFormatter.format(Number(product.precio))}`,
+        'celda-monto',
+        'Precio',
+      );
+      detailRows.append(row);
+    });
+  }
+
+  async function loadSaleDetails(paymentId) {
+    detailRequest?.abort();
+    const request = new AbortController();
+    detailRequest = request;
+
+    if (!detailDialog.open) detailDialog.showModal();
+    detailLocation.textContent = '';
+    detailRows.replaceChildren();
+    detailStatus.textContent = 'Cargando detalle...';
+    detailStatus.classList.remove('error');
+
+    try {
+      const response = await fetch(
+        `${searchUrl.replace(/\/$/, '')}/${encodeURIComponent(paymentId)}/detalle`,
+        {
+          headers: { Accept: 'application/json' },
+          credentials: 'same-origin',
+          signal: request.signal,
+        },
+      );
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message ?? 'No fue posible consultar el detalle de la venta.');
+      }
+
+      renderSaleDetails(result);
+      detailStatus.textContent = '';
+    } catch (error) {
+      if (error.name === 'AbortError') return;
+
+      detailLocation.textContent = '';
+      detailRows.replaceChildren();
+      detailStatus.textContent = error.message;
+      detailStatus.classList.add('error');
+    }
+  }
+
+  tbody.addEventListener('dblclick', event => {
+    const amountCell = event.target.closest('[data-venta-id]');
+    if (amountCell) loadSaleDetails(amountCell.dataset.ventaId);
+  });
+
+  tbody.addEventListener('keydown', event => {
+    const amountCell = event.target.closest('[data-venta-id]');
+    if (amountCell && (event.key === 'Enter' || event.key === ' ')) {
+      event.preventDefault();
+      loadSaleDetails(amountCell.dataset.ventaId);
+    }
+  });
+
+  closeDetailButton.addEventListener('click', () => detailDialog.close());
+  detailDialog.addEventListener('close', () => detailRequest?.abort());
+  detailDialog.addEventListener('click', event => {
+    if (event.target === detailDialog) detailDialog.close();
+  });
 
   async function loadSales(page = 1) {
     activeRequest?.abort();

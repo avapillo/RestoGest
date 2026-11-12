@@ -823,6 +823,7 @@ test('la búsqueda de ventas filtra por parámetros y pagina los resultados', fu
         ->assertJsonPath('total', 2)
         ->assertJsonPath('per_page', 1);
     expect(array_keys($respuestaVentas->json('data.0')))->toEqualCanonicalizing([
+        'id_registro',
         'fecha_pago',
         'monto',
         'metodo_pago',
@@ -866,6 +867,48 @@ test('la página de ventas carga los tipos de pago y los controles de búsqueda'
         ->assertDontSee('Cierres de caja')
         ->assertDontSee('data-historial-api-url=', false)
         ->assertSee('js/ventas.js');
+});
+
+test('el detalle de una venta muestra su mesa, sección y productos cobrados', function () {
+    $seccionId = DB::table('seccion')->insertGetId(['seccion' => 'Patio']);
+    $mesaId = DB::table('mesas')->insertGetId([
+        'fk_id_seccion' => $seccionId,
+        'numero_mesa' => 7,
+    ]);
+    $categoriaId = DB::table('categoria')->insertGetId(['categoria' => 'Bebidas']);
+    $productoId = DB::table('productos')->insertGetId([
+        'nombre' => 'Limonada',
+        'precio' => 2500,
+        'fk_id_categoria' => $categoriaId,
+    ]);
+    $pedidoId = DB::table('pedidos')->insertGetId([
+        'fk_id_mesa' => $mesaId,
+        'es_para_llevar' => false,
+    ]);
+    DB::table('detalle_pedido')->insert([
+        'fk_id_pedido' => $pedidoId,
+        'fk_id_producto' => $productoId,
+        'cantidad' => 2,
+        'precio_unitario' => 2500,
+        'subtotal' => 5000,
+    ]);
+    $pagoId = DB::table('registro_pago')->insertGetId([
+        'monto' => 5000,
+        'fk_id_pedido' => $pedidoId,
+        'fecha_pago' => '2026-10-22',
+    ]);
+
+    $this->getJson('/api/ventas/'.$pagoId.'/detalle')
+        ->assertOk()
+        ->assertJsonPath('seccion', 'Patio')
+        ->assertJsonPath('numero_mesa', 7)
+        ->assertJsonPath('para_llevar', false)
+        ->assertJsonPath('productos.0.nombre', 'Limonada')
+        ->assertJsonPath('productos.0.cantidad', 2)
+        ->assertJsonPath('productos.0.precio', 2500)
+        ->assertJsonMissingPath('productos.0.subtotal');
+
+    $this->getJson('/api/ventas/999/detalle')->assertNotFound();
 });
 
 test('la búsqueda ordena productos pagados y filtra por nombre y fecha', function () {

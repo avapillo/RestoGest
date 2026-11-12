@@ -269,6 +269,11 @@ public function mostrarOrdenesPedidos(Request $request){
     public function modificarPedido(Request $request, $id_pedido)
     {
         $pedido = Pedido::with('detalles')->findOrFail($id_pedido);
+        if ($pedido->fk_id_estado == 2) {
+    return redirect()
+        ->back()
+        ->with('error', 'No se puede modificar un pedido que ya está en preparación.');
+}
 
         $datos = $request->validate([
             'es_para_llevar' => ['required', 'boolean'],

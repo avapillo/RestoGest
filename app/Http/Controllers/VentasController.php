@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Categoria;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class VentasController extends Controller
 {
@@ -46,6 +47,7 @@ class VentasController extends Controller
         $ventas = DB::table('registro_pago as pago')
             ->leftJoin('tipo_pago as tipo', 'tipo.id', '=', 'pago.fk_tipo_pago')
             ->select([
+                'pago.id_registro',
                 'pago.fecha_pago',
                 'pago.monto',
                 'tipo.tipo_pago as metodo_pago',
@@ -70,6 +72,77 @@ class VentasController extends Controller
             ->withQueryString();
 
         return response()->json($resultados);
+    }
+
+    public function detalle(int $id)
+    {
+        $venta = DB::table('registro_pago as pago')
+            ->leftJoin('pedidos as pedido', 'pedido.id_pedido', '=', 'pago.fk_id_pedido')
+            ->leftJoin('mesas as mesa', 'mesa.id_mesa', '=', 'pedido.fk_id_mesa')
+            ->leftJoin('seccion as seccion', 'seccion.id_seccion', '=', 'mesa.fk_id_seccion')
+            ->where('pago.id_registro', $id)
+            ->first([
+                'pago.fk_id_pedido',
+                'pedido.es_para_llevar',
+                'mesa.numero_mesa',
+                'seccion.seccion',
+            ]);
+
+        abort_if($venta === null, 404);
+
+        $productos = collect();
+
+        if ($venta->fk_id_pedido !== null) {
+            $detalles = DB::table('detalle_pedido as detalle')
+                ->leftJoin('productos as producto', 'producto.id', '=', 'detalle.fk_id_producto')
+                ->where('detalle.fk_id_pedido', $venta->fk_id_pedido)
+                ->select([
+                    'detalle.cantidad',
+                    'detalle.precio_unitario',
+                    'detalle.subtotal',
+                    'detalle.descripcion',
+                    'producto.nombre as producto_nombre',
+                ]);
+
+            $tieneCombos = Schema::hasColumn('detalle_pedido', 'fk_id_combo');
+
+            if ($tieneCombos) {
+                $detalles->addSelect('detalle.fk_id_combo');
+            }
+
+            if ($tieneCombos && Schema::hasTable('combos')) {
+                $detalles->leftJoin('combos as combo', 'combo.id', '=', 'detalle.fk_id_combo')
+                    ->addSelect('combo.combo as combo_nombre');
+            }
+
+            $productos = $detalles->get()->map(function ($detalle) {
+                $comboId = $detalle->fk_id_combo ?? null;
+                $nombre = $detalle->producto_nombre
+                    ?? ($detalle->combo_nombre ?? null)
+                    ?? $detalle->descripcion
+                    ?? ($comboId !== null ? 'Combo '.$comboId : 'Producto');
+
+                $cantidad = (int) ($detalle->cantidad ?? 0);
+                $precio = $detalle->precio_unitario;
+
+                if ($precio === null && $detalle->subtotal !== null && $cantidad > 0) {
+                    $precio = (float) $detalle->subtotal / $cantidad;
+                }
+
+                return [
+                    'nombre' => $nombre,
+                    'cantidad' => $cantidad,
+                    'precio' => $precio,
+                ];
+            });
+        }
+
+        return response()->json([
+            'seccion' => $venta->seccion,
+            'numero_mesa' => $venta->numero_mesa,
+            'para_llevar' => (bool) $venta->es_para_llevar && $venta->numero_mesa === null,
+            'productos' => $productos,
+        ]);
     }
 
     public function productosMasVendidos(Request $request)

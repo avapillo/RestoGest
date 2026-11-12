@@ -135,6 +135,29 @@
         </footer>
       </section>
 
+      <dialog id="dialogoDetalleVenta" class="dialogo-detalle-venta" aria-labelledby="tituloDetalleVenta">
+        <div class="contenido-dialogo">
+          <div class="encabezado-dialogo">
+            <h2 id="tituloDetalleVenta">Detalle de la venta</h2>
+            <button id="cerrarDetalleVenta" class="btn-cerrar-dialogo" type="button" aria-label="Cerrar detalle">×</button>
+          </div>
+          <p id="ubicacionDetalleVenta" class="ubicacion-detalle"></p>
+          <p id="estadoDetalleVenta" class="estado-ventas" role="status" aria-live="polite"></p>
+          <div class="envoltura-tabla">
+            <table class="tabla-ventas">
+              <thead>
+                <tr>
+                  <th scope="col">Producto</th>
+                  <th scope="col">Cantidad</th>
+                  <th scope="col">Precio</th>
+                </tr>
+              </thead>
+              <tbody id="filasDetalleVenta"></tbody>
+            </table>
+          </div>
+        </div>
+      </dialog>
+
       <section class="panel-resultados" aria-labelledby="tituloProductosMasVendidos">
         <div class="encabezado-resultados">
           <div>

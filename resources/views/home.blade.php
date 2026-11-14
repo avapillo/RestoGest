@@ -132,6 +132,7 @@
               <th>Fecha</th>
               <th>Hora de Cierre</th>
               <th>Total del cierre</th>
+              <th>Total del Día</th>
               <th>Cerro Caja</th>
             </tr>
           </thead>

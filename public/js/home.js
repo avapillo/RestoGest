@@ -813,22 +813,16 @@ function construirFilasTabla(registrosCaja) {
             });
 
 
-        const montoFormateado =
-            parseFloat(
-                registro.monto_cierre ?? registro.monto_total ?? 0
-            ).toLocaleString('es-AR', {
-
-                minimumFractionDigits: 2,
-
-                maximumFractionDigits: 2
-
-            });
-
+        const montoCierreFormateado =
+            `$${formatearMonto(registro.monto_cierre ?? registro.monto_total)}`;
+        const montoDiaFormateado =
+            `$${formatearMonto(registro.monto_total)}`;
 
         const datosFila = [
             fechaFormateada,
             horaFormateada,
-            `$${montoFormateado}`,
+            montoCierreFormateado,
+            montoDiaFormateado,
             registro.usuario?.nombre || 'No disponible'
         ];
 
@@ -836,7 +830,7 @@ function construirFilasTabla(registrosCaja) {
             const celda = document.createElement('td');
             celda.textContent = valor;
 
-            if (indice === 0 || indice === 2) {
+            if (indice === 0 || indice === 2 || indice === 3) {
                 const destacado = document.createElement('strong');
                 destacado.textContent = valor;
                 celda.replaceChildren(destacado);

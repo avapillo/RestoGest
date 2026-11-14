@@ -27,6 +27,7 @@
         <a href="{{ route('producto.index') }}" class="opcion-menu">Producto</a>
         <a href="{{ route('usuario.index') }}" class="opcion-menu">Control de Usuario</a>
         <a href="{{ route('ventas.index') }}" class="opcion-menu">Administración de Ventas</a>
+        <a href="{{ route('pendientes.index') }}" class="opcion-menu">Pendientes</a>
       </nav>
 
       <!-- Botón para cerrar sesión -->

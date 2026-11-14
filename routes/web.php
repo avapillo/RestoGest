@@ -9,6 +9,7 @@ use App\Http\Controllers\UsuariosController;
 use App\Http\Controllers\VentasController;
 use App\Http\Controllers\SeccionController;
 use App\Http\Controllers\ComboController;
+use App\Http\Controllers\PendientesController;
 // Login
 
 // Mostrar formulario
@@ -82,3 +83,12 @@ use App\Http\Controllers\CatalogoController;
 Route::get('/catalogo', [CatalogoController::class, 'index'])
     ->name('catalogo');
 Route::get('/Ventas', [VentasController::class, 'index'])->name('ventas.index');
+
+// Rutas de pendientes
+Route::get('/Pendientes', [PendientesController::class, 'index'])->name('pendientes.index');
+
+Route::post('/Pendientes/guardar', [PendientesController::class, 'store'])->name('pendientes.store');
+
+Route::put('/Pendientes/{id}/modificar', [PendientesController::class, 'update'])->name('pendientes.update');
+
+Route::delete('/Pendientes/{id}/eliminar', [PendientesController::class, 'destroy'])->name('pendientes.destroy');

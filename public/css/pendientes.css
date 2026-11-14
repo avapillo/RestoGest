@@ -1,0 +1,392 @@
+/* =====================================
+   ESTILOS DE PENDIENTES
+   ===================================== */
+
+.pendientes-contenido {
+    gap: 22px;
+}
+
+.pendientes-contenido .encabezado-seccion {
+    align-items: flex-start;
+}
+
+.pendientes-panel {
+    width: 100%;
+    padding: 24px;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    background: #ffffff;
+    box-shadow: 0 4px 12px rgba(18, 26, 43, 0.05);
+}
+
+/* FORMULARIO */
+
+.pendientes-formulario {
+    display: grid;
+    grid-template-columns: 72px minmax(180px, 1.5fr) minmax(150px, 0.7fr) auto;
+    align-items: end;
+    gap: 18px;
+}
+
+.pendientes-avatar {
+    display: grid;
+    width: 66px;
+    height: 66px;
+    align-self: center;
+    place-items: center;
+    border-radius: 50%;
+    color: #ffffff;
+    background: #121a2b;
+}
+
+.pendientes-formulario .grupo-campo {
+    gap: 8px;
+}
+
+.pendientes-formulario .grupo-campo label {
+    color: #1e293b;
+    font-size: 0.95rem;
+    font-weight: 700;
+}
+
+.pendientes-formulario .grupo-campo input {
+    height: 48px;
+    padding: 10px 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 7px;
+    font-size: 0.95rem;
+}
+
+.pendientes-formulario .grupo-campo input:focus {
+    border-color: #d97706;
+    box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.14);
+}
+
+/* BOTÓN AGREGAR */
+
+.pendientes-btn-agregar {
+    display: inline-flex;
+    min-height: 48px;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 10px 20px;
+    border: 0;
+    border-radius: 7px;
+    color: #ffffff;
+    background: #d97706;
+    font: inherit;
+    font-size: 0.92rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 150ms ease;
+}
+
+.pendientes-btn-agregar:hover {
+    background: #b45309;
+}
+
+.pendientes-btn-agregar span {
+    font-size: 1.5rem;
+    line-height: 1;
+}
+
+/* TABLA */
+
+.pendientes-panel-tabla {
+    padding: 0;
+    overflow: hidden;
+}
+
+.pendientes-tabla-envoltura {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.pendientes-tabla {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.pendientes-tabla th,
+.pendientes-tabla td {
+    padding: 15px 18px;
+    border-bottom: 1px solid #e2e8f0;
+    font-size: 0.9rem;
+}
+
+.pendientes-tabla th {
+    color: #ffffff;
+    background: #121a2b;
+    font-size: 0.82rem;
+    font-weight: 700;
+}
+
+.pendientes-tabla tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.pendientes-tabla tbody tr:hover {
+    background: #f8fafc;
+}
+
+.pendientes-monto {
+    font-weight: 750;
+    font-variant-numeric: tabular-nums;
+}
+
+/* ACCIONES */
+
+.pendientes-acciones {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+.pendientes-acciones form {
+    margin: 0;
+}
+
+.pendientes-btn-editar,
+.pendientes-btn-eliminar {
+    display: inline-flex;
+    min-height: 40px;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 13px;
+    border: 0;
+    border-radius: 6px;
+    color: #ffffff;
+    font: inherit;
+    font-size: 0.84rem;
+    font-weight: 650;
+    cursor: pointer;
+}
+
+.pendientes-btn-editar {
+    background: #2563eb;
+}
+
+.pendientes-btn-editar:hover {
+    background: #1d4ed8;
+}
+
+.pendientes-btn-eliminar {
+    background: #dc2626;
+}
+
+.pendientes-btn-eliminar:hover {
+    background: #b91c1c;
+}
+
+.pendientes-vacio {
+    padding: 35px 15px !important;
+    color: #64748b;
+    text-align: center;
+    white-space: normal;
+}
+
+/* AVISO INFORMATIVO */
+
+.pendientes-aviso {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 17px 20px;
+    border: 1px solid #bfdbfe;
+    border-radius: 8px;
+    color: #1e40af;
+    background: #eff6ff;
+    font-size: 0.9rem;
+}
+
+.pendientes-aviso-icono {
+    display: grid;
+    flex: 0 0 30px;
+    width: 30px;
+    height: 30px;
+    place-items: center;
+    border-radius: 50%;
+    color: #ffffff;
+    background: #1d4ed8;
+    font-weight: 800;
+}
+
+/* MENSAJES */
+
+.pendientes-mensaje {
+    padding: 13px 16px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
+
+.pendientes-mensaje p {
+    margin: 3px 0;
+}
+
+.pendientes-mensaje.exito {
+    border: 1px solid #86efac;
+    color: #166534;
+    background: #f0fdf4;
+}
+
+.pendientes-mensaje.error {
+    border: 1px solid #fca5a5;
+    color: #991b1b;
+    background: #fef2f2;
+}
+
+/* MODAL DE EDICIÓN */
+
+.pendientes-modal[hidden] {
+    display: none !important;
+}
+
+.pendientes-modal {
+    position: fixed;
+    z-index: 1000;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    padding: 20px;
+    background: rgba(15, 23, 42, 0.6);
+}
+
+.pendientes-modal-contenido {
+    width: min(450px, 100%);
+    padding: 25px;
+    border-radius: 10px;
+    background: #ffffff;
+    box-shadow: 0 15px 40px rgba(18, 26, 43, 0.25);
+}
+
+.pendientes-modal-contenido h2 {
+    margin: 0 0 22px;
+    color: #121a2b;
+    font-size: 1.25rem;
+}
+
+.pendientes-modal-contenido .grupo-campo {
+    margin-bottom: 17px;
+}
+
+.pendientes-modal-contenido .grupo-campo label {
+    color: #475569;
+    font-size: 0.88rem;
+    font-weight: 650;
+}
+
+.pendientes-modal-contenido .grupo-campo input {
+    height: 43px;
+}
+
+.pendientes-modal-acciones {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 22px;
+}
+
+.pendientes-btn-cancelar {
+    min-height: 42px;
+    padding: 9px 16px;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    color: #334155;
+    background: #ffffff;
+    font: inherit;
+    cursor: pointer;
+}
+
+.pendientes-btn-cancelar:hover {
+    background: #f1f5f9;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 1050px) {
+    .pendientes-formulario {
+        grid-template-columns: 60px minmax(0, 1fr) minmax(0, 0.8fr);
+    }
+
+    .pendientes-btn-agregar {
+        grid-column: 2 / 4;
+    }
+}
+
+@media (max-width: 700px) {
+    .pendientes-panel {
+        padding: 16px;
+    }
+
+    .pendientes-formulario {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .pendientes-avatar {
+        display: none;
+    }
+
+    .pendientes-btn-agregar {
+        grid-column: auto;
+        width: 100%;
+    }
+
+    .pendientes-tabla thead {
+        display: none;
+    }
+
+    .pendientes-tabla,
+    .pendientes-tabla tbody,
+    .pendientes-tabla tr,
+    .pendientes-tabla td {
+        display: block;
+        width: 100%;
+    }
+
+    .pendientes-tabla tbody tr {
+        padding: 8px 14px;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .pendientes-tabla tbody tr:last-child {
+        border-bottom: 0;
+    }
+
+    .pendientes-tabla tbody td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        padding: 9px 0;
+        border: 0;
+        white-space: normal;
+        text-align: right;
+    }
+
+    .pendientes-tabla tbody td::before {
+        flex: 0 0 auto;
+        color: #64748b;
+        content: attr(data-label);
+        font-size: 0.72rem;
+        font-weight: 700;
+        text-align: left;
+        text-transform: uppercase;
+    }
+
+    .pendientes-tabla tbody td.pendientes-vacio {
+        display: block;
+        text-align: center;
+    }
+
+    .pendientes-acciones {
+        flex-wrap: wrap;
+        justify-content: flex-end;
+    }
+
+    .pendientes-aviso {
+        align-items: flex-start;
+    }
+}

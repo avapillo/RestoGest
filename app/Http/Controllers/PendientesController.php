@@ -19,8 +19,10 @@ class PendientesController extends Controller
     public function store(Request $request)
     {
         $datos = $request->validate([
-            'nombre' => 'required|string|max:150',
+            'nombre' => ['required', 'string', 'max:150', 'regex:/^\p{L}[\p{L}\p{M}]*(?: \p{L}[\p{L}\p{M}]*)*$/u'],
             'monto' => 'required|numeric|min:0.01',
+        ], [
+            'nombre.regex' => 'El nombre solo puede contener letras y espacios.',
         ]);
 
         Pendiente::create($datos);
@@ -33,8 +35,10 @@ class PendientesController extends Controller
     public function update(Request $request, $id)
     {
         $datos = $request->validate([
-            'nombre' => 'required|string|max:150',
+            'nombre' => ['required', 'string', 'max:150', 'regex:/^\p{L}[\p{L}\p{M}]*(?: \p{L}[\p{L}\p{M}]*)*$/u'],
             'monto' => 'required|numeric|min:0.01',
+        ], [
+            'nombre.regex' => 'El nombre solo puede contener letras y espacios.',
         ]);
 
         $pendiente = Pendiente::findOrFail($id);

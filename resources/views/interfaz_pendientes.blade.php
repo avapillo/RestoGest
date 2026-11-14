@@ -102,6 +102,7 @@
                         id="nombre"
                         name="nombre"
                         maxlength="150"
+                        title="El nombre solo puede contener letras y espacios."
                         required
                         placeholder="Ingrese el nombre del cliente"
                         value="{{ old('nombre') }}">
@@ -225,7 +226,14 @@
 
             <div class="grupo-campo">
                 <label for="editar_nombre">Nombre del cliente</label>
-                <input type="text" id="editar_nombre" name="nombre" maxlength="150" required>
+                <input
+                    type="text"
+                    id="editar_nombre"
+                    name="nombre"
+                    maxlength="150"
+
+                    title="El nombre solo puede contener letras y espacios."
+                    required>
             </div>
 
             <div class="grupo-campo">

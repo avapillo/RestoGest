@@ -150,9 +150,9 @@
             $estadoNormalizado === 'en preparación' ||
             $estadoNormalizado === 'en preparacion'
         ) {
-            $colorEstado = '#F28C28';
+            $colorEstado = '#FFC107';
         } else {
-            $colorEstado = '#2585D8';
+            $colorEstado = '#DC3545';
         }
     @endphp
 

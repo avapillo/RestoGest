@@ -357,4 +357,123 @@ document.addEventListener('DOMContentLoaded', () => {
   categorySelect.addEventListener('change', updateProductOptions);
   updateProductOptions();
   loadProducts();
+
+  const expensesForm = document.querySelector('#filtrosGastos');
+  const expenseRows = document.querySelector('#filasGastos');
+  const expenseStatus = document.querySelector('#estadoGastos');
+  const expenseSummary = document.querySelector('#resumenGastos');
+  const expenseTotal = document.querySelector('#totalGastos');
+  const expensePageLabel = document.querySelector('#paginaGastos');
+  const expensePreviousButton = document.querySelector('#gastosPaginaAnterior');
+  const expenseNextButton = document.querySelector('#gastosPaginaSiguiente');
+  const expenseSearchButton = expensesForm.querySelector('button[type="submit"]');
+  let expenseCurrentPage = 1;
+  let expenseLastPage = 1;
+  let expenseRequest;
+
+  function renderExpenses(expenses) {
+    expenseRows.replaceChildren();
+
+    if (!expenses.length) {
+      const row = document.createElement('tr');
+      const cell = document.createElement('td');
+      cell.className = 'fila-vacia';
+      cell.colSpan = 3;
+      cell.textContent = 'No se encontraron gastos con esos parámetros.';
+      row.append(cell);
+      expenseRows.append(row);
+      return;
+    }
+
+    expenses.forEach(expense => {
+      const row = document.createElement('tr');
+      row.className = 'fila-venta';
+      addCell(
+        row,
+        expense.momento_cierre ? formatPaymentDate(expense.momento_cierre) : 'Sin fecha de cierre',
+        '',
+        'Fecha de cierre',
+      );
+      addCell(row, expense.producto ?? 'Gasto sin nombre', '', 'Gasto');
+      addCell(
+        row,
+        expense.monto === null ? '-' : `$ ${currencyFormatter.format(Number(expense.monto))}`,
+        'celda-monto',
+        'Monto',
+      );
+      expenseRows.append(row);
+    });
+  }
+
+  async function loadExpenses(page = 1) {
+    expenseRequest?.abort();
+    const request = new AbortController();
+    expenseRequest = request;
+    const parameters = new URLSearchParams();
+
+    for (const [key, value] of new FormData(expensesForm).entries()) {
+      if (value) parameters.set(key, value);
+    }
+    parameters.set('page', String(page));
+
+    expenseSearchButton.disabled = true;
+    expensePreviousButton.disabled = true;
+    expenseNextButton.disabled = true;
+    expenseStatus.textContent = 'Buscando gastos...';
+    expenseStatus.classList.remove('error');
+
+    try {
+      const response = await fetch(`${expensesForm.dataset.apiUrl}?${parameters.toString()}`, {
+        headers: { Accept: 'application/json' },
+        credentials: 'same-origin',
+        signal: request.signal,
+      });
+      const result = await response.json();
+
+      if (!response.ok) {
+        const validationMessage = Object.values(result.errors ?? {}).flat()[0];
+        throw new Error(validationMessage ?? result.message ?? 'No fue posible consultar los gastos.');
+      }
+
+      expenseCurrentPage = result.current_page;
+      expenseLastPage = result.last_page;
+      renderExpenses(result.data);
+      expensePageLabel.textContent = `Página ${expenseCurrentPage} de ${expenseLastPage}`;
+      expenseSummary.textContent = `${result.total} ${result.total === 1 ? 'gasto encontrado' : 'gastos encontrados'}`;
+      expenseTotal.textContent = currencyFormatter.format(Number(result.total_monto ?? 0));
+      expenseStatus.textContent = result.total ? 'Resultados actualizados.' : 'No hay gastos para mostrar.';
+      expensePreviousButton.disabled = expenseCurrentPage <= 1;
+      expenseNextButton.disabled = expenseCurrentPage >= expenseLastPage;
+    } catch (error) {
+      if (error.name === 'AbortError') return;
+
+      renderExpenses([]);
+      expenseSummary.textContent = 'No se pudieron cargar los gastos';
+      expenseTotal.textContent = '0,00';
+      expensePageLabel.textContent = 'Página 1 de 1';
+      expenseStatus.textContent = error.message;
+      expenseStatus.classList.add('error');
+    } finally {
+      if (!request.signal.aborted) expenseSearchButton.disabled = false;
+    }
+  }
+
+  expensesForm.addEventListener('submit', event => {
+    event.preventDefault();
+    loadExpenses(1);
+  });
+
+  expensesForm.addEventListener('reset', () => {
+    window.setTimeout(() => loadExpenses(1), 0);
+  });
+
+  expensePreviousButton.addEventListener('click', () => {
+    if (expenseCurrentPage > 1) loadExpenses(expenseCurrentPage - 1);
+  });
+
+  expenseNextButton.addEventListener('click', () => {
+    if (expenseCurrentPage < expenseLastPage) loadExpenses(expenseCurrentPage + 1);
+  });
+
+  loadExpenses();
 });

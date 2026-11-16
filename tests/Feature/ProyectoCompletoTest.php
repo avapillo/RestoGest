@@ -959,3 +959,35 @@ test('la búsqueda ordena productos pagados y filtra por nombre y fecha', functi
     $this->getJson('/api/productos-mas-vendidos?fecha_desde=2026-10-23&fecha_hasta=2026-10-20')
         ->assertUnprocessable();
 });
+
+test('el registro de ventas muestra gastos y permite filtrarlos por fecha de cierre', function () {
+    $this->get('/Ventas')
+        ->assertOk()
+        ->assertSee('Registro de gastos')
+        ->assertSee('data-api-url=', false);
+
+    $historialHoy = DB::table('historial_caja')->insertGetId([
+        'momento_cierre' => '2026-11-15 20:30:00',
+        'monto_total' => 50000,
+    ]);
+    $historialAyer = DB::table('historial_caja')->insertGetId([
+        'momento_cierre' => '2026-11-14 19:00:00',
+        'monto_total' => 40000,
+    ]);
+
+    DB::table('registro_gasto')->insert([
+        ['producto' => 'Aceite', 'monto' => 1200.50, 'fk_id_historial' => $historialHoy],
+        ['producto' => 'Pan', 'monto' => 800, 'fk_id_historial' => $historialHoy],
+        ['producto' => 'Verduras', 'monto' => 1500, 'fk_id_historial' => $historialAyer],
+    ]);
+
+    $this->getJson('/api/gastos?fecha_desde=2026-11-15&fecha_hasta=2026-11-15')
+        ->assertOk()
+        ->assertJsonPath('total', 2)
+        ->assertJsonPath('total_monto', 2000.5)
+        ->assertJsonPath('data.0.producto', 'Pan')
+        ->assertJsonPath('data.1.producto', 'Aceite');
+
+    $this->getJson('/api/gastos?fecha_desde=2026-11-16&fecha_hasta=2026-11-15')
+        ->assertUnprocessable();
+});

@@ -17,6 +17,7 @@ Route::middleware('web')->group(function () {
     Route::get('/ventas', [VentasController::class, 'buscar']);
     Route::get('/ventas/{id}/detalle', [VentasController::class, 'detalle']);
     Route::get('/productos-mas-vendidos', [VentasController::class, 'productosMasVendidos']);
+    Route::get('/gastos', [VentasController::class, 'gastos']);
 
     Route::post('/caja/abrir', [HistorialCajaController::class, 'abrir']);
 

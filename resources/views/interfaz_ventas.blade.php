@@ -159,6 +159,63 @@
         </div>
       </dialog>
 
+      <section class="panel-resultados" aria-labelledby="tituloGastos">
+        <div class="encabezado-resultados">
+          <div>
+            <p class="sobre-titulo">Egresos</p>
+            <h2 id="tituloGastos">Registro de gastos</h2>
+          </div>
+          <div class="resumen-gastos-ventas">
+            <p id="resumenGastos" class="resumen-resultados" aria-live="polite">Cargando gastos...</p>
+            <strong>Total: $ <span id="totalGastos">0,00</span></strong>
+          </div>
+        </div>
+
+        <form id="filtrosGastos" class="formulario-filtros" data-api-url="{{ url('/api/gastos') }}" novalidate>
+          <div class="rejilla-filtros rejilla-filtros-gastos">
+            <div class="grupo-campo">
+              <label for="gastos_fecha_desde">Desde</label>
+              <input id="gastos_fecha_desde" name="fecha_desde" type="date">
+            </div>
+            <div class="grupo-campo">
+              <label for="gastos_fecha_hasta">Hasta</label>
+              <input id="gastos_fecha_hasta" name="fecha_hasta" type="date">
+            </div>
+          </div>
+          <div class="acciones-filtros">
+            <button class="btn-buscar" type="submit">Buscar gastos</button>
+            <button class="btn-limpiar" type="reset">Limpiar fechas</button>
+          </div>
+        </form>
+
+        <p id="estadoGastos" class="estado-ventas" role="status" aria-live="polite">Cargando gastos...</p>
+        <div class="envoltura-tabla">
+          <table class="tabla-ventas">
+            <thead>
+              <tr>
+                <th scope="col">Fecha de cierre</th>
+                <th scope="col">Gasto</th>
+                <th scope="col">Monto</th>
+              </tr>
+            </thead>
+            <tbody id="filasGastos">
+              <tr><td class="fila-vacia" colspan="3">Cargando registros...</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <footer class="paginacion-ventas">
+          <span id="paginaGastos">Página 1 de 1</span>
+          <div class="controles-paginacion">
+            <button id="gastosPaginaAnterior" type="button" aria-label="Página anterior" disabled>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg>
+            </button>
+            <button id="gastosPaginaSiguiente" type="button" aria-label="Página siguiente" disabled>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg>
+            </button>
+          </div>
+        </footer>
+      </section>
+
       <section class="panel-resultados" aria-labelledby="tituloProductosMasVendidos">
         <div class="encabezado-resultados">
           <div>

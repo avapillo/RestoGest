@@ -186,4 +186,46 @@ class VentasController extends Controller
 
         return response()->json($productos);
     }
+
+    public function gastos(Request $request)
+    {
+        $reglas = [
+            'fecha_desde' => 'sometimes|nullable|date',
+            'fecha_hasta' => 'sometimes|nullable|date',
+            'per_page' => 'sometimes|integer|min:1|max:100',
+        ];
+
+        if ($request->filled('fecha_desde') && $request->filled('fecha_hasta')) {
+            $reglas['fecha_hasta'] .= '|after_or_equal:fecha_desde';
+        }
+
+        $filtros = $request->validate($reglas);
+
+        $gastos = DB::table('registro_gasto as gasto')
+            ->leftJoin('historial_caja as historial', 'historial.id_historial', '=', 'gasto.fk_id_historial')
+            ->select([
+                'gasto.id_gasto',
+                'gasto.producto',
+                'gasto.monto',
+                'historial.momento_cierre',
+            ])
+            ->when(!empty($filtros['fecha_desde']), function ($query) use ($filtros) {
+                $query->whereDate('historial.momento_cierre', '>=', $filtros['fecha_desde']);
+            })
+            ->when(!empty($filtros['fecha_hasta']), function ($query) use ($filtros) {
+                $query->whereDate('historial.momento_cierre', '<=', $filtros['fecha_hasta']);
+            });
+
+        $totalMonto = (clone $gastos)->sum('gasto.monto');
+        $resultados = $gastos
+            ->orderByRaw('CASE WHEN historial.momento_cierre IS NULL THEN 1 ELSE 0 END')
+            ->orderByDesc('historial.momento_cierre')
+            ->orderByDesc('gasto.id_gasto')
+            ->paginate($filtros['per_page'] ?? 15)
+            ->withQueryString();
+
+        return response()->json($resultados->toArray() + [
+            'total_monto' => (float) $totalMonto,
+        ]);
+    }
 }

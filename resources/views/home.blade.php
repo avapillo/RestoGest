@@ -7,7 +7,7 @@
   <link rel="icon" type="image/png" href="{{ asset('img/Sanwicheria Gabriel icon.png') }}">
   <title>Panel de Control - Sanwichería Gabriel</title>
   <!-- Enlace al archivo de estilos CSS en la carpeta public/css -->
-  <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+  <link rel="stylesheet" href="{{ asset('css/style.css') }}?v={{ filemtime(public_path('css/style.css')) }}">
 </head>
 <body>
 

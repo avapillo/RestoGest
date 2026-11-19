@@ -128,8 +128,17 @@ class HistorialCajaController extends Controller
     {
         $validated = $request->validate([
             'gastos' => ['sometimes', 'array'],
-            'gastos.*.producto' => ['required', 'string', 'max:120'],
+            'gastos.*.producto' => [
+                'required',
+                'string',
+                'max:120',
+                'regex:/^\p{L}[\p{L}\p{M}]*(?: \p{L}[\p{L}\p{M}]*)*$/u',
+            ],
             'gastos.*.monto' => ['required', 'numeric', 'gt:0'],
+        ], [
+            'gastos.*.producto.required' => 'El nombre del gasto es obligatorio.',
+            'gastos.*.producto.regex' => 'El nombre del gasto solo puede contener letras y espacios.',
+            'gastos.*.producto.max' => 'El nombre del gasto no puede superar los 120 caracteres.',
         ]);
         $gastos = $validated['gastos'] ?? [];
 

@@ -258,6 +258,7 @@
 			}
 		}
 	</style>
+	<link rel="stylesheet" href="{{ asset('css/responsive-adapter.css') }}">
 </head>
 <body>
 	<div class="page">

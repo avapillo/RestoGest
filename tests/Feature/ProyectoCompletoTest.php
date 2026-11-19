@@ -395,6 +395,33 @@ test('el cierre guarda los gastos asociados al historial creado', function () {
     ]);
 });
 
+test('el nombre de un gasto solo acepta letras y espacios', function () {
+    $adminId = DB::table('usuarios')->insertGetId([
+        'nombre' => 'Admin',
+        'gmail' => 'admin-gastos-validacion@gmail.com',
+        'contrasenia' => Hash::make('clave-segura'),
+        'id_rol_usuario' => 1,
+    ]);
+    DB::table('caja_estado')->insert([
+        'abierta' => true,
+        'monto_actual' => 500,
+        'monto_inicial' => 100,
+        'id_usuario' => $adminId,
+    ]);
+
+    $this->withSession(['usuario_id' => $adminId])
+        ->postJson('/api/caja/cerrar', [
+            'gastos' => [
+                ['producto' => 'Aceite 123', 'monto' => 100],
+            ],
+        ])
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors('gastos.0.producto');
+
+    $this->assertDatabaseCount('historial_caja', 0);
+    $this->assertDatabaseCount('registro_gasto', 0);
+});
+
 test('no se puede cerrar la caja si hay pedidos sin cobrar', function () {
     $estadoListoId = DB::table('estados')->insertGetId(['estado' => 'Listo']);
     $pedidoId = DB::table('pedidos')->insertGetId(['fk_id_estado' => $estadoListoId]);

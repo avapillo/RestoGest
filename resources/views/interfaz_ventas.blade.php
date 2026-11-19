@@ -6,6 +6,7 @@
   <link rel="icon" type="image/png" href="{{ asset('img/Sanwicheria Gabriel icon.png') }}">
   <title>Ventas - Sandwichería Gabriel</title>
   <link rel="stylesheet" href="{{ asset('css/ventas.css') }}">
+  <link rel="stylesheet" href="{{ asset('css/responsive-adapter.css') }}">
 </head>
 <body>
 

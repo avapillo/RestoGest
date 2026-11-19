@@ -74,6 +74,7 @@
             font-weight:bold;
         }
     </style>
+    <link rel="stylesheet" href="{{ asset('css/responsive-adapter.css') }}">
 </head>
 
 <body>

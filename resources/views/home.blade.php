@@ -8,6 +8,7 @@
   <title>Panel de Control - Sanwichería Gabriel</title>
   <!-- Enlace al archivo de estilos CSS en la carpeta public/css -->
   <link rel="stylesheet" href="{{ asset('css/style.css') }}?v={{ filemtime(public_path('css/style.css')) }}">
+  <link rel="stylesheet" href="{{ asset('css/responsive-adapter.css') }}">
 </head>
 <body>
 
@@ -185,7 +186,7 @@
           <div class="fila-form-gasto">
             <label class="campo-gasto">
               <span>Nombre</span>
-              <input name="producto[]" type="text" maxlength="120" placeholder="Ej. Aceite" required>
+              <input name="producto[]" type="text" maxlength="120" pattern="\p{L}[\p{L}\p{M}]*(?: \p{L}[\p{L}\p{M}]*)*" title="El nombre solo puede contener letras y espacios." placeholder="Ej. Aceite" required>
             </label>
             <label class="campo-gasto">
               <span>Monto</span>
@@ -199,7 +200,7 @@
           <div class="fila-form-gasto">
             <label class="campo-gasto">
               <span>Nombre</span>
-              <input name="producto[]" type="text" maxlength="120" placeholder="Ej. Aceite" required>
+              <input name="producto[]" type="text" maxlength="120" pattern="\p{L}[\p{L}\p{M}]*(?: \p{L}[\p{L}\p{M}]*)*" title="El nombre solo puede contener letras y espacios." placeholder="Ej. Aceite" required>
             </label>
             <label class="campo-gasto">
               <span>Monto</span>

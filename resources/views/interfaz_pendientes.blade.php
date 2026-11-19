@@ -7,6 +7,7 @@
     <title>Pendientes - Sandwichería Gabriel</title>
     <link rel="stylesheet" href="{{ asset('css/ventas.css') }}">
     <link rel="stylesheet" href="{{ asset('css/pendientes.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/responsive-adapter.css') }}">
 </head>
 <body>
 

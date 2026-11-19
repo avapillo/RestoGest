@@ -6,6 +6,7 @@
   <link rel="icon" type="image/png" href="{{ asset('img/Sanwicheria Gabriel icon.png') }}">
   <title>Panel de Control - Sandwichería Gabriel</title>
   <link rel="stylesheet" href="{{ asset('css/style_producto.css') }}">
+  <link rel="stylesheet" href="{{ asset('css/responsive-adapter.css') }}">
 </head>
 <body>
 

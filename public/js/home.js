@@ -669,13 +669,26 @@ function inicializarRegistroGastos() {
 
     formulario.addEventListener('submit', evento => {
         evento.preventDefault();
+        const nombreValido = /^\p{L}[\p{L}\p{M}]*(?: \p{L}[\p{L}\p{M}]*)*$/u;
         const nuevasFilas = [...filas.querySelectorAll('.fila-form-gasto')];
         const registros = nuevasFilas.map(fila => ({
             product: fila.querySelector('input[name="producto[]"]').value.trim(),
             amount: Number(fila.querySelector('input[name="monto[]"]').value)
         }));
 
-        if (registros.some(gasto => !gasto.product || !Number.isFinite(gasto.amount) || gasto.amount <= 0)) {
+        if (registros.some(gasto => !gasto.product)) {
+            estado.textContent = 'Completa el nombre del gasto en cada fila.';
+            estado.classList.add('error');
+            return;
+        }
+
+        if (registros.some(gasto => !nombreValido.test(gasto.product))) {
+            estado.textContent = 'El nombre del gasto solo puede contener letras y espacios.';
+            estado.classList.add('error');
+            return;
+        }
+
+        if (registros.some(gasto => !Number.isFinite(gasto.amount) || gasto.amount <= 0)) {
             estado.textContent = 'Completa el nombre y un monto mayor que cero en cada fila.';
             estado.classList.add('error');
             return;

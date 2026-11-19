@@ -1,0 +1,274 @@
+/* Adaptador responsivo compartido para todas las pantallas de RestoGest. */
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+img,
+svg,
+video,
+canvas {
+  max-width: 100%;
+}
+
+input,
+button,
+select,
+textarea {
+  max-width: 100%;
+  font: inherit;
+}
+
+.contenedor-sitio,
+.contenido-principal,
+.barra-superior,
+.encabezado-seccion,
+.panel-filtros,
+.panel-resultados,
+.pendientes-panel,
+.panel-caja,
+main,
+section,
+form,
+dialog,
+.modal-content,
+.modal-gastos,
+.modal-monto-inicial {
+  min-width: 0;
+}
+
+@media (max-width: 900px) {
+  .contenedor-sitio {
+    flex-direction: column;
+  }
+
+  .barra-lateral {
+    position: static;
+    width: 100%;
+    height: auto;
+    max-height: none;
+    flex: 0 0 auto;
+  }
+
+  .logo-sistema {
+    padding: 10px 14px;
+  }
+
+  .logo-sistema img {
+    width: 150px;
+  }
+
+  .menu-navegacion {
+    flex-direction: row;
+    align-items: center;
+    gap: 4px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 8px 10px;
+  }
+
+  .opcion-menu {
+    flex: 0 0 auto;
+    padding: 10px 12px;
+    border-left: 0;
+    border-radius: 6px;
+    white-space: nowrap;
+  }
+
+  .opcion-menu:hover,
+  .opcion-menu.activa {
+    border-left: 0;
+  }
+
+  .cerrar-sesion-contenedor {
+    margin-top: 0;
+    padding: 8px 10px;
+  }
+
+  .cerrar-sesion {
+    justify-content: center;
+  }
+
+  .contenido-principal {
+    width: 100%;
+    min-width: 0;
+    padding: 20px;
+  }
+
+  .barra-superior,
+  .encabezado-seccion,
+  .titulo-panel,
+  .encabezado-resultados {
+    align-items: flex-start;
+  }
+
+  table,
+  .tabla-ventas,
+  .pendientes-tabla,
+  #tabla-datos {
+    max-width: 100%;
+  }
+
+  .envoltura-tabla,
+  .pendientes-tabla-envoltura,
+  .seccion-tabla {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
+  .modal-gastos,
+  .modal-monto-inicial,
+  .modal-overlay {
+    align-items: start;
+    padding: 12px;
+  }
+
+  .contenido-modal-gastos,
+  .contenido-modal-monto-inicial,
+  .modal-content,
+  dialog {
+    width: 100%;
+    max-width: 100%;
+    max-height: calc(100vh - 24px);
+  }
+}
+
+@media (max-width: 700px) {
+  body {
+    font-size: 15px;
+  }
+
+  .contenido-principal {
+    padding: 16px 12px;
+  }
+
+  .barra-superior,
+  .encabezado-seccion,
+  .titulo-panel,
+  .encabezado-resultados,
+  .controles-caja,
+  .panel-caja,
+  .acciones-filtros,
+  .resumen-gastos-ventas {
+    width: 100%;
+  }
+
+  .barra-superior,
+  .encabezado-seccion,
+  .titulo-panel,
+  .encabezado-resultados,
+  .resumen-gastos-ventas,
+  .acciones-filtros {
+    flex-direction: column;
+  }
+
+  .panel-caja,
+  .rejilla-filtros,
+  .pendientes-formulario,
+  .fila-horizontal,
+  .fila-item-producto,
+  .campos-item-producto {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .panel-filtros,
+  .panel-resultados,
+  .pendientes-panel,
+  .panel-caja,
+  .contenido-modal-gastos,
+  .contenido-modal-monto-inicial,
+  .modal-content {
+    padding: 16px 12px;
+  }
+
+  .btn-buscar,
+  .btn-limpiar,
+  .acciones-filtros button,
+  .acciones-modal-gastos button,
+  .acciones-modal-monto-inicial button,
+  .pendientes-btn-agregar {
+    width: 100%;
+  }
+
+  .acciones-modal-gastos,
+  .acciones-modal-monto-inicial,
+  .acciones-modal-gastos > div,
+  .acciones-modal-monto-inicial {
+    align-items: stretch;
+  }
+
+  .fila-form-gasto,
+  .pendientes-formulario,
+  .fila-horizontal,
+  .fila-item-producto {
+    min-width: 0;
+  }
+
+  .catalogo,
+  .contenedor {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)) !important;
+  }
+
+  .card {
+    max-width: none;
+  }
+
+  .login-container,
+  .page,
+  .container,
+  .contenedor-login {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .logo-sistema {
+    display: none;
+  }
+
+  .menu-navegacion {
+    padding-inline: 6px;
+  }
+
+  .opcion-menu {
+    font-size: 0.78rem;
+    padding: 9px 10px;
+  }
+
+  .cerrar-sesion {
+    padding: 9px 12px;
+  }
+
+  .encabezado-seccion h1,
+  .encabezado-seccion h2,
+  h1 {
+    font-size: 1.45rem;
+  }
+
+  .fila-form-gasto,
+  .lista-gastos li,
+  .pendientes-tabla tbody tr,
+  .tabla-ventas tbody tr.fila-venta {
+    min-width: 0;
+  }
+
+  .catalogo,
+  .contenedor {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  input,
+  select,
+  textarea,
+  button {
+    min-height: 42px;
+  }
+}

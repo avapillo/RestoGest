@@ -132,6 +132,14 @@ body {
   margin: 0 auto;
 }
 
+.menu-navegacion {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 15px 0;
+  flex-shrink: 0;
+}
+
 .tabla-grilla-pedidos th {
   background-color: #f1f5f9;
   color: var(--text-primary);

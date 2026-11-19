@@ -210,7 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
       renderRows(result.data);
       pageLabel.textContent = `Página ${currentPage} de ${lastPage}`;
       summary.textContent = `${result.total} ${result.total === 1 ? 'venta encontrada' : 'ventas encontradas'}`;
-      setStatus(result.total ? 'Resultados actualizados.' : 'No hay ventas para mostrar.');
+      setStatus(result.total ? 'Resultados actualizados.' : '');
       previousButton.disabled = currentPage <= 1;
       nextButton.disabled = currentPage >= lastPage;
     } catch (error) {

@@ -109,20 +109,33 @@ body {
 
 .encabezado-seccion {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
+  gap: 16px;
   border-bottom: 1px solid var(--border-color);
   padding-bottom: 15px;
 }
 
 .encabezado-seccion h2 {
   margin: 0;
+  min-width: 0;
   font-size: 1.8rem;
   color: var(--text-primary);
 }
 
+.contenedor-botones-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
 /* Botón Nuevo Producto */
 .btn-agregar {
+  display: inline-flex;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
   background-color: var(--accent-orange);
   color: #ffffff;
   border: none;
@@ -130,6 +143,7 @@ body {
   font-size: 1rem;
   font-weight: bold;
   border-radius: var(--radius-btn);
+  white-space: nowrap;
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
@@ -565,4 +579,76 @@ body {
 .cerrar-sesion:hover {
     background-color: #1e293b;
     color: #ffffff;
+}
+
+@media (max-width: 1050px) {
+  .encabezado-seccion {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .encabezado-seccion h2 {
+    font-size: clamp(1.45rem, 3vw, 1.8rem);
+  }
+
+  .contenedor-botones-header {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+  }
+
+  .btn-agregar {
+    width: 100%;
+    padding-inline: 12px;
+  }
+
+  .grilla-productos {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  }
+
+  .modal-overlay {
+    align-items: flex-start;
+    height: 100vh;
+    height: 100dvh;
+    overflow-y: auto;
+    padding: 12px;
+  }
+
+  .modal-content {
+    width: min(520px, 100%);
+    max-height: calc(100vh - 24px);
+    max-height: calc(100dvh - 24px);
+    margin: auto 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .modal-overlay .modal-content {
+    width: min(520px, 100%);
+    max-width: 520px;
+  }
+
+  .modal-overlay .modal-content.modal-categorias {
+    width: min(760px, 100%);
+    max-width: 760px;
+  }
+}
+
+@media (max-width: 540px) {
+  .contenedor-botones-header {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .modal-content {
+    padding: 20px 16px;
+  }
+
+  .modal-botones {
+    flex-direction: column-reverse;
+  }
+
+  .modal-botones button {
+    width: 100%;
+    min-height: 44px;
+  }
 }

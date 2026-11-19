@@ -289,6 +289,10 @@ body {
   font-size: 0.85rem;
 }
 
+.estado-ventas:empty {
+  display: none;
+}
+
 .estado-ventas.error {
   color: var(--ventas-danger);
 }
@@ -448,7 +452,7 @@ body {
   }
 }
 
-@media (max-width: 700px) {
+@media (max-width: 850px) {
   .contenedor-sitio {
     flex-direction: column;
   }

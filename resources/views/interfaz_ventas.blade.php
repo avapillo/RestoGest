@@ -11,7 +11,7 @@
 <body>
 
   <!-- CONTENEDOR PRINCIPAL: Envuelve todo el sitio web -->
-  <div class="contenedor-sitio">
+  <div class="contenedor-sitio administracion-layout">
 
     <!-- BARRA LATERAL (MENU) -->
     <aside class="barra-lateral">

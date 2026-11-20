@@ -11,7 +11,7 @@
 </head>
 <body>
 
-<div class="contenedor-sitio">
+<div class="contenedor-sitio administracion-layout">
 
     <!-- BARRA LATERAL -->
     <aside class="barra-lateral">

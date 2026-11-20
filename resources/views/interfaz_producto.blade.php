@@ -65,8 +65,8 @@
         @endif
 
         <div class="contenedor-botones-header">
-          <button id="btnAbrirModalProducto" class="btn-agregar">➕ Nuevo Producto</button>
-          <button id="btnAbrirModalCategoria" class="btn-agregar">➕ Nueva Categoría</button>
+          <button id="btnAbrirModalProducto" class="btn-agregar">➕ Producto</button>
+          <button id="btnAbrirModalCategoria" class="btn-agregar">➕ Categoría</button>
         </div>
 
       </header>

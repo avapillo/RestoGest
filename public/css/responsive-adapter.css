@@ -2,7 +2,7 @@
 html,
 body {
   max-width: 100%;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 *,
@@ -273,5 +273,227 @@ dialog,
   textarea,
   button {
     min-height: 42px;
+  }
+}
+
+@media (min-width: 701px) and (max-width: 1050px) {
+  .contenedor-sitio.administracion-layout {
+    flex-direction: row;
+    align-items: stretch;
+  }
+
+  .administracion-layout .barra-lateral {
+    position: sticky;
+    top: 0;
+    align-self: flex-start;
+    flex: 0 0 220px;
+    width: 220px;
+    height: 100vh;
+    height: 100dvh;
+    max-height: 100vh;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .administracion-layout .menu-navegacion {
+    flex-direction: column;
+    align-items: stretch;
+    overflow: visible;
+  }
+
+  .administracion-layout .opcion-menu {
+    flex: 0 0 auto;
+    white-space: normal;
+  }
+
+  .administracion-layout .cerrar-sesion-contenedor {
+    margin-top: auto;
+  }
+
+  .administracion-layout .contenido-principal {
+    flex: 1 1 0;
+    width: auto;
+    min-width: 0;
+    padding: 24px 20px;
+  }
+
+  .administracion-layout .pendientes-formulario {
+    grid-template-columns: minmax(0, 1fr) minmax(140px, 0.65fr);
+  }
+
+  .administracion-layout .pendientes-avatar {
+    display: none;
+  }
+
+  .administracion-layout .pendientes-btn-agregar {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+}
+
+@media (max-width: 850px) {
+  .administracion-layout .envoltura-tabla,
+  .administracion-layout .pendientes-tabla-envoltura {
+    width: 100%;
+    min-width: 0;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+  }
+
+  .administracion-layout .envoltura-tabla {
+    border: 1px solid var(--ventas-border);
+  }
+
+  .administracion-layout .tabla-ventas {
+    display: table;
+    width: 100%;
+    min-width: 450px;
+  }
+
+  .administracion-layout .tabla-ventas thead {
+    position: static;
+    display: table-header-group;
+    width: auto;
+    height: auto;
+    padding: 0;
+    margin: 0;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+  }
+
+  .administracion-layout .tabla-ventas tbody {
+    display: table-row-group;
+    width: auto;
+  }
+
+  .administracion-layout .tabla-ventas tbody tr,
+  .administracion-layout .tabla-ventas tbody tr.fila-venta {
+    display: table-row;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+  }
+
+  .administracion-layout .tabla-ventas tbody tr.fila-venta td,
+  .administracion-layout .tabla-ventas tbody tr:not(.fila-venta) td {
+    display: table-cell;
+    min-width: 0;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--ventas-border);
+    overflow-wrap: normal;
+    white-space: nowrap;
+  }
+
+  .administracion-layout .tabla-ventas tbody tr.fila-venta td::before {
+    content: none;
+  }
+
+  .administracion-layout .tabla-ventas td.fila-vacia {
+    white-space: normal;
+  }
+
+  .administracion-layout .pendientes-panel-tabla {
+    overflow: hidden;
+  }
+
+  .administracion-layout .pendientes-tabla {
+    display: table;
+    width: 100%;
+    min-width: 720px;
+  }
+
+  .administracion-layout .pendientes-tabla thead {
+    display: table-header-group;
+  }
+
+  .administracion-layout .pendientes-tabla tbody {
+    display: table-row-group;
+  }
+
+  .administracion-layout .pendientes-tabla tbody tr {
+    display: table-row;
+    padding: 0;
+    border: 0;
+  }
+
+  .administracion-layout .pendientes-tabla tbody td {
+    display: table-cell;
+    padding: 15px 18px;
+    border-bottom: 1px solid #e2e8f0;
+    overflow-wrap: normal;
+    white-space: nowrap;
+    text-align: left;
+  }
+
+  .administracion-layout .pendientes-tabla tbody td::before {
+    content: none;
+  }
+
+  .administracion-layout .pendientes-tabla tbody td.pendientes-vacio {
+    display: table-cell;
+    text-align: center;
+    white-space: normal;
+  }
+
+  .administracion-layout .pendientes-acciones {
+    flex-wrap: nowrap;
+  }
+}
+
+@media (max-width: 700px) {
+  .contenedor-sitio.administracion-layout {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .administracion-layout .barra-lateral {
+    position: sticky;
+    z-index: 20;
+    top: 0;
+    width: 100%;
+    height: auto;
+    max-height: none;
+    flex: 0 0 auto;
+    overflow: visible;
+  }
+
+  .administracion-layout .menu-navegacion {
+    flex-direction: row;
+    align-items: center;
+    gap: 4px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+  }
+
+  .administracion-layout .opcion-menu {
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+
+  .administracion-layout .cerrar-sesion-contenedor {
+    margin-top: 0;
+  }
+
+  .administracion-layout .contenido-principal {
+    width: 100%;
+    min-width: 0;
+    padding: 20px 14px;
+  }
+
+  .administracion-layout .pendientes-formulario {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .administracion-layout .pendientes-btn-agregar {
+    grid-column: 1 / -1;
+  }
+
+  .administracion-layout .resumen-resultados {
+    min-width: 0;
+    overflow-wrap: anywhere;
   }
 }

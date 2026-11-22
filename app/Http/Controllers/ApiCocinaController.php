@@ -21,7 +21,8 @@ class ApiCocinaController extends Controller
             'estado',
             'detalles.producto.categoria',
             'detalles.combo',
-        ])
+        ]) 
+        ->whereIn('fk_id_estado', [1, 2, 3])
         ->orderBy('hora_pedido', 'desc')
         ->get()
         ->map(function ($pedido) {
@@ -87,7 +88,7 @@ class ApiCocinaController extends Controller
                 'required',
                 'integer',
                 Rule::exists('estados', 'id'),
-                Rule::in([2, 3]),
+                Rule::in([2, 3, 4]),
             ],
         ]);
 
@@ -136,18 +137,24 @@ class ApiCocinaController extends Controller
         }
 
         $detalles = [];
+        $soloBebidas = true;
 
         foreach ($datos['items'] as $item) {
             $producto = DB::table('productos')
                 ->where('nombre', trim($item['producto']))
                 ->first();
 
-            if (!$producto) {
+                   if (!$producto) {
                 return response()->json([
                     'mensaje' => 'No se encontró el producto: '
                         . $item['producto'],
                 ], 422);
             }
+
+            if ((int) $producto->fk_id_categoria !== 4) {
+                $soloBebidas = false;
+            }
+            
 
             $detalles[] = [
                 'id_producto' => $producto->id,
@@ -168,7 +175,8 @@ foreach ($detalles as $detalle) {
             $numeroMesa,
             $detalles,
             $total,
-            $datos
+            $datos,
+            $soloBebidas
         ) {
             $idMesa = $datos['id_mesa'];
             $id = DB::table('pedidos')->insertGetId([
@@ -178,7 +186,7 @@ foreach ($detalles as $detalle) {
                 'fk_id_mesa' => $idMesa,
                 'fk_id_tipo_pago' => null,
                 'es_para_llevar' => 0,
-                'fk_id_estado' => 1,
+                'fk_id_estado' => $soloBebidas ? 3 : 1,
                 'fk_id_usuario' => $datos['usuario_id'] ?? null,
 'nombre_creador' => $datos['nombre_creador'] ?? null,
 'rol_creador' => $datos['rol_creador'] ?? null,

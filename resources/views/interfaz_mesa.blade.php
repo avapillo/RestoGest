@@ -139,78 +139,188 @@
           </p>
         @endif
 
-@if ($ultimoPedido)
-    @php
-        $estadoNombre = trim($ultimoPedido->estado->estado ?? 'Recibido');
-        $estadoNormalizado = mb_strtolower($estadoNombre);
 
-        if ($estadoNormalizado === 'listo') {
-            $colorEstado = '#22A565';
-        } elseif (
-           $estadoNormalizado === 'preparando' ||
-            $estadoNormalizado === 'en preparación' ||
-            $estadoNormalizado === 'en preparacion'
-        ) {
-            $colorEstado = '#FFC107';
-        } else {
-            $colorEstado = '#DC3545';
+@if ($mesa->pedidos->isNotEmpty())
+
+    @php
+        $totalConsumoMesa = 0;
+        $totalPedidoCalculado = 0;
+
+        // Variables para controlar si se puede cobrar la mesa.
+        $hayPedidosComidaMesa = false;
+        $comidaMesaListaParaCobrar = true;
+
+        // Revisamos todos los pedidos pendientes de esta mesa.
+        foreach ($mesa->pedidos as $pedidoEstado) {
+
+            $soloBebidasEstado = $pedidoEstado->detalles->isNotEmpty();
+
+            foreach ($pedidoEstado->detalles as $detalleEstado) {
+
+                $categoriaEstado = mb_strtolower(trim(
+                    (string) ($detalleEstado->producto?->categoria?->categoria ?? '')
+                ));
+
+                if (
+                    !$detalleEstado->producto ||
+                    mb_strpos($categoriaEstado, 'bebida') === false
+                ) {
+                    $soloBebidasEstado = false;
+                    break;
+                }
+            }
+
+            if (!$soloBebidasEstado) {
+
+                $hayPedidosComidaMesa = true;
+
+                $estadoMesa = mb_strtolower(trim(
+                    (string) ($pedidoEstado->estado->estado ?? '')
+                ));
+
+                if ($estadoMesa !== 'servido') {
+                    $comidaMesaListaParaCobrar = false;
+                }
+            }
         }
     @endphp
 
-    <div style="display: flex; justify-content: flex-end; align-items: center; margin: 8px 4px;">
-        <span
-            title="{{ $estadoNombre }}"
-            aria-label="Estado: {{ $estadoNombre }}"
-            style="
-                display: inline-block;
-                width: 16px;
-                height: 16px;
-                border-radius: 50%;
-                background-color: {{ $colorEstado }};
-                border: 3px solid white;
-                box-shadow: 0 0 0 1px rgba(0,0,0,0.12),
-                            0 0 9px {{ $colorEstado }};
-            ">
-        </span>
-    </div>
-@endif
+    <div class="detalle-pedido" style="margin-top: 10px; border-top: 1px dashed #ccc; padding-top: 8px;">
 
+        @foreach ($mesa->pedidos as $pedidoMesa)
 
-        <!-- Bloque con el detalle de Productos/Combos -->
-        @if ($ultimoPedido && $ultimoPedido->detalles->isNotEmpty())
-          <div class="detalle-pedido" style="margin-top: 10px; border-top: 1px dashed #ccc; padding-top: 8px;">
-            @php $totalPedidoCalculado = 0; @endphp
-            <ul style="list-style: none; padding-left: 0; margin: 0 0 8px 0; font-size: 0.88rem;">
-              @foreach ($ultimoPedido->detalles as $detalle)
-                @php
-                  // Determina si el detalle pertenece a un Producto o a un Combo
-                  $nombreItem = $detalle->producto->nombre ?? $detalle->combo->nombre ?? 'Ítem';
-                  $precioUnitario = $detalle->producto->precio ?? 0;
-                  $subtotalItem = $detalle->producto
-                    ? $precioUnitario * $detalle->cantidad
-                    : $detalle->subtotal;
-                  $totalPedidoCalculado += $subtotalItem;
-                @endphp
-                <li style="display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 12px; row-gap: 2px; margin-bottom: 6px;">
-                  <span>
-                    <strong>{{ $detalle->cantidad }}x</strong> {{ $nombreItem }}
-                  </span>
-                  <span>${{ number_format($subtotalItem, 2) }}</span>
-                  @if ($detalle->descripcion)
-                    <small style="grid-column: 1; color: #64748b; font-size: 0.8rem;">
-                      {{ $detalle->descripcion }}
-                    </small>
-                  @endif
-                </li>
-              @endforeach
-            </ul>
+            @php
+                $estadoNombre = trim($pedidoMesa->estado->estado ?? 'Recibido');
+                $estadoNormalizado = mb_strtolower($estadoNombre); 
+                $pedidoSoloBebidas = $pedidoMesa->detalles->isNotEmpty();
 
-            <!-- Total calculado a partir de los importes de cada línea -->
-            <div style="text-align: right; font-weight: bold; font-size: 0.95rem; border-top: 1px solid #eee; padding-top: 4px;">
-              Total: ${{ number_format($totalPedidoCalculado, 2) }}
+foreach ($pedidoMesa->detalles as $detalleBebida) {
+    $categoriaBebida = mb_strtolower(trim(
+        (string) ($detalleBebida->producto?->categoria?->categoria ?? '')
+    ));
+
+    if (
+        !$detalleBebida->producto ||
+        mb_strpos($categoriaBebida, 'bebida') === false
+    ) {
+        $pedidoSoloBebidas = false;
+        break;
+    }
+}
+                $pedidoSoloBebidas = $pedidoMesa->detalles->isNotEmpty();
+
+foreach ($pedidoMesa->detalles as $detalleBebida) {
+    $categoriaBebida = mb_strtolower(trim(
+        (string) ($detalleBebida->producto?->categoria?->categoria ?? '')
+    ));
+
+    if (!$detalleBebida->producto || mb_strpos($categoriaBebida, 'bebida') === false) {
+        $pedidoSoloBebidas = false;
+        break;
+    }
+}
+
+                if ($estadoNormalizado === 'listo') {
+                    $colorEstado = '#22A565';
+                } elseif (
+                    $estadoNormalizado === 'preparando' ||
+                    $estadoNormalizado === 'en preparación' ||
+                    $estadoNormalizado === 'en preparacion'
+                ) {
+                    $colorEstado = '#FFC107';
+                } elseif ($estadoNormalizado === 'servido') {
+                    $colorEstado = '#0D6EFD';
+                } else {
+                    $colorEstado = '#DC3545';
+                }
+
+                $totalPedidoActual = 0;
+            @endphp
+
+            <div style="margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px dashed #ddd;">
+
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+
+                    <strong>Pedido #{{ $pedidoMesa->id_pedido }}</strong>
+
+                    <span style="display: flex; align-items: center; gap: 6px; font-size: 0.82rem;">
+
+                        <span
+                            title="Estado: {{ $estadoNombre }}"
+                            aria-label="Estado: {{ $estadoNombre }}"
+                            style="
+                                display: inline-block;
+                                width: 12px;
+                                height: 12px;
+                                border-radius: 50%;
+                                background-color: {{ $colorEstado }};
+                                border: 2px solid white;
+                                box-shadow: 0 0 0 1px rgba(0,0,0,0.12);
+                            ">
+                        </span>
+
+                        {{ $estadoNombre }}
+
+                    </span>
+
+                </div>
+
+                <ul style="list-style: none; padding-left: 0; margin: 0; font-size: 0.88rem;">
+
+                    @foreach ($pedidoMesa->detalles as $detalle)
+
+                        @php
+                            $nombreItem = $detalle->producto->nombre ?? $detalle->combo->nombre ?? 'Ítem';
+
+// Se utiliza el mismo subtotal histórico que utiliza el controlador al cobrar.
+$subtotalItem = (float) ($detalle->subtotal ?? 0);
+
+$totalPedidoActual += $subtotalItem;
+$totalConsumoMesa += $subtotalItem;
+                        @endphp
+
+                        <li style="display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 12px; row-gap: 2px; margin-bottom: 6px;">
+
+                            <span>
+                                <strong>{{ $detalle->cantidad }}x</strong> {{ $nombreItem }}
+                            </span>
+
+                            <span>${{ number_format($subtotalItem, 2) }}</span>
+
+                            @if ($detalle->descripcion)
+                                <small style="grid-column: 1; color: #64748b; font-size: 0.8rem;">
+                                    {{ $detalle->descripcion }}
+                                </small>
+                            @endif
+
+                        </li>
+
+                    @endforeach
+
+                </ul>
+
+                <div style="text-align: right; font-size: 0.85rem; font-weight: bold;">
+                    Subtotal pedido: ${{ number_format($totalPedidoActual, 2) }}
+                </div>
+
             </div>
-            <div class="acciones-pedido">
-              <button
+
+            {{-- Conservamos el total del último pedido para el botón de cobro actual. --}}
+            @if ($ultimoPedido && $pedidoMesa->id_pedido == $ultimoPedido->id_pedido)
+                @php
+                    $totalPedidoCalculado = $totalPedidoActual;
+                @endphp
+            @endif
+
+        @endforeach
+
+        <div style="text-align: right; font-weight: bold; font-size: 1rem; border-top: 1px solid #eee; padding-top: 8px; margin-top: 8px;">
+            Total consumo de la mesa: ${{ number_format($totalConsumoMesa, 2) }}
+        </div>
+
+        <div class="acciones-pedido">
+
+            <button
                 type="button"
                 class="btn-accion btn-modificar btn-pedido-modificar"
                 data-update-url="{{ route('pedido.update', $ultimoPedido->id_pedido) }}"
@@ -221,18 +331,49 @@
                 @disabled($pedidoTieneCombos)
                 title="{{ $pedidoTieneCombos ? 'No se pueden modificar pedidos que contienen combos desde este formulario.' : 'Modificar pedido' }}">
                 Modificar
-              </button>
-              <button
+            </button>
+
+            <button
                 type="button"
-                class="btn-accion btn-pedido-cobrar"
+                class="btn-accion btn-tomar-pedido"
                 disabled
-                data-order-id="{{ $ultimoPedido->id_pedido }}"
-                data-total="{{ $totalPedidoCalculado }}">
-                Cobrar
-              </button>
-            </div>
-          </div>
-        @endif
+                data-seccion-id="{{ $mesa->fk_id_seccion }}"
+                data-seccion-nombre="{{ $mesa->seccion->seccion ?? 'Sin Sección' }}"
+                data-mesa-numero="{{ $mesa->numero_mesa }}"
+                data-mesa-id="{{ $mesa->id_mesa }}">
+                ➕ Agregar pedido
+            </button>
+
+            @if ($hayPedidosComidaMesa)
+    <button
+        type="button"
+        class="btn-accion btn-pedido-cobrar"
+        disabled
+        data-tipo-cobro="mesa"
+        data-puede-cobrar="{{ $comidaMesaListaParaCobrar ? '1' : '0' }}"
+        data-mesa-id="{{ $mesa->id_mesa }}"
+        data-total="{{ $totalConsumoMesa }}">
+        Cobrar
+    </button>
+@else
+    <button
+        type="button"
+        class="btn-accion btn-pedido-cobrar"
+        disabled
+        data-tipo-cobro="pedido"
+        data-puede-cobrar="1"
+        data-order-id="{{ $ultimoPedido->id_pedido }}"
+        data-total="{{ $totalPedidoCalculado }}">
+        Cobrar
+    </button>
+@endif
+
+        </div>
+
+    </div>
+
+@endif
+
 
         @if ($mesa->pedidos->isEmpty())
           <button
@@ -384,6 +525,7 @@
       <form id="formCobrar" action="{{ route('pedido.pagar') }}" method="POST">
         @csrf
         <input id="pagoIdPedido" type="hidden" name="id_pedido">
+        <input id="pagoIdMesa" type="hidden" name="fk_id_mesa">
         <p class="total-cobro">Total: <strong id="totalCobroPedido"></strong></p>
         <div class="grupo-campo">
           <label for="fk_tipo_pago">Medio de pago:</label>

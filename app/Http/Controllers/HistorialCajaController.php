@@ -157,7 +157,10 @@ class HistorialCajaController extends Controller
                         $subquery->selectRaw('1')
                             ->from('registro_pago')
                             ->whereColumn('registro_pago.fk_id_pedido', 'pedidos.id_pedido');
-                    })->orWhereRaw("LOWER(TRIM(COALESCE(estados.estado, ''))) <> ?", ['listo']);
+                    })->orWhereRaw(
+    "LOWER(TRIM(COALESCE(estados.estado, ''))) NOT IN (?, ?)",
+    ['listo', 'servido']
+);
                 })
                 ->where(function ($query) {
                     $query->whereNotExists(function ($subquery) {

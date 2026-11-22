@@ -96,10 +96,123 @@ public function mostrarOrdenesPedidos(Request $request){
 
     public function procesarPago(Request $request)
     {
-        $datos = $request->validate([
-            'id_pedido' => 'required|exists:pedidos,id_pedido',
-            'fk_tipo_pago' => 'required|exists:tipo_pago,id',
-        ]);
+       $datos = $request->validate([
+    'id_pedido' => ['nullable', 'required_without:fk_id_mesa', 'exists:pedidos,id_pedido'],
+    'fk_id_mesa' => ['nullable', 'required_without:id_pedido', 'exists:mesas,id_mesa'],
+    'fk_tipo_pago' => ['required', 'exists:tipo_pago,id'],
+]);
+if (!empty($datos['fk_id_mesa'])) {
+
+    DB::transaction(function () use ($datos) {
+
+        $caja = CajaEstado::query()->lockForUpdate()->first();
+
+        if (!$caja || !$caja->abierta) {
+            throw ValidationException::withMessages([
+                'fk_id_mesa' => 'Debe abrir la caja antes de procesar cobros.',
+            ]);
+        }
+
+        Mesas::where('id_mesa', $datos['fk_id_mesa'])
+            ->lockForUpdate()
+            ->firstOrFail();
+
+        $pedidos = Pedido::with('detalles')
+            ->sinCobrar()
+            ->where('fk_id_mesa', $datos['fk_id_mesa'])
+            ->orderBy('id_pedido')
+            ->lockForUpdate()
+            ->get();
+
+        if ($pedidos->isEmpty()) {
+            throw ValidationException::withMessages([
+                'fk_id_mesa' => 'La mesa no tiene consumo pendiente.',
+            ]);
+        }
+
+        $pagos = [];
+        $montoTotal = 0;
+        $hayComida = false;
+
+        foreach ($pedidos as $pedidoMesa) {
+
+            if ($pedidoMesa->detalles->isEmpty()) {
+                throw ValidationException::withMessages([
+                    'fk_id_mesa' => 'Hay un pedido sin productos.',
+                ]);
+            }
+
+            $hayDetallesNoBebida = DB::table('detalle_pedido')
+                ->leftJoin('productos', 'productos.id', '=', 'detalle_pedido.fk_id_producto')
+                ->leftJoin('categoria', 'categoria.id', '=', 'productos.fk_id_categoria')
+                ->where('detalle_pedido.fk_id_pedido', $pedidoMesa->id_pedido)
+                ->where(function ($query) {
+                    $query->whereNull('detalle_pedido.fk_id_producto')
+                        ->orWhereRaw(
+                            "LOWER(TRIM(COALESCE(categoria.categoria, ''))) NOT LIKE ?",
+                            ['%bebida%']
+                        );
+                })
+                ->exists();
+
+            if ($hayDetallesNoBebida) {
+
+                $hayComida = true;
+
+                $estado = DB::table('estados')
+                    ->where('id', $pedidoMesa->fk_id_estado)
+                    ->value('estado');
+
+                if (mb_strtolower(trim((string) $estado)) !== 'servido') {
+                    throw ValidationException::withMessages([
+                        'fk_id_mesa' => 'Todos los pedidos con comida deben estar servidos.',
+                    ]);
+                }
+            }
+
+            // Exactamente el cálculo original de procesarPago().
+            $montoPedido = $pedidoMesa->detalles->sum('subtotal');
+
+            if ($montoPedido <= 0) {
+                throw ValidationException::withMessages([
+                    'fk_id_mesa' => 'Hay un pedido sin importe válido.',
+                ]);
+            }
+
+            $pagos[] = [
+                'monto' => $montoPedido,
+                'fk_tipo_pago' => $datos['fk_tipo_pago'],
+                'fecha_pago' => now()->toDateString(),
+                'fk_id_pedido' => $pedidoMesa->id_pedido,
+            ];
+
+            $montoTotal += $montoPedido;
+        }
+
+        if (!$hayComida) {
+            throw ValidationException::withMessages([
+                'fk_id_mesa' => 'Los pedidos que contienen solamente bebidas se cobran individualmente.',
+            ]);
+        }
+
+        if ($caja->id_registro_inicio === null) {
+            $caja->update([
+                'id_registro_inicio' => DB::table('registro_pago')->max('id_registro') ?? 0,
+            ]);
+        }
+
+        DB::table('registro_pago')->insert($pagos);
+
+        $caja->increment('monto_actual', $montoTotal);
+    });
+
+    return redirect()->back()->with(
+        'status',
+        'Consumo de la mesa cobrado correctamente.'
+    );
+}
+
+        
 
         $pedido = Pedido::with('detalles')->findOrFail($datos['id_pedido']);
         $monto = $pedido->detalles->sum('subtotal');
@@ -144,7 +257,10 @@ public function mostrarOrdenesPedidos(Request $request){
                 ->exists();
             $soloBebidas = $tieneDetalles && !$hayDetallesNoBebida;
 
-            if (mb_strtolower(trim((string) $estadoPedido)) !== 'listo' && !$soloBebidas) {
+            if (
+    !in_array(mb_strtolower(trim((string) $estadoPedido)), ['listo', 'servido'], true)
+    && !$soloBebidas
+) {
                 throw ValidationException::withMessages([
                     'id_pedido' => 'No se puede cobrar un pedido que aún no está listo.',
                 ]);
@@ -219,6 +335,13 @@ public function mostrarOrdenesPedidos(Request $request){
                 ]);
             }
         }
+        // Si todos los productos son bebidas (categoría 4),
+// el pedido comienza en LISTO y no necesita pasar por cocina.
+$soloBebidas = collect($datos['items'])->every(function ($item) use ($productos) {
+    $producto = $productos->get($item['fk_id_producto']);
+
+    return (int) $producto->fk_id_categoria === 4;
+});
 
         $creatorId = session('usuario_id');
         $creator = $creatorId
@@ -229,7 +352,7 @@ public function mostrarOrdenesPedidos(Request $request){
             ? $this->pedidoCreatorRole((int) $creatorId, $creator?->id_rol_usuario)
             : null;
 
-        DB::transaction(function () use ($datos, $productos, $creatorId, $creatorName, $creatorRole) {
+        DB::transaction(function () use ($datos, $productos, $creatorId, $creatorName, $creatorRole, $soloBebidas) {
             $caja = CajaEstado::query()->lockForUpdate()->first();
 
             if (!$caja || !$caja->abierta) {
@@ -241,7 +364,7 @@ public function mostrarOrdenesPedidos(Request $request){
             $pedido = Pedido::create([
                 'fk_id_mesa' => $datos['fk_id_mesa'],
                 'es_para_llevar' => $datos['es_para_llevar'],
-                'fk_id_estado' => 1,
+                'fk_id_estado' => $soloBebidas ? 3 : 1,
                 'fk_id_usuario' => $creatorId,
                 'nombre_creador' => $creatorName,
                 'rol_creador' => $creatorRole,
@@ -311,6 +434,10 @@ public function mostrarOrdenesPedidos(Request $request){
             }
 
             $pedido->update(['es_para_llevar' => $datos['es_para_llevar']]);
+            // Si el pedido estaba LISTO o SERVIDO, vuelve a RECIBIDO.
+if (in_array((int) $pedido->fk_id_estado, [3, 4], true)) {
+    $pedido->update(['fk_id_estado' => 1]);
+}
 
             // Eliminar los detalles existentes
             $pedido->detalles()->delete();
@@ -461,6 +588,9 @@ public function pedidosPendientesApi($idMesa)
                     'precio_unitario' => $precioUnitario,
                     'subtotal' => $subtotal,
                     'descripcion' => $detalle->descripcion,
+                       'fk_id_categoria' => $detalle->producto
+        ? $detalle->producto->fk_id_categoria
+        : null,
                 ];
             }),
         ];

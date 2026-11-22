@@ -39,9 +39,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const estadoCaja = await response.json();
       cajaAbierta = estadoCaja.abierta === true;
-      botonesDePedido.forEach(boton => {
-        boton.disabled = !cajaAbierta;
-      });
+      botonesAbrirModalPedido.forEach(boton => {
+    boton.disabled = !cajaAbierta;
+});
+
+botonesCobrar.forEach(boton => {
+    boton.disabled =
+        !cajaAbierta || boton.dataset.puedeCobrar === '0';
+});
 
       if (avisoCajaPedidos) {
         avisoCajaPedidos.hidden = cajaAbierta;
@@ -342,13 +347,27 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  botonesCobrar.forEach(boton => {
+   botonesCobrar.forEach(boton => {
     boton.addEventListener('click', async () => {
       if (!await actualizarEstadoCaja()) return;
+      if (boton.dataset.puedeCobrar === '0') return;
+
+      const esCobroMesa = boton.dataset.tipoCobro === 'mesa';
 
       formCobrar.reset();
-      document.getElementById('pagoIdPedido').value = boton.dataset.orderId;
-      document.getElementById('totalCobroPedido').textContent = `$${Number(boton.dataset.total).toLocaleString('es-CL')}`;
+
+      document.getElementById('pagoIdPedido').value =
+        esCobroMesa ? '' : boton.dataset.orderId;
+
+      document.getElementById('pagoIdMesa').value =
+        esCobroMesa ? boton.dataset.mesaId : '';
+
+      document.getElementById('totalCobroPedido').textContent =
+        `$${Number(boton.dataset.total).toLocaleString('es-CL')}`;
+
+      modalCobrar.querySelector('h3').textContent =
+        esCobroMesa ? 'Cobrar consumo de mesa' : 'Cobrar bebida';
+
       modalCobrar.classList.remove('hidden');
     });
   });

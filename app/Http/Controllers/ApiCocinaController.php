@@ -157,12 +157,11 @@ class ApiCocinaController extends Controller
             
 
             $detalles[] = [
-                'id_producto' => $producto->id,
-                'cantidad' => (int) $item['cantidad'],
-                'subtotal' => (float) $item['precio']
-                    * (int) $item['cantidad'],
-                'descripcion' => $item['descripcion'] ?? '',
-            ];
+    'id_producto' => $producto->id,
+    'cantidad' => (int) $item['cantidad'],
+    'subtotal' => (float) $item['precio'],
+    'descripcion' => $item['descripcion'] ?? '',
+];
         }
 
         $total = 0;

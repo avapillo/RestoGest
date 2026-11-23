@@ -333,16 +333,7 @@ $totalConsumoMesa += $subtotalItem;
                 Modificar
             </button>
 
-            <button
-                type="button"
-                class="btn-accion btn-tomar-pedido"
-                disabled
-                data-seccion-id="{{ $mesa->fk_id_seccion }}"
-                data-seccion-nombre="{{ $mesa->seccion->seccion ?? 'Sin Sección' }}"
-                data-mesa-numero="{{ $mesa->numero_mesa }}"
-                data-mesa-id="{{ $mesa->id_mesa }}">
-                ➕ Agregar pedido
-            </button>
+           
 
             @if ($hayPedidosComidaMesa)
     <button
@@ -512,9 +503,16 @@ $totalConsumoMesa += $subtotalItem;
         </div>
 
         <div class="modal-botones">
-          <button type="button" id="btnCerrarModal" class="btn-cancelar">Cancelar</button>
-          <button type="submit" class="btn-guardar">Registrar Pedido</button>
-        </div>
+  <button type="button" id="btnCerrarModal" class="btn-cancelar">Cancelar</button>
+  <button
+    type="button"
+    id="btnAgregarPedidoDesdeModificar"
+    class="btn-guardar"
+    hidden>
+    + Agregar otro pedido
+  </button>
+  <button type="submit" class="btn-guardar">Registrar Pedido</button>
+</div>
       </form>
     </div>
   </div>

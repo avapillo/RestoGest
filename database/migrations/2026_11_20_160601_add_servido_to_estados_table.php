@@ -1,9 +1,7 @@
-
 <?php
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
-use RuntimeException;
 
 return new class extends Migration
 {
@@ -15,7 +13,7 @@ return new class extends Migration
 
         if ($estado) {
             if (mb_strtolower(trim($estado->estado ?? '')) !== 'servido') {
-                throw new RuntimeException(
+                throw new \RuntimeException(
                     'El ID 4 ya esta ocupado por otro estado.'
                 );
             }
@@ -28,7 +26,7 @@ return new class extends Migration
             ->first();
 
         if ($servido) {
-            throw new RuntimeException(
+            throw new \RuntimeException(
                 'El estado Servido ya existe con un ID diferente de 4.'
             );
         }

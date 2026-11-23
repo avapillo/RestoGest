@@ -197,7 +197,25 @@ botonesCobrar.forEach(boton => {
     formPedido.action = formPedido.dataset.createUrl;
     modalProducto.querySelector('h3').textContent = 'Agregar Pedido';
     formPedido.querySelector('button[type="submit"]').textContent = 'Registrar Pedido';
-  };
+    document.getElementById('btnAgregarPedidoDesdeModificar').hidden = true;
+    };
+  const btnAgregarPedidoDesdeModificar = document.getElementById('btnAgregarPedidoDesdeModificar');
+
+if (btnAgregarPedidoDesdeModificar) {
+  btnAgregarPedidoDesdeModificar.addEventListener('click', () => {
+    const seccionId = inputSeccion.value;
+    const mesaId = inputMesa.value;
+    const seccionNombre = nombreSeccionPedido.textContent;
+    const mesaNumero = numeroMesaPedido.textContent;
+
+    prepararNuevoPedido();
+
+    inputSeccion.value = seccionId;
+    inputMesa.value = mesaId;
+    nombreSeccionPedido.textContent = seccionNombre;
+    numeroMesaPedido.textContent = mesaNumero;
+  });
+}
 
   if (modalProducto) {
     botonesAbrirModalPedido.forEach(boton => boton.addEventListener('click', async () => {
@@ -329,6 +347,7 @@ botonesCobrar.forEach(boton => {
       actualizarFilas();
       modalProducto.querySelector('h3').textContent = 'Modificar Pedido';
       formPedido.querySelector('button[type="submit"]').textContent = 'Guardar cambios';
+      document.getElementById('btnAgregarPedidoDesdeModificar').hidden = false;
       modalProducto.classList.remove('hidden');
     });
   });

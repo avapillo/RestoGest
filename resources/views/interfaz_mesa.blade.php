@@ -16,6 +16,7 @@
       <div class="logo-sistema">
         <img src="{{ asset('img/Sanwicheria Gabriel icon.png') }}" alt="Sandwichería Gabriel">
       </div>
+      // Menu de navegación
       <nav class="menu-navegacion">
         <a href="{{ route('home') }}" class="opcion-menu">Principal</a>
         <a href="{{ route('mesas.index') }}" class="opcion-menu activa">Mesas</a>
@@ -24,7 +25,6 @@
         <a href="{{ route('ventas.index') }}" class="opcion-menu">Administración de Ventas</a>
         <a href="{{ route('pendientes.index') }}" class="opcion-menu">Pendientes</a>
       </nav>
-
       <div class="cerrar-sesion-contenedor">
         <a href="{{ route('logout') }}" class="cerrar-sesion">
           <svg xmlns="http://www.w3.org/2000/svg"

@@ -16,7 +16,7 @@
       <div class="logo-sistema">
         <img src="{{ asset('img/Sanwicheria Gabriel icon.png') }}" alt="Sandwichería Gabriel">
       </div>
-      // Menu de navegación
+      <!-- Menu de navegación-->
       <nav class="menu-navegacion">
         <a href="{{ route('home') }}" class="opcion-menu">Principal</a>
         <a href="{{ route('mesas.index') }}" class="opcion-menu activa">Mesas</a>

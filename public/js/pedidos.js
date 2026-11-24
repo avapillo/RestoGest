@@ -188,15 +188,27 @@ botonesCobrar.forEach(boton => {
     actualizarFilas();
   };
 
+  const configurarAccionesProductosPedido = (visible) => {
+    if (!listaProductosPedido) return;
+    listaProductosPedido
+      .querySelectorAll('.acciones-item-producto')
+      .forEach(acciones => {
+        acciones.hidden = !visible;
+      });
+  };
+
   const prepararNuevoPedido = () => {
     if (!formPedido) return;
 
     esPedidoNuevo = true;
     formPedido.reset();
     limpiarFilasPedido();
+    configurarAccionesProductosPedido(true);
     formPedido.action = formPedido.dataset.createUrl;
     modalProducto.querySelector('h3').textContent = 'Agregar Pedido';
-    formPedido.querySelector('button[type="submit"]').textContent = 'Registrar Pedido';
+    const botonGuardarPedido = formPedido.querySelector('button[type="submit"]');
+    botonGuardarPedido.textContent = 'Registrar Pedido';
+    botonGuardarPedido.hidden = false;
     document.getElementById('btnAgregarPedidoDesdeModificar').hidden = true;
     };
   const btnAgregarPedidoDesdeModificar = document.getElementById('btnAgregarPedidoDesdeModificar');
@@ -346,8 +358,11 @@ if (btnAgregarPedidoDesdeModificar) {
 
       actualizarFilas();
       modalProducto.querySelector('h3').textContent = 'Modificar Pedido';
-      formPedido.querySelector('button[type="submit"]').textContent = 'Guardar cambios';
+      const botonGuardarPedido = formPedido.querySelector('button[type="submit"]');
+      botonGuardarPedido.textContent = 'Guardar cambios';
+      botonGuardarPedido.hidden = true;
       document.getElementById('btnAgregarPedidoDesdeModificar').hidden = false;
+      configurarAccionesProductosPedido(false);
       modalProducto.classList.remove('hidden');
     });
   });

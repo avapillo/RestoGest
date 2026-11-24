@@ -589,6 +589,10 @@ body {
   padding-bottom: 1px;
 }
 
+.acciones-item-producto[hidden] {
+  display: none;
+}
+
 .acciones-item-producto button {
   width: 38px;
   height: 38px;

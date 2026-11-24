@@ -191,7 +191,7 @@
 
             @php
                 $estadoNombre = trim($pedidoMesa->estado->estado ?? 'Recibido');
-                $estadoNormalizado = mb_strtolower($estadoNombre); 
+                $estadoNormalizado = mb_strtolower($estadoNombre);
                 $pedidoSoloBebidas = $pedidoMesa->detalles->isNotEmpty();
 
 foreach ($pedidoMesa->detalles as $detalleBebida) {
@@ -333,7 +333,7 @@ $totalConsumoMesa += $subtotalItem;
                 Modificar
             </button>
 
-           
+
 
             @if ($hayPedidosComidaMesa)
     <button

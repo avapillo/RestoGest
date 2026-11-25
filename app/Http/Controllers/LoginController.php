@@ -27,7 +27,6 @@ class LoginController extends Controller
             'contrasenia' => 'required|string',
         ], [
             // Mensaje de erro de ingreso
-
             'gmail.email' => 'Ingresa un correo electrónico válido.',
             'gmail.ends_with' => 'Debes ingresar una dirección @gmail.com.',
         ]);

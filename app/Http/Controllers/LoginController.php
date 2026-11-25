@@ -26,6 +26,8 @@ class LoginController extends Controller
             'gmail'       => 'required|email|ends_with:@gmail.com',
             'contrasenia' => 'required|string',
         ], [
+            // Mensaje de erro de ingreso
+
             'gmail.email' => 'Ingresa un correo electrónico válido.',
             'gmail.ends_with' => 'Debes ingresar una dirección @gmail.com.',
         ]);
@@ -40,6 +42,7 @@ class LoginController extends Controller
             ? Hash::check($request->contrasenia, $storedPassword)
             : hash_equals($storedPassword, (string) $request->contrasenia));
 
+            // Verifica el rol del usario que trata de ingresar
         if ($credentialsValid) {
             if (!$adminAccess->isAdmin((int) $usuario->id)) {
                 return back()

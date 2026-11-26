@@ -215,7 +215,6 @@ dialog,
     min-width: 0;
   }
 
-  .catalogo,
   .contenedor {
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)) !important;
   }
@@ -263,7 +262,6 @@ dialog,
     min-width: 0;
   }
 
-  .catalogo,
   .contenedor {
     grid-template-columns: minmax(0, 1fr) !important;
   }

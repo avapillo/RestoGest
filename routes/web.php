@@ -78,10 +78,6 @@ Route::post('/Mesas/Pedido/{id_pedido}/modificar', [MesasController::class, 'mod
 
 // Ruta de ventas
 
-use App\Http\Controllers\CatalogoController;
-
-Route::get('/catalogo', [CatalogoController::class, 'index'])
-    ->name('catalogo');
 Route::get('/Ventas', [VentasController::class, 'index'])->name('ventas.index');
 
 // Rutas de pendientes

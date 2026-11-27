@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="{{ asset('img/Sanwicheria Gabriel icon.png') }}">
-    <title>Pendientes - Sandwichería Gabriel</title>
+    <title>Clientes y pendientes - Sandwichería Gabriel</title>
     <link rel="stylesheet" href="{{ asset('css/ventas.css') }}">
     <link rel="stylesheet" href="{{ asset('css/pendientes.css') }}">
     <link rel="stylesheet" href="{{ asset('css/responsive-adapter.css') }}">
@@ -54,9 +54,9 @@
         <header class="encabezado-seccion">
             <div>
                 <p class="sobre-titulo">Administración</p>
-                <h1>Pendientes</h1>
+                <h1>Clientes y pendientes</h1>
                 <p class="resumen-encabezado">
-                    Gestioná los pedidos a fiado (pendientes de pago).
+                Registrá movimientos y encontrá clientes por nombre o DNI.
                 </p>
             </div>
         </header>
@@ -76,14 +76,17 @@
             </div>
         @endif
 
-        <!-- FORMULARIO PARA AGREGAR -->
+        <!-- ALTA DE MOVIMIENTO Y CLIENTE -->
         <section class="pendientes-panel">
-
             <form action="{{ route('pendientes.store') }}"
                   method="POST"
-                  class="pendientes-formulario">
+                  class="pendientes-formulario"
+                  id="formNuevoRegistro"
+                  data-search-url="{{ route('pendientes.buscar') }}">
 
                 @csrf
+
+                <input type="hidden" name="cliente_id" id="cliente_id">
 
                 <div class="pendientes-avatar">
                     <svg xmlns="http://www.w3.org/2000/svg"
@@ -105,6 +108,7 @@
                         maxlength="150"
                         title="El nombre solo puede contener letras y espacios."
                         required
+                        autocomplete="name"
                         placeholder="Ingrese el nombre del cliente"
                         value="{{ old('nombre') }}">
                 </div>
@@ -116,30 +120,70 @@
                         id="monto"
                         name="monto"
                         min="0.01"
+                        max="99999999.99"
                         step="0.01"
                         required
                         placeholder="Ej: 18000"
                         value="{{ old('monto') }}">
                 </div>
 
-                <button type="submit" class="pendientes-btn-agregar">
-                    <span>＋</span> Agregar Pendiente
+                <div class="grupo-campo" id="grupoDniCliente" hidden>
+                    <label for="dni_ultimos_4">Últimos 4 dígitos del DNI</label>
+                    <input
+                        type="text"
+                        id="dni_ultimos_4"
+                        name="dni_ultimos_4"
+                        inputmode="numeric"
+                        autocomplete="off"
+                        pattern="[0-9]{4}"
+                        maxlength="4"
+                        placeholder="Ej: 0042"
+                        aria-describedby="ayudaDniCliente">
+                    <small id="ayudaDniCliente">Se usa para distinguir a clientes con el mismo nombre.</small>
+                </div>
+
+                <p id="seleccionCliente" class="pendientes-seleccion-cliente" role="status" aria-live="polite" hidden></p>
+                <p id="estadoAltaCliente" class="pendientes-estado-flujo" role="status" aria-live="polite" hidden></p>
+                <div id="coincidenciasCliente" class="pendientes-coincidencias" hidden></div>
+
+                <button type="submit" class="pendientes-btn-agregar" id="btnRegistrarCliente">
+                    Registrar
                 </button>
-
             </form>
-
         </section>
 
-        <!-- TABLA DE PENDIENTES -->
+        <!-- BUSCADOR ÚNICO -->
+        <section class="pendientes-panel">
+            <h2 class="pendientes-panel-titulo">Buscar clientes y movimientos</h2>
+            <form id="formBuscarClientes"
+                  class="pendientes-buscador"
+                  data-search-url="{{ route('pendientes.buscar') }}">
+                <label for="busquedaCliente">Nombre o últimos 4 dígitos del DNI</label>
+                <div class="pendientes-buscador-campo">
+                    <input
+                        type="search"
+                        id="busquedaCliente"
+                        maxlength="150"
+                        placeholder="Escribí un nombre o exactamente 4 dígitos">
+                    <button type="submit" class="pendientes-btn-agregar">Buscar</button>
+                </div>
+                <p class="pendientes-ayuda-busqueda">El nombre se busca parcialmente; el DNI, por coincidencia exacta.</p>
+            </form>
+            <div id="resultadosBusqueda" class="pendientes-resultados-busqueda" role="status" aria-live="polite"></div>
+        </section>
+
+        <!-- HISTORIAL DE MOVIMIENTOS -->
         <section class="pendientes-panel pendientes-panel-tabla">
+            <h2 class="pendientes-panel-titulo pendientes-panel-titulo-tabla">Movimientos recientes</h2>
 
             <div class="pendientes-tabla-envoltura">
                 <table class="pendientes-tabla">
                     <thead>
                         <tr>
-                            <th>Fecha</th>
+                            <th>Fecha del registro</th>
                             <th>Cliente</th>
-                            <th>Monto pendiente</th>
+                            <th>DNI (últimos 4)</th>
+                            <th>Monto</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -148,14 +192,18 @@
                         @forelse ($pendientes as $pendiente)
                             <tr>
                                 <td data-label="Fecha">
-                                    {{ $pendiente->created_at->format('d/m/Y') }}
+                                    {{ $pendiente->fecha_registro?->format('d/m/Y H:i') ?? '—' }}
                                 </td>
 
                                 <td data-label="Cliente">
-                                    {{ $pendiente->nombre }}
+                                    {{ $pendiente->cliente->nombre }}
                                 </td>
 
-                                <td data-label="Monto pendiente" class="pendientes-monto">
+                                <td data-label="DNI (últimos 4)">
+                                    {{ $pendiente->cliente->dni_ultimos_4 ?? '—' }}
+                                </td>
+
+                                <td data-label="Monto" class="pendientes-monto">
                                     ${{ number_format((float) $pendiente->monto, 2, ',', '.') }}
                                 </td>
 
@@ -166,7 +214,7 @@
                                             type="button"
                                             class="pendientes-btn-editar btn-editar-pendiente"
                                             data-url="{{ route('pendientes.update', $pendiente->id) }}"
-                                            data-nombre="{{ $pendiente->nombre }}"
+                                            data-nombre="{{ $pendiente->cliente->nombre }}"
                                             data-monto="{{ $pendiente->monto }}">
                                             ✏️ Editar
                                         </button>
@@ -190,8 +238,8 @@
 
                         @empty
                             <tr>
-                                <td colspan="4" class="pendientes-vacio">
-                                    Todavía no hay pendientes registrados.
+                                <td colspan="5" class="pendientes-vacio">
+                                    Todavía no hay movimientos registrados.
                                 </td>
                             </tr>
                         @endforelse
@@ -205,8 +253,7 @@
         <div class="pendientes-aviso">
             <span class="pendientes-aviso-icono">i</span>
             <span>
-                Estos montos quedan registrados como deudas pendientes de pago
-                y podrán abonarse más adelante.
+                Cada movimiento queda vinculado al identificador del cliente; los nombres repetidos no mezclan sus registros.
             </span>
         </div>
 
@@ -218,7 +265,7 @@
 
     <div class="pendientes-modal-contenido" role="dialog" aria-modal="true" aria-labelledby="tituloEditarPendiente">
 
-        <h2 id="tituloEditarPendiente">Editar pendiente</h2>
+        <h2 id="tituloEditarPendiente">Editar movimiento</h2>
 
         <form id="formEditarPendiente" method="POST">
 
@@ -226,19 +273,18 @@
             @method('PUT')
 
             <div class="grupo-campo">
-                <label for="editar_nombre">Nombre del cliente</label>
+                <label for="editar_nombre">Cliente</label>
                 <input
                     type="text"
                     id="editar_nombre"
                     name="nombre"
                     maxlength="150"
-
                     title="El nombre solo puede contener letras y espacios."
-                    required>
+                    readonly>
             </div>
 
             <div class="grupo-campo">
-                <label for="editar_monto">Cantidad ($)</label>
+                <label for="editar_monto">Monto ($)</label>
                 <input type="number" id="editar_monto" name="monto" min="0.01" step="0.01" required>
             </div>
 
@@ -256,40 +302,7 @@
     </div>
 </div>
 
-<script>
-    const modalPendiente = document.getElementById('modalEditarPendiente');
-    const formularioEditar = document.getElementById('formEditarPendiente');
-
-    document.querySelectorAll('.btn-editar-pendiente').forEach(boton => {
-        boton.addEventListener('click', function () {
-            formularioEditar.action = this.dataset.url;
-
-            document.getElementById('editar_nombre').value = this.dataset.nombre;
-            document.getElementById('editar_monto').value = this.dataset.monto;
-
-            modalPendiente.hidden = false;
-            document.getElementById('editar_nombre').focus();
-        });
-    });
-
-    function cerrarModalPendiente() {
-        modalPendiente.hidden = true;
-    }
-
-    document.getElementById('btnCancelarEdicion').addEventListener('click', cerrarModalPendiente);
-
-    modalPendiente.addEventListener('click', function (event) {
-        if (event.target === modalPendiente) {
-            cerrarModalPendiente();
-        }
-    });
-
-    document.addEventListener('keydown', function (event) {
-        if (event.key === 'Escape' && !modalPendiente.hidden) {
-            cerrarModalPendiente();
-        }
-    });
-</script>
+ <script src="{{ asset('js/pendientes.js') }}"></script>
 
 </body>
 </html>

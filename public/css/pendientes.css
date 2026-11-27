@@ -19,6 +19,16 @@
     box-shadow: 0 4px 12px rgba(18, 26, 43, 0.05);
 }
 
+.pendientes-panel-titulo {
+    margin: 0 0 18px;
+    color: #121a2b;
+    font-size: 1.12rem;
+}
+
+.pendientes-panel-titulo-tabla {
+    padding: 20px 20px 0;
+}
+
 /* FORMULARIO */
 
 .pendientes-formulario {
@@ -26,6 +36,10 @@
     grid-template-columns: 72px minmax(180px, 1.5fr) minmax(150px, 0.7fr) auto;
     align-items: end;
     gap: 18px;
+}
+
+.pendientes-formulario > #btnRegistrarCliente {
+    grid-column: 4;
 }
 
 .pendientes-avatar {
@@ -60,6 +74,110 @@
 .pendientes-formulario .grupo-campo input:focus {
     border-color: #d97706;
     box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.14);
+}
+
+.pendientes-formulario [hidden],
+.pendientes-coincidencias[hidden] {
+    display: none !important;
+}
+
+.pendientes-estado-flujo,
+.pendientes-seleccion-cliente,
+.pendientes-coincidencias,
+.pendientes-formulario #grupoDniCliente {
+    grid-column: 1 / -1;
+}
+
+.pendientes-estado-flujo,
+.pendientes-seleccion-cliente {
+    margin: 0;
+    color: #475569;
+    font-size: 0.9rem;
+}
+
+.pendientes-formulario #grupoDniCliente small {
+    color: #64748b;
+    font-size: 0.8rem;
+}
+
+.pendientes-coincidencias h3 {
+    margin: 0 0 8px;
+    color: #121a2b;
+    font-size: 1rem;
+}
+
+.pendientes-coincidencias > p {
+    margin: 0 0 12px;
+    color: #475569;
+    font-size: 0.9rem;
+}
+
+.pendientes-cliente-coincidente {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    margin-bottom: 10px;
+    padding: 13px;
+    border: 1px solid #e2e8f0;
+    border-radius: 7px;
+}
+
+.pendientes-cliente-coincidente p {
+    margin: 0;
+    color: #334155;
+    font-size: 0.9rem;
+}
+
+.pendientes-btn-nuevo-homonimo {
+    min-height: 42px;
+    margin-top: 4px;
+    padding: 9px 14px;
+    border: 1px solid #d97706;
+    border-radius: 6px;
+    color: #92400e;
+    background: #fffbeb;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.pendientes-btn-nuevo-homonimo:hover {
+    background: #fef3c7;
+}
+
+.pendientes-buscador label {
+    display: block;
+    margin-bottom: 8px;
+    color: #1e293b;
+    font-size: 0.95rem;
+    font-weight: 700;
+}
+
+.pendientes-buscador-campo {
+    display: flex;
+    gap: 12px;
+}
+
+.pendientes-buscador-campo input {
+    flex: 1;
+    min-width: 0;
+    height: 48px;
+    padding: 10px 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 7px;
+    font: inherit;
+}
+
+.pendientes-ayuda-busqueda {
+    margin: 8px 0 0;
+    color: #64748b;
+    font-size: 0.82rem;
+}
+
+.pendientes-resultados-busqueda {
+    margin-top: 16px;
+    color: #475569;
 }
 
 /* BOTÓN AGREGAR */
@@ -311,7 +429,7 @@
         grid-template-columns: 60px minmax(0, 1fr) minmax(0, 0.8fr);
     }
 
-    .pendientes-btn-agregar {
+    .pendientes-formulario > .pendientes-btn-agregar {
         grid-column: 2 / 4;
     }
 }
@@ -329,9 +447,16 @@
         display: none;
     }
 
-    .pendientes-btn-agregar {
+    .pendientes-formulario > .pendientes-btn-agregar,
+    .pendientes-buscador-campo .pendientes-btn-agregar {
         grid-column: auto;
         width: 100%;
+    }
+
+    .pendientes-buscador-campo,
+    .pendientes-cliente-coincidente {
+        align-items: stretch;
+        flex-direction: column;
     }
 
     .pendientes-tabla thead {

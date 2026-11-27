@@ -83,6 +83,8 @@ Route::get('/Ventas', [VentasController::class, 'index'])->name('ventas.index');
 // Rutas de pendientes
 Route::get('/Pendientes', [PendientesController::class, 'index'])->name('pendientes.index');
 
+Route::get('/Pendientes/buscar-persona', [PendientesController::class, 'buscarPersona'])->name('pendientes.buscar');
+
 Route::post('/Pendientes/guardar', [PendientesController::class, 'store'])->name('pendientes.store');
 
 Route::put('/Pendientes/{id}/modificar', [PendientesController::class, 'update'])->name('pendientes.update');

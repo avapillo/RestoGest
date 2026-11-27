@@ -17,21 +17,34 @@ class AdminAccess
         $roles = collect();
 
         if (Schema::hasColumn('usuarios', 'id_rol_usuario')) {
-            $roles = $roles->merge(
-                DB::table('usuarios')
-                    ->join('rol_usuario', 'usuarios.id_rol_usuario', '=', 'rol_usuario.id_rol')
-                    ->where('usuarios.id', $userId)
-                    ->pluck('rol_usuario.rol_nombre')
-            );
+            $legacyRoles = DB::table('usuarios')
+                ->join('rol_usuario', 'usuarios.id_rol_usuario', '=', 'rol_usuario.id_rol')
+                ->where('usuarios.id', $userId);
+
+            if (Schema::hasColumn('usuarios', 'deleted_at')) {
+                $legacyRoles->whereNull('usuarios.deleted_at');
+            }
+            if (Schema::hasColumn('rol_usuario', 'deleted_at')) {
+                $legacyRoles->whereNull('rol_usuario.deleted_at');
+            }
+
+            $roles = $roles->merge($legacyRoles->pluck('rol_usuario.rol_nombre'));
         }
 
         if (Schema::hasTable('usuario_roles')) {
-            $roles = $roles->merge(
-                DB::table('usuario_roles')
-                    ->join('rol_usuario', 'usuario_roles.fk_id_rol', '=', 'rol_usuario.id_rol')
-                    ->where('usuario_roles.fk_id_usuario', $userId)
-                    ->pluck('rol_usuario.rol_nombre')
-            );
+            $pivotRoles = DB::table('usuario_roles')
+                ->join('usuarios', 'usuario_roles.fk_id_usuario', '=', 'usuarios.id')
+                ->join('rol_usuario', 'usuario_roles.fk_id_rol', '=', 'rol_usuario.id_rol')
+                ->where('usuario_roles.fk_id_usuario', $userId);
+
+            if (Schema::hasColumn('usuarios', 'deleted_at')) {
+                $pivotRoles->whereNull('usuarios.deleted_at');
+            }
+            if (Schema::hasColumn('rol_usuario', 'deleted_at')) {
+                $pivotRoles->whereNull('rol_usuario.deleted_at');
+            }
+
+            $roles = $roles->merge($pivotRoles->pluck('rol_usuario.rol_nombre'));
         }
 
         return $roles->first(function ($roleName) {

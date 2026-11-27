@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use App\Support\AdminAccess;
 
 class UsuariosController extends Controller
 {
@@ -137,12 +138,44 @@ class UsuariosController extends Controller
     return redirect()->route('usuario.index')->with('status', '¡Usuario modificado con éxito!');
 }
 
-    public function eliminarUsuario($id){
+    public function eliminarUsuario($id, AdminAccess $adminAccess)
+    {
+        $resultado = DB::transaction(function () use ($id, $adminAccess) {
+            $usuario = Usuarios::findOrFail($id);
 
-    $usuarios = usuarios::findOrFail($id);
+            if ($adminAccess->isAdmin((int) $usuario->id)) {
+                $usuarios = DB::table('usuarios')->select('id');
 
-    $usuarios->delete();
+                if (\Illuminate\Support\Facades\Schema::hasColumn('usuarios', 'deleted_at')) {
+                    $usuarios->whereNull('deleted_at');
+                }
 
-     return redirect()->route('usuario.index')->with('status', '¡Usuario eliminado con éxito!');
+                $cantidadAdministradores = $usuarios
+                    ->lockForUpdate()
+                    ->pluck('id')
+                    ->filter(fn ($usuarioId) => $adminAccess->isAdmin((int) $usuarioId))
+                    ->count();
+
+                if ($cantidadAdministradores <= 1) {
+                    return [
+                        'eliminado' => false,
+                        'mensaje' => 'No se puede eliminar el único administrador registrado.',
+                    ];
+                }
+            }
+
+            $usuario->delete();
+
+            return [
+                'eliminado' => true,
+                'mensaje' => '¡Usuario eliminado con éxito!',
+            ];
+        });
+
+        if (!$resultado['eliminado']) {
+            return redirect()->route('usuario.index')->with('error', $resultado['mensaje']);
+        }
+
+        return redirect()->route('usuario.index')->with('status', $resultado['mensaje']);
     }
 }

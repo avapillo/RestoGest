@@ -225,6 +225,41 @@ test('se puede registrar un usuario con Gmail único y contraseña segura', func
     $this->assertTrue(Hash::check('clave-segura', DB::table('usuarios')->value('contrasenia')));
 });
 
+test('no se puede eliminar el único administrador registrado', function () {
+    $adminId = DB::table('usuarios')
+        ->where('gmail', 'admin-pruebas@gmail.com')
+        ->value('id');
+
+    $this->delete("/Usuarios/{$adminId}/eliminar")
+        ->assertRedirect(route('usuario.index'))
+        ->assertSessionHas('error', 'No se puede eliminar el único administrador registrado.');
+
+    $this->assertDatabaseHas('usuarios', [
+        'id' => $adminId,
+        'deleted_at' => null,
+    ]);
+});
+
+test('se puede eliminar un administrador cuando existe otro registrado', function () {
+    $adminId = DB::table('usuarios')
+        ->where('gmail', 'admin-pruebas@gmail.com')
+        ->value('id');
+
+    $secondAdminId = DB::table('usuarios')->insertGetId([
+        'nombre' => 'Segundo administrador',
+        'gmail' => 'segundo-admin@gmail.com',
+        'contrasenia' => Hash::make('clave-segura'),
+        'id_rol_usuario' => 1,
+    ]);
+
+    $this->delete("/Usuarios/{$adminId}/eliminar")
+        ->assertRedirect(route('usuario.index'))
+        ->assertSessionHas('status', '¡Usuario eliminado con éxito!');
+
+    $this->assertNotNull(DB::table('usuarios')->where('id', $adminId)->value('deleted_at'));
+    $this->assertNull(DB::table('usuarios')->where('id', $secondAdminId)->value('deleted_at'));
+});
+
 test('no se puede registrar un Gmail repetido ni contraseñas distintas', function () {
     DB::table('usuarios')->insert([
         'nombre' => 'Milton',
